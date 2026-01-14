@@ -1,0 +1,30 @@
+GET http://localhost:8080/api/v1/software-engineers
+
+###
+
+POST http://localhost:8080/api/v1/software-engineers
+Content-Type: application/json
+
+{
+    "name": "Ryan",
+    "techStack": "React, Spring Boot",
+    "questionType": "LOGIC"
+}
+
+###
+GET http://localhost:8080/api/v1/software-engineers/1
+
+###
+
+DELETE http://localhost:8080/api/v1/software-engineers/10
+
+###
+
+PUT http://localhost:8080/api/v1/software-engineers/2
+Content-Type: application/json
+
+{
+    "name": "Jim",
+    "techStack": "React, Python",
+    "questionType": "MATH"
+}
