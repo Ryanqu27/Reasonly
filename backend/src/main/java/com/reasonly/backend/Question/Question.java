@@ -1,10 +1,12 @@
 package com.reasonly.backend.Question;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import java.util.List;
+
+import com.reasonly.backend.QuestionDifficulty;
 import com.reasonly.backend.QuestionType;
 
-import io.hypersistence.utils.hibernate.type.array.StringArrayType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -24,15 +26,64 @@ public class Question {
     @Enumerated(EnumType.STRING)
     private QuestionType type;
 
-    private int difficulty;
+    private QuestionDifficulty difficulty;
 
     @Column(columnDefinition = "jsonb")
     private String question;
 
-    @Type(StringArrayType.class)
-    @Column(name = "answers", columnDefinition = "text[]")
-    private String[] answers;
+    @ElementCollection
+    @Column(name = "answer")
+    private List<String> answers;
 
     @Column(nullable = false)
     private String correctAnswer;
+
+    public Long getId() {
+        return id;
+    }
+
+    public QuestionType getType() {
+        return type;
+    }
+
+    public QuestionDifficulty getDifficulty() {
+        return difficulty;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+
+    public List<String> getAnswers() {
+        return answers;
+    }
+
+    public String getCorrectAnswer() {
+        return correctAnswer;
+    }
+
+    public void setId(Long newId) {
+        id = newId;
+    }
+
+    public void setType(QuestionType newType) {
+        type = newType;
+    }
+
+    public void setDifficulty(QuestionDifficulty newDifficulty) {
+        difficulty = newDifficulty;
+    }
+
+    public void setQuestion(String newQuestion) {
+        question = newQuestion;
+    }
+
+    public void setAnswers(List<String> newAnswers) {
+        answers = newAnswers;
+    }
+
+    public void setCorrectAnswer(String newCorrectAnswer) {
+        correctAnswer = newCorrectAnswer;
+    }
+
 }

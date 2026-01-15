@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
@@ -27,5 +28,14 @@ public class UserController {
         userService.addUser(user);
     }
 
+    @PutMapping("{id}/increment-streak")
+    public void incrementStreak(@PathVariable Long id) {
+        userService.incrementStreak(id);
+    }
+    
+    @PutMapping("{id}/complete-today")
+    public void updateCompletedDate(@PathVariable Long id) {
+        userService.updateCompletedDate(id);
+    }
     
 }
