@@ -3,6 +3,8 @@ package com.reasonly.backend.SWE;
 import com.reasonly.backend.QuestionType;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -12,9 +14,12 @@ public class SoftwareEngineer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private QuestionType questionType;
+
     private String name;
     private String techStack;
+
+    @Enumerated(EnumType.STRING)
+    private QuestionType questionType;
 
     public SoftwareEngineer(Integer id, String name, String techStack, QuestionType questionType) {
         this.id = id;

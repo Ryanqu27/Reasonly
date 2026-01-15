@@ -46,6 +46,7 @@ public class SoftwareEngineerController {
 
     @PutMapping("{id}")
     public void updateEngineer(@PathVariable Integer id, @RequestBody SoftwareEngineer updatedEngineer) {
+        System.out.println(updatedEngineer.getQuestionType());
         softwareEngineerService.updateSoftwareEngineer(id, updatedEngineer);
     }
 }

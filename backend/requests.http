@@ -2,17 +2,19 @@ GET http://localhost:8080/api/v1/software-engineers
 
 ###
 
-POST http://localhost:8080/api/v1/software-engineers
+POST http://localhost:8080/api/v1/user
 Content-Type: application/json
 
 {
-    "name": "Ryan",
-    "techStack": "React, Spring Boot",
-    "questionType": "LOGIC"
+    "email": "Ryanqu27@gmail.com",
+    "passwordHash": "7!@#FJ10129*&!@#-0",
+    "currentStreak": 1,
+    "longestStreak": 5,
+    "lastCompletedDate": "2024-05-20"
 }
 
 ###
-GET http://localhost:8080/api/v1/software-engineers/1
+GET http://localhost:8080/api/v1/user/1
 
 ###
 
@@ -20,11 +22,11 @@ DELETE http://localhost:8080/api/v1/software-engineers/10
 
 ###
 
-PUT http://localhost:8080/api/v1/software-engineers/2
+PUT http://localhost:8080/api/v1/software-engineers/1
 Content-Type: application/json
 
 {
     "name": "Jim",
     "techStack": "React, Python",
-    "questionType": "MATH"
+    "questionType": "M"
 }

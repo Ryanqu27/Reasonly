@@ -34,6 +34,7 @@ public class SoftwareEngineerService {
             .orElseThrow(() -> new RuntimeException("Software engineer not found with id: " + id));
         existingEngineer.setName(updatedEngineer.getName());
         existingEngineer.setTechStack(updatedEngineer.getTechStack());
+        existingEngineer.setQuestionType(updatedEngineer.getQuestionType());
         softwareEngineerRepository.save(existingEngineer);
     }
 }
