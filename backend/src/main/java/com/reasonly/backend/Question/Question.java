@@ -14,8 +14,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name = "questions")
 public class Question {
     
@@ -28,7 +34,6 @@ public class Question {
 
     private QuestionDifficulty difficulty;
 
-    @Column(columnDefinition = "jsonb")
     private String question;
 
     @ElementCollection
@@ -38,52 +43,12 @@ public class Question {
     @Column(nullable = false)
     private String correctAnswer;
 
-    public Long getId() {
-        return id;
+    public Question(Long id, QuestionType type, QuestionDifficulty difficulty, String question, List<String> answers, String correctAnswer) {
+        this.id = id;
+        this.type = type;
+        this.difficulty = difficulty;
+        this.question = question;
+        this.answers = answers;
+        this.correctAnswer = correctAnswer;
     }
-
-    public QuestionType getType() {
-        return type;
-    }
-
-    public QuestionDifficulty getDifficulty() {
-        return difficulty;
-    }
-
-    public String getQuestion() {
-        return question;
-    }
-
-    public List<String> getAnswers() {
-        return answers;
-    }
-
-    public String getCorrectAnswer() {
-        return correctAnswer;
-    }
-
-    public void setId(Long newId) {
-        id = newId;
-    }
-
-    public void setType(QuestionType newType) {
-        type = newType;
-    }
-
-    public void setDifficulty(QuestionDifficulty newDifficulty) {
-        difficulty = newDifficulty;
-    }
-
-    public void setQuestion(String newQuestion) {
-        question = newQuestion;
-    }
-
-    public void setAnswers(List<String> newAnswers) {
-        answers = newAnswers;
-    }
-
-    public void setCorrectAnswer(String newCorrectAnswer) {
-        correctAnswer = newCorrectAnswer;
-    }
-
 }

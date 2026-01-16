@@ -5,7 +5,12 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 public enum QuestionType {
     LOGIC, 
     PATTERNS, 
-    MATH;
+    MATH,
+    SPATIAL,
+    VERBAL,
+    ALGORITHMIC,
+    CRITICAL;
+
 
     @JsonCreator
     public static QuestionType fromString(String value) {
