@@ -3,13 +3,14 @@ package com.reasonly.backend;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 public enum QuestionType {
-    LOGIC, 
-    PATTERNS, 
-    MATH,
-    SPATIAL,
-    VERBAL,
-    ALGORITHMIC,
-    CRITICAL;
+    DATA_STRUCTURES_AND_ALGORITHMS,     // Recursion, greedy, DP intuitionArrays, stacks, trees, graphs, hash tables
+    SYSTEMS,                            // OS, memory, processes, threads, scheduling
+    NETWORKING,                         // HTTP, TCP/IP, latency, reliability
+    DATABASES,                          // SQL, indexing, normalization, transactions
+    CONCURRENCY,                        // Locks, deadlocks, race conditions
+    SOFTWARE_DESIGN,                    // OOP, design patterns, abstractions
+    DEBUGGING,                          // Code tracing, finding logical errors
+    CODE_REASONING;                     // Read code, predict output, edge cases
 
 
     @JsonCreator
