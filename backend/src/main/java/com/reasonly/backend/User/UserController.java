@@ -2,6 +2,7 @@ package com.reasonly.backend.User;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,15 +28,16 @@ public class UserController {
     public void addUser(@RequestBody User user) {
         userService.addUser(user);
     }
-
-    @PutMapping("{id}/increment-streak")
-    public void incrementStreak(@PathVariable Long id) {
-        userService.incrementStreak(id);
-    }
     
     @PutMapping("{id}/complete-today")
     public void updateCompletedDate(@PathVariable Long id) {
         userService.updateCompletedDate(id);
+        userService.incrementStreak(id);
+    }
+
+    @DeleteMapping("{id}")
+    public void deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
     }
     
 }

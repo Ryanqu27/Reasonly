@@ -4,6 +4,8 @@ import java.time.LocalDate;
 
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class UserService {
     private final UserRepository userRepository;
@@ -21,9 +23,18 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional
     public void incrementStreak(Long id) {
         User currentUser = userRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+
+        LocalDate today = LocalDate.now();
+        LocalDate lastCompleted = currentUser.getLastCompletedDate();
+
+        if (today.equals(lastCompleted)) {
+            return;
+        }
+
         int newStreak = currentUser.getCurrentStreak() + 1;
         currentUser.setCurrentStreak(newStreak);
         if (newStreak > currentUser.getLongestStreak()) {
@@ -37,5 +48,9 @@ public class UserService {
         .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
         currentUser.setLastCompletedDate(LocalDate.now());
         userRepository.save(currentUser);
+    }
+
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
     }
 }

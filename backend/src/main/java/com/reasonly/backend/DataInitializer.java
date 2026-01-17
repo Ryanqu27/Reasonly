@@ -150,7 +150,15 @@ public class DataInitializer {
                             "They only occur in production",
                             "They cause compile errors",
                             "They occur deterministically"),
-                    "They depend on timing and thread scheduling")
+                    "They depend on timing and thread scheduling"),
+                new Question(null, QuestionType.CODE_REASONING, QuestionDifficulty.HARD,
+                    "Why does this code cause a StackOverflowError?\n\n" +
+                    "int factorial(int n) {\n" +
+                    "    if (n == 0) return n;\n" +
+                    "    return n * factorial(n - 1);\n" +
+                    "}",
+                    List.of("Incorrect base case", "Heap exhaustion", "Null pointer access", "Integer overflow"),
+                    "Incorrect base case")
             );
 
             if (repository.count() < questions.size()) {
