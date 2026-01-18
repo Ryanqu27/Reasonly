@@ -7,7 +7,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.reasonly.backend.Question.Question;
+import com.reasonly.backend.Question.QuestionDifficulty;
 import com.reasonly.backend.Question.QuestionRepository;
+import com.reasonly.backend.Question.QuestionType;
 
 @Configuration
 public class DataInitializer {

@@ -1,7 +1,17 @@
+###
+POST http://localhost:8080/auth/register
+Content-Type: application/json
+
+{
+    "email": "Ryanqu27@gmail.com",
+    "password": "HelloWorld123"
+}
+
+###
 GET http://localhost:8080/api/v1/questions
 ###
 
-DELETE http://localhost:8080/api/v1/user/2
+DELETE http://localhost:8080/api/v1/auth/user/1
 
 ###
 
@@ -9,7 +19,7 @@ PUT http://localhost:8080/api/v1/user/1/complete-today
 
 ###
 
-GET http://localhost:8080/api/v1/user/3
+GET http://localhost:8080/auth/api/v1/user/1
 
 ###
 

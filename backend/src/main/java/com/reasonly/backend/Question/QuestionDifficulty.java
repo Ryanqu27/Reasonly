@@ -1,4 +1,4 @@
-package com.reasonly.backend;
+package com.reasonly.backend.Question;
 
 public enum QuestionDifficulty {
     BASIC(1),

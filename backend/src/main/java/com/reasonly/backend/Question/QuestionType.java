@@ -1,4 +1,4 @@
-package com.reasonly.backend;
+package com.reasonly.backend.Question;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 

@@ -2,9 +2,6 @@ package com.reasonly.backend.Question;
 
 import java.util.List;
 
-import com.reasonly.backend.QuestionDifficulty;
-import com.reasonly.backend.QuestionType;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;

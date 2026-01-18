@@ -1,7 +1,6 @@
 package com.reasonly.backend.User;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -46,10 +45,11 @@ public class User {
 
     @CreatedDate
     @Column(updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDate createdAt = LocalDate.now();
     
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
 
+    private int rating = 0;
 
 }

@@ -38,6 +38,8 @@ public class AuthController {
         User user = new User();
         user.setEmail(req.email());
         user.setPasswordHash(passwordEncoder.encode(req.password()));
+        user.setCurrentStreak(0);
+        user.setLongestStreak(0);
         userRepository.save(user);
     }
 
