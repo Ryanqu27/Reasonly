@@ -1,18 +1,14 @@
-import { useState } from 'react'
-import { useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import { getAllEngineers, 
-  getEngineerById, 
-  createEngineer, 
-  updateEngineer,
-  deleteEngineer
- } from './SoftwareEngineerService.js'
+import { useState } from 'react';
+import { useEffect } from 'react';
+import './App.css';
+import { useAuth } from './UserAuth/AuthContext.jsx'
+import LoginForm from './UserAuth/LoginForm.jsx';
+import RegisterForm from './UserAuth/RegisterForm.jsx'
+import { AuthProvider } from './UserAuth/AuthContext.jsx';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 
-
-function ChangeButtonColor() {
+function Dashboard() {
   const [color, setColor] = useState("blue");
   function switchColor() {
     if (color == "blue") {
@@ -22,68 +18,44 @@ function ChangeButtonColor() {
       setColor("blue");
     }
   }
+  const { logout, user } = useAuth();
   return (
     <div>
       <p>Current color is {color}</p>
       <button onClick={switchColor}>Click me</button>
+      <button onClick={logout}>Logout</button>
     </div>
   )
   
 }
 
-function Engineers() {
-  const [engineers, setEngineers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [randomVariable, setRandomVariable] = useState(true);
-  useEffect(() => {
-    loadEngineers();
-  }, [randomVariable]);
-
-  const loadEngineers = async () => {
-    try {
-      const res = await getAllEngineers();
-      setEngineers(res.data);
-    } catch (err) {
-      setError("Failed to load engineers");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
-  function changeVariable() {
-    if (randomVariable) {
-      setRandomVariable(false);
-    }
-    else {
-      setRandomVariable(true);
-    }
-  }
-  return (
-    <div>
-      <button onClick={changeVariable}>Get Engineers</button>
-      <ul>
-      {engineers.map(e => (
-        <li key={e.id}>
-          {e.name} — {e.techStack}
-        </li>
-      ))}
-      </ul>
-    </div>
-    
-  );
-}
-
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, loading } = useAuth();
+  
+  if (loading) return <div>Loading...</div>;
+  return isAuthenticated ? children : <Navigate to="/login" />;
+};
 
 function App() {
 
   return (
-    <div className="App">
-      <ChangeButtonColor />
-      <Engineers />
-    </div>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/register" element={<RegisterForm />} />
+
+          {/* Private Routes for logged in users */}
+          <Route path="/" element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          } />
+        </Routes>
+      </Router>
+    </AuthProvider>
+    
     
   )
 }
