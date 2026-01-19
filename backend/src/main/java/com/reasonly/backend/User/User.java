@@ -38,8 +38,8 @@ public class User {
     @Column(nullable = false)
     private String passwordHash;
 
-    private int currentStreak;
-    private int longestStreak;
+    private int currentStreak = 0;
+    private int longestStreak = 0;
 
     private LocalDate lastCompletedDate;
 

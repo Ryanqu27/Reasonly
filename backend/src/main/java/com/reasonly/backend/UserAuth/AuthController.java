@@ -38,8 +38,6 @@ public class AuthController {
         User user = new User();
         user.setEmail(req.email());
         user.setPasswordHash(passwordEncoder.encode(req.password()));
-        user.setCurrentStreak(0);
-        user.setLongestStreak(0);
         userRepository.save(user);
     }
 
@@ -48,8 +46,9 @@ public class AuthController {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(req.email(), req.password())
         );
-
+        User user = userRepository.findByEmail(req.email())
+        .orElseThrow(() -> new RuntimeException("User not found with email: " + req.email()));
         String token = jwtUtil.generateToken(req.email());
-        return new AuthResponse(token);
+        return new AuthResponse(token, user);
     }
 }

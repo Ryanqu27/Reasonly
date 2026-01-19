@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:8080';
 const TOKEN_KEY = 'auth_token';
-
+const USER_KEY = 'user';
 const AuthService = {
     /**
    * Register a new user
@@ -37,6 +37,7 @@ const AuthService = {
         });
         if (response.data.token) {
             localStorage.setItem(TOKEN_KEY, response.data.token);
+            localStorage.setItem(USER_KEY, response.data.user);
         }
         return response.data;
     }
@@ -57,7 +58,15 @@ const AuthService = {
    * @returns {string|null} JWT token or null
    */
   getToken: () => {
-    localStorage.getItem(TOKEN_KEY);
+    return localStorage.getItem(TOKEN_KEY);
+  },
+
+  /**
+   * Get stored user
+   * @returns {User|null} User object or null
+   */
+  getUser: () => {
+    return localStorage.getItem(USER_KEY);
   },
 
   /**

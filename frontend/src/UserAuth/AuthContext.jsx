@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await AuthService.login(email, password);
       setToken(response.token);
-      setUser({ email });
+      setUser(response.user);
       return response;
     } catch (err) {
       const errorMessage = err.message || 'Login failed';
