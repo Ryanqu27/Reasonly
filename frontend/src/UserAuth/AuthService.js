@@ -2,9 +2,10 @@ import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:8080';
 const TOKEN_KEY = 'auth_token';
-const USER_KEY = 'user';
+const USER_KEY = 'reasonly_user';
+
 const AuthService = {
-    /**
+  /**
    * Register a new user
    * @param {string} email - User email
    * @param {string} password - User password
@@ -16,7 +17,7 @@ const AuthService = {
             email,
             password
         });
-        return response.data
+        return response.data;
     }
     catch (error) {
         throw error.response?.data || error.message;
@@ -37,7 +38,8 @@ const AuthService = {
         });
         if (response.data.token) {
             localStorage.setItem(TOKEN_KEY, response.data.token);
-            localStorage.setItem(USER_KEY, response.data.user);
+            // ✅ Convert object to JSON string before storing
+            localStorage.setItem(USER_KEY, JSON.stringify(response.data.user));
         }
         return response.data;
     }
@@ -51,6 +53,7 @@ const AuthService = {
    */
   logout: () => {
     localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
   },
 
   /**
@@ -66,7 +69,9 @@ const AuthService = {
    * @returns {User|null} User object or null
    */
   getUser: () => {
-    return localStorage.getItem(USER_KEY);
+    const userString = localStorage.getItem(USER_KEY);
+    // ✅ Parse JSON string back to object
+    return userString ? JSON.parse(userString) : null;
   },
 
   /**
@@ -85,6 +90,6 @@ const AuthService = {
         const token = AuthService.getToken();
         return token ? { Authorization: `Bearer ${token}` } : {};
     }
-}
+};
 
 export default AuthService;
