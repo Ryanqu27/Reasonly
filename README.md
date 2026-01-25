@@ -1,10 +1,12 @@
-Reasonly
+# Reasonly
+
 A daily practice platform for computer science and software engineering professionals to stay sharp and refresh their technical knowledge through adaptive questioning.
 
-Overview
+## Overview
+
 Reasonly helps developers or students to maintain and improve thei technical skills through question challenges. The platform adapts to your skill level, tracks your progress through streaks, and uses a rating systems to provide personalized question difficulty. 
 
-Features
+## Features
 
 Secure Authentication - JWT-based user registration and login
 Technical Questions - Curated questions covering computer science and software engineering topics
@@ -14,7 +16,7 @@ Rating System - ELO-style rating that adjusts based on performance
 Instant Feedback - Learn from mistakes with immediate answer validation
 Progress Tracking - Monitor your improvement over time
 
-Tech Stack
+## Tech Stack
 
 Frontend:
 - React 
