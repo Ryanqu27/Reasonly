@@ -3,7 +3,7 @@ POST http://localhost:8080/auth/register
 Content-Type: application/json
 
 {
-    "email": "Ryanqu27@gmail.com",
+    "email": "randomEmail@gmail.com",
     "password": "HelloWorld123"
 }
 

@@ -9,26 +9,19 @@ import Questions from './Questions/Questions.jsx';
 import AuthService from './UserAuth/AuthService.js';
 
 function Dashboard() {
-  const [color, setColor] = useState("blue");
   const { logout, loading } = useAuth();
   const [user, setUser] = useState(null);
 
   useEffect(() => {
     setUser(AuthService.getUser());
   }, []);
-  
-  function switchColor() {
-    setColor(color === "blue" ? "red" : "blue");
-  }
+
   
   if (loading) return <div>Loading...</div>;
   
   return (
     <div>
-      <p>Current color is {color}</p>
-      <button onClick={switchColor}>Click me</button>
       <button onClick={logout}>Logout</button>
-      
       <p>Logged in as: {user?.email}</p>
       <p>Id is : {user?.id}</p>
       <p>Current streak is : {user?.currentStreak}</p>
