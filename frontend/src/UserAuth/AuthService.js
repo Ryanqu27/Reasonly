@@ -1,8 +1,8 @@
 import axios from 'axios';
+import api from '../api.js';
 
 const API_BASE_URL = 'http://localhost:8080';
 const TOKEN_KEY = 'auth_token';
-const USER_KEY = 'reasonly_user';
 
 const AuthService = {
   /**
@@ -13,14 +13,14 @@ const AuthService = {
    */
   register: async (email, password) => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/auth/register`, {
-            email,
-            password
-        });
-        return response.data;
+      const response = await axios.post(`${API_BASE_URL}/auth/register`, {
+        email,
+        password
+      });
+      return response.data;
     }
     catch (error) {
-        throw error.response?.data || error.message;
+      throw error.response?.data || error.message;
     }
   },
 
@@ -32,19 +32,17 @@ const AuthService = {
    */
   login: async (email, password) => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/auth/login`, {
-            email,
-            password
-        });
-        if (response.data.token) {
-            localStorage.setItem(TOKEN_KEY, response.data.token);
-            // ✅ Convert object to JSON string before storing
-            localStorage.setItem(USER_KEY, JSON.stringify(response.data.user));
-        }
-        return response.data;
+      const response = await axios.post(`${API_BASE_URL}/auth/login`, {
+        email,
+        password
+      });
+      if (response.data.token) {
+        localStorage.setItem(TOKEN_KEY, response.data.token);
+      }
+      return response.data;
     }
     catch (error) {
-        throw error.response?.data || error.message;
+      throw error.response?.data || error.message;
     }
   },
 
@@ -53,7 +51,6 @@ const AuthService = {
    */
   logout: () => {
     localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
   },
 
   /**
@@ -65,31 +62,34 @@ const AuthService = {
   },
 
   /**
-   * Get stored user
-   * @returns {User|null} User object or null
+   * Fetch current user data from the backend
+   * @returns {Promise<User|null>} Fresh user data or null
    */
-  getUser: () => {
-    const userString = localStorage.getItem(USER_KEY);
-    // ✅ Parse JSON string back to object
-    return userString ? JSON.parse(userString) : null;
+  fetchCurrentUser: async () => {
+    try {
+      const response = await api.get(`${API_BASE_URL}/api/user/me`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
   },
 
   /**
    * Check if user is authenticated
    * @returns {boolean} returns true if token exists
    */
-    isAuthenticated: () => {
-        return !!localStorage.getItem(TOKEN_KEY);
-    },
+  isAuthenticated: () => {
+    return !!localStorage.getItem(TOKEN_KEY);
+  },
 
-    /**
-     * Get authorization header
-     * @returns {object} Authorization header object
-     */
-    getAuthHeader: () => {
-        const token = AuthService.getToken();
-        return token ? { Authorization: `Bearer ${token}` } : {};
-    }
+  /**
+   * Get authorization header
+   * @returns {object} Authorization header object
+   */
+  getAuthHeader: () => {
+    const token = AuthService.getToken();
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  }
 };
 
 export default AuthService;

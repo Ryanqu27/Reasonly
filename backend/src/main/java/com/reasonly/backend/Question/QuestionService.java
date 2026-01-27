@@ -12,8 +12,11 @@ public class QuestionService {
         this.questionRepository = questionRepository;
     }
 
-    public List<Question> getQuestions() {
-        return questionRepository.findAll();
+    public List<Question> getQuestions(QuestionType type) {
+        if (type == null) {
+            return questionRepository.findAll();
+        }
+        return questionRepository.findByType(type);
     }
 
     public Question getQuestionById(Long id) {

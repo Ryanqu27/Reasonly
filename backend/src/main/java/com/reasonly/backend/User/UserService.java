@@ -16,7 +16,7 @@ public class UserService {
 
     public User getUserById(Long id) {
         return userRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
     }
 
     public void addUser(User user) {
@@ -26,31 +26,30 @@ public class UserService {
     @Transactional
     public void incrementStreak(Long id) {
         User currentUser = userRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
         LocalDate today = LocalDate.now();
         LocalDate lastCompleted = currentUser.getLastCompletedDate();
 
-        if (today.equals(lastCompleted)) {
+        if (lastCompleted != null && today.equals(lastCompleted)) {
             return;
         }
 
         int newStreak = currentUser.getCurrentStreak() + 1;
         currentUser.setCurrentStreak(newStreak);
+        currentUser.setLastCompletedDate(today);
         if (newStreak > currentUser.getLongestStreak()) {
             currentUser.setLongestStreak(newStreak);
         }
         userRepository.save(currentUser);
     }
 
-    public void updateCompletedDate(Long id) {
-        User currentUser = userRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
-        currentUser.setLastCompletedDate(LocalDate.now());
-        userRepository.save(currentUser);
-    }
-
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
     }
 }

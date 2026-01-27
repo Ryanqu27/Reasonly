@@ -13,19 +13,34 @@ function Dashboard() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    setUser(AuthService.getUser());
+    const loadUser = async () => {
+      try {
+        const userData = await AuthService.fetchCurrentUser();
+        setUser(userData);
+      } catch (err) {
+        console.error("Failed to load user", err);
+      }
+    };
+
+    loadUser(); // Initial load
+
+    const intervalId = setInterval(loadUser, 1000); 
+
+    return () => clearInterval(intervalId); 
   }, []);
 
-  
+
   if (loading) return <div>Loading...</div>;
-  
+
   return (
     <div>
       <button onClick={logout}>Logout</button>
       <p>Logged in as: {user?.email}</p>
       <p>Id is : {user?.id}</p>
       <p>Current streak is : {user?.currentStreak}</p>
-      
+      <p>Long streak is: {user?.longestStreak}</p>
+      <p>Rating is: {user?.rating}</p>
+
       <Questions />
     </div>
   );
@@ -34,7 +49,7 @@ function Dashboard() {
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
-  
+
   if (loading) return <div>Loading...</div>;
   return isAuthenticated ? children : <Navigate to="/login" />;
 };
@@ -58,8 +73,8 @@ function App() {
         </Routes>
       </Router>
     </AuthProvider>
-    
-    
+
+
   )
 }
 
