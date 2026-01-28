@@ -2,6 +2,8 @@ package com.reasonly.backend.Question;
 
 import java.util.List;
 
+import com.reasonly.backend.User.User;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,7 +23,7 @@ public class QuestionService {
 
     public Question getQuestionById(Long id) {
         return questionRepository.findById(id)
-            .orElseThrow(() -> new IllegalStateException("Question not found with id: " + id));
+                .orElseThrow(() -> new IllegalStateException("Question not found with id: " + id));
     }
 
     public void insertQuestion(Question newQuestion) {
@@ -34,12 +36,79 @@ public class QuestionService {
 
     public void updateQuestion(Long id, Question updatedQuestion) {
         Question existingQuestion = questionRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Question not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Question not found with id: " + id));
         existingQuestion.setType(updatedQuestion.getType());
         existingQuestion.setDifficulty(updatedQuestion.getDifficulty());
         existingQuestion.setQuestion(updatedQuestion.getQuestion());
         existingQuestion.setAnswers(updatedQuestion.getAnswers());
         existingQuestion.setCorrectAnswer(updatedQuestion.getCorrectAnswer());
         questionRepository.save(existingQuestion);
+    }
+
+    public List<Question> getPlayQuestions(User user) {
+        int rating = user.getRating();
+        QuestionDifficulty targetDifficulty = getDifficultyFromRating(rating);
+        QuestionDifficulty selectedDifficulty = selectProbabilisticDifficulty(targetDifficulty);
+
+        List<Question> potentialQuestions = questionRepository.findUnansweredByDifficultyAndUser(selectedDifficulty,
+                user.getId());
+
+        if (potentialQuestions.isEmpty()) {
+            return List.of();
+        }
+
+        java.util.Collections.shuffle(potentialQuestions);
+        return List.of(potentialQuestions.get(0));
+    }
+
+    private QuestionDifficulty getDifficultyFromRating(int rating) {
+        if (rating <= 1000)
+            return QuestionDifficulty.BASIC;
+        if (rating <= 2000)
+            return QuestionDifficulty.EASY;
+        if (rating <= 3000)
+            return QuestionDifficulty.MEDIUM;
+        if (rating <= 4000)
+            return QuestionDifficulty.HARD;
+        return QuestionDifficulty.EXTREME;
+    }
+
+    private QuestionDifficulty selectProbabilisticDifficulty(QuestionDifficulty target) {
+        int roll = (int) (Math.random() * 100); // 0-99
+
+        // 70% chance for target difficulty
+        if (roll < 70) {
+            return target;
+        }
+
+        // 15% chance for easier (if possible)
+        if (roll < 85) {
+            return getEasierDifficulty(target);
+        }
+
+        // 15% chance for harder (if possible)
+        return getHarderDifficulty(target);
+    }
+
+    private QuestionDifficulty getEasierDifficulty(QuestionDifficulty current) {
+        int val = current.getValue() - 1;
+        if (val < 1)
+            return current; // already lowest
+        return getDifficultyByValue(val);
+    }
+
+    private QuestionDifficulty getHarderDifficulty(QuestionDifficulty current) {
+        int val = current.getValue() + 1;
+        if (val > 5)
+            return current; // already highest
+        return getDifficultyByValue(val);
+    }
+
+    private QuestionDifficulty getDifficultyByValue(int value) {
+        for (QuestionDifficulty d : QuestionDifficulty.values()) {
+            if (d.getValue() == value)
+                return d;
+        }
+        return QuestionDifficulty.BASIC;
     }
 }

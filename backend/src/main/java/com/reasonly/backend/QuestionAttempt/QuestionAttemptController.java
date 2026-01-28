@@ -32,8 +32,8 @@ public class QuestionAttemptController {
     }
 
     @PostMapping()
-    public void addQuestionAttempt(@RequestBody QuestionAttempt newQuestionAttempt) {
-        questionAttemptService.insertQuestionAttempt(newQuestionAttempt);
+    public void addQuestionAttempt(@RequestBody QuestionAttemptRequest request) {
+        questionAttemptService.insertQuestionAttempt(request);
     }
 
     @DeleteMapping("{id}")

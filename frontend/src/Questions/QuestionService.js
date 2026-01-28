@@ -1,14 +1,17 @@
 import api from '../api'
 import AuthService from '../UserAuth/AuthService'
 
-const API_BASE_URL = 'http://localhost:8080';
-export const getQuestions = (type) => {
-    const endpoint = type ? `/questions?type=${type}` : '/questions';
-    return api.get(endpoint);
+export const getQuestions = () => {
+    return api.get('/questions/play');
 };
+
 export const updateCompletedDate = async () => {
     const user = await AuthService.fetchCurrentUser();
     return api.put(`/user/${user.id}/complete-today`);
+};
+
+export const submitQuestionAttempt = async (questionAttempt) => {
+    return api.post('/question-attempts', questionAttempt);
 };
 
 //export const getEngineerById = (id) => api.get(`/${id}`);

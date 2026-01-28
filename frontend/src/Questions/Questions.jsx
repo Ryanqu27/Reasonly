@@ -1,40 +1,30 @@
 import QuestionCard from "./QuestionCard";
 import { useState, useEffect } from 'react';
-import { getQuestions, updateCompletedDate } from './QuestionService'
-
-// Define available question types (matching backend enum)
-const QUESTION_TYPES = [
-  { value: '', label: 'All Types' },
-  { value: 'DATA_STRUCTURES_AND_ALGORITHMS', label: 'Data Structures & Algorithms' },
-  { value: 'SYSTEMS', label: 'Systems' },
-  { value: 'NETWORKING', label: 'Networking' },
-  { value: 'DATABASES', label: 'Databases' },
-  { value: 'CONCURRENCY', label: 'Concurrency' },
-  { value: 'SOFTWARE_DESIGN', label: 'Software Design' },
-  { value: 'DEBUGGING', label: 'Debugging' },
-  { value: 'CODE_REASONING', label: 'Code Reasoning' },
-];
+import { getQuestions, updateCompletedDate, submitQuestionAttempt } from './QuestionService'
+import AuthService from '../UserAuth/AuthService'
 
 function Questions() {
-  const [questions, setQuestions] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentQuestion, setCurrentQuestion] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showFeedback, setShowFeedback] = useState(false);
-  const [score, setScore] = useState(0);
-  const [quizFinished, setQuizFinished] = useState(false);
+  const [sessionStarted, setSessionStarted] = useState(false);
 
-  const [selectedType, setSelectedType] = useState('');
-  const [quizStarted, setQuizStarted] = useState(false);
-
-  const fetchQuestions = async (type) => {
+  const fetchNextQuestion = async () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await getQuestions(type || null);
-      setQuestions(response.data);
+      const response = await getQuestions();
+      // Backend returns a list with 1 item
+      if (response.data && response.data.length > 0) {
+        setCurrentQuestion(response.data[0]);
+      } else {
+        setCurrentQuestion(null);
+      }
+      setSelectedAnswer(null);
+      setShowFeedback(false);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -42,83 +32,45 @@ function Questions() {
     }
   };
 
-  const handleStartQuiz = () => {
-    fetchQuestions(selectedType);
-    setQuizStarted(true);
-    setCurrentIndex(0);
-    setScore(0);
-    setQuizFinished(false);
-    setSelectedAnswer(null);
-    setShowFeedback(false);
+  const handleStartSession = () => {
+    setSessionStarted(true);
+    fetchNextQuestion();
   };
 
-  const handleAnswerClick = (option) => {
-    const currentQuestion = questions[currentIndex];
+  const handleAnswerClick = async (option) => {
+    if (!currentQuestion) return;
+
     setSelectedAnswer(option);
     setShowFeedback(true);
+    const user = await AuthService.fetchCurrentUser();
+    const questionAttempt = {
+      userId: user.id,
+      questionId: currentQuestion.id,
+      answer: option
+    };
 
+    submitQuestionAttempt(questionAttempt);
     if (option === currentQuestion.correctAnswer) {
-      setScore(score + 1);
       updateCompletedDate();
     }
   };
 
   const handleNextQuestion = () => {
-    const nextIndex = currentIndex + 1;
-    if (nextIndex < questions.length) {
-      setCurrentIndex(nextIndex);
-      setSelectedAnswer(null);
-      setShowFeedback(false);
-    } else {
-      setQuizFinished(true);
-    }
+    fetchNextQuestion();
   };
 
-  const restartQuiz = () => {
-    setCurrentIndex(0);
-    setScore(0);
-    setQuizFinished(false);
-    setSelectedAnswer(null);
-    setShowFeedback(false);
-    setQuizStarted(false);
-  };
-
-  // Selection screen before quiz starts
-  if (!quizStarted) {
+  if (!sessionStarted) {
     return (
-      <div style={{ padding: '20px', maxWidth: '500px', margin: '0 auto' }}>
-        <h2 style={{ marginBottom: '20px' }}>Choose Question Type</h2>
-
-        <div style={{ marginBottom: '20px' }}>
-          <label htmlFor="type-select" style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold' }}>
-            Select a category:
-          </label>
-          <select
-            id="type-select"
-            value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '12px',
-              fontSize: '16px',
-              borderRadius: '8px',
-              border: '1px solid #ccc',
-              cursor: 'pointer'
-            }}
-          >
-            {QUESTION_TYPES.map((type) => (
-              <option key={type.value} value={type.value}>
-                {type.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
+      <div style={{ padding: '20px', maxWidth: '500px', margin: '0 auto', textAlign: 'center' }}>
+        <h2 style={{ marginBottom: '20px' }}>Adaptive Practice</h2>
+        <p style={{ marginBottom: '20px' }}>
+          Questions will be selected based on your current rating.
+          Correct answers increase your rating, incorrect answers decrease it.
+        </p>
         <button
-          onClick={handleStartQuiz}
+          onClick={handleStartSession}
           style={{
-            width: '100%',
-            padding: '15px',
+            padding: '15px 30px',
             fontSize: '18px',
             backgroundColor: '#4CAF50',
             color: 'white',
@@ -128,52 +80,37 @@ function Questions() {
             fontWeight: 'bold'
           }}
         >
-          Start Quiz
+          Start Practice
         </button>
       </div>
     );
   }
 
-  if (loading) return <div>Loading questions...</div>;
+  if (loading) return <div>Loading next question...</div>;
   if (error) return <div>Error: {error}</div>;
-  if (questions.length === 0) return (
+
+  if (!currentQuestion) return (
     <div style={{ textAlign: 'center', padding: '20px' }}>
-      <p>No questions found for this category.</p>
-      <button onClick={restartQuiz} style={{ padding: '10px 20px', marginTop: '10px' }}>
-        Choose Another Category
+      <p>No more questions available for your current difficulty level!</p>
+      <button onClick={() => window.location.reload()} style={{ padding: '10px 20px', marginTop: '10px' }}>
+        Refresh
       </button>
     </div>
   );
 
-  if (quizFinished) {
-    return (
-      <div style={{ textAlign: 'center' }}>
-        <h2>Quiz Complete!</h2>
-        <p>You scored {score} out of {questions.length}</p>
-        <button onClick={restartQuiz} style={{ padding: '10px 20px', marginRight: '10px' }}>
-          Choose Another Category
-        </button>
-        <button onClick={handleStartQuiz} style={{ padding: '10px 20px' }}>
-          Play Again (Same Category)
-        </button>
-      </div>
-    );
-  }
-
   return (
     <div style={{ padding: '20px' }}>
-      <div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2 style={{ margin: 0 }}>Question {currentIndex + 1} / {questions.length}</h2>
+      <div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
         <button
-          onClick={restartQuiz}
+          onClick={() => setSessionStarted(false)}
           style={{ padding: '8px 16px', fontSize: '14px' }}
         >
-          Change Category
+          End Session
         </button>
       </div>
 
       <QuestionCard
-        question={questions[currentIndex]}
+        question={currentQuestion}
         onAnswer={handleAnswerClick}
         selectedAnswer={selectedAnswer}
         showFeedback={showFeedback}
@@ -184,7 +121,7 @@ function Questions() {
           onClick={handleNextQuestion}
           style={{ marginTop: '20px', padding: '10px 20px' }}
         >
-          {currentIndex === questions.length - 1 ? "Finish Quiz" : "Next Question"}
+          Next Question
         </button>
       )}
     </div>

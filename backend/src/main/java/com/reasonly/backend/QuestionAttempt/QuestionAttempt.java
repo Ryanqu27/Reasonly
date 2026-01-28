@@ -1,7 +1,5 @@
 package com.reasonly.backend.QuestionAttempt;
 
-import java.time.LocalDateTime;
-
 import com.reasonly.backend.Question.Question;
 import com.reasonly.backend.User.User;
 import jakarta.persistence.Entity;
@@ -35,11 +33,5 @@ public class QuestionAttempt {
     private Question question;
 
     private String answer;
-
-    private boolean isCorrect;
-
-    private long timeTakenMillis;
-
-    private LocalDateTime attemptedAt = LocalDateTime.now();
 
 }

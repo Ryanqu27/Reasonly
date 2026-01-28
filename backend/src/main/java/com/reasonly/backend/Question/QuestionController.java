@@ -25,10 +25,23 @@ public class QuestionController {
 
     @GetMapping()
     public ResponseEntity<List<Question>> getAllQuestions(
-        @RequestParam(required = false) QuestionType type
-    ) {
+            @RequestParam(required = false) QuestionType type) {
         List<Question> questions = questionService.getQuestions(type);
         return ResponseEntity.ok(questions);
+    }
+
+    @GetMapping("/play")
+    public ResponseEntity<List<Question>> getPlayQuestions() {
+        return ResponseEntity.ok(questionService.getPlayQuestions(getCurrentUser()));
+    }
+
+    private com.reasonly.backend.User.User getCurrentUser() {
+        org.springframework.security.core.Authentication authentication = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof com.reasonly.backend.User.User) {
+            return (com.reasonly.backend.User.User) authentication.getPrincipal();
+        }
+        throw new RuntimeException("User not authenticated");
     }
 
     @GetMapping("{id}")
