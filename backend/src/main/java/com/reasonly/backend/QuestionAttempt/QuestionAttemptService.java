@@ -44,7 +44,7 @@ public class QuestionAttemptService {
         return questionAttemptRepository.findByUserAndQuestion(user, question);
     }
 
-    public void insertQuestionAttempt(QuestionAttemptRequest request) {
+    public QuestionAttemptResult insertQuestionAttempt(QuestionAttemptRequest request) {
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + request.getUserId()));
         Question question = questionRepository.findById(request.getQuestionId())
@@ -57,12 +57,14 @@ public class QuestionAttemptService {
 
         boolean isCorrect = request.getAnswer().equals(question.getCorrectAnswer());
 
-        updateUserRating(user, question, isCorrect);
-
-        questionAttemptRepository.save(attempt);
+        QuestionAttemptResult result = updateUserRating(user, question, isCorrect);
+        if (isCorrect) {
+            questionAttemptRepository.save(attempt);
+        }
+        return result;
     }
 
-    private void updateUserRating(User user, Question question, boolean isCorrect) {
+    private QuestionAttemptResult updateUserRating(User user, Question question, boolean isCorrect) {
         int currentRating = user.getRating();
         QuestionDifficulty questionDiff = question.getDifficulty();
         QuestionDifficulty userLevel = getDifficultyFromRating(currentRating);
@@ -72,29 +74,31 @@ public class QuestionAttemptService {
         if (questionDiff.getValue() < userLevel.getValue()) {
             // Easier question
             if (isCorrect) {
-                ratingChange = 10; // Small reward
+                ratingChange = 20; // Small reward
             } else {
-                ratingChange = -30; // Large penalty
+                ratingChange = -60; // Large penalty
             }
         } else if (questionDiff.getValue() > userLevel.getValue()) {
             // Harder question
             if (isCorrect) {
-                ratingChange = 30; // Large reward
+                ratingChange = 60; // Large reward
             } else {
-                ratingChange = -10; // Small penalty
+                ratingChange = -20; // Small penalty
             }
         } else {
             // Matched difficulty
             if (isCorrect) {
-                ratingChange = 20;
+                ratingChange = 40;
             } else {
-                ratingChange = -20;
+                ratingChange = -40;
             }
         }
 
         int newRating = Math.max(0, currentRating + ratingChange); // Prevent negative rating
         user.setRating(newRating);
         userRepository.save(user);
+
+        return new QuestionAttemptResult(isCorrect, ratingChange, newRating);
     }
 
     private QuestionDifficulty getDifficultyFromRating(int rating) {

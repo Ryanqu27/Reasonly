@@ -53,12 +53,33 @@ public class QuestionService {
         List<Question> potentialQuestions = questionRepository.findUnansweredByDifficultyAndUser(selectedDifficulty,
                 user.getId());
 
-        if (potentialQuestions.isEmpty()) {
-            return List.of();
+        if (!potentialQuestions.isEmpty()) {
+            java.util.Collections.shuffle(potentialQuestions);
+            return List.of(potentialQuestions.get(0));
         }
 
-        java.util.Collections.shuffle(potentialQuestions);
-        return List.of(potentialQuestions.get(0));
+        // Fallback 1: Try exact target difficulty if we diverted
+        if (selectedDifficulty != targetDifficulty) {
+            potentialQuestions = questionRepository.findUnansweredByDifficultyAndUser(targetDifficulty, user.getId());
+            if (!potentialQuestions.isEmpty()) {
+                java.util.Collections.shuffle(potentialQuestions);
+                return List.of(potentialQuestions.get(0));
+            }
+        }
+
+        // Fallback 2: Try ANY difficulty, prioritizing closest to target
+        // Simple approach: check all difficulties in order of distance from target
+        for (QuestionDifficulty d : QuestionDifficulty.values()) {
+            if (d == selectedDifficulty || d == targetDifficulty)
+                continue;
+            potentialQuestions = questionRepository.findUnansweredByDifficultyAndUser(d, user.getId());
+            if (!potentialQuestions.isEmpty()) {
+                java.util.Collections.shuffle(potentialQuestions);
+                return List.of(potentialQuestions.get(0));
+            }
+        }
+
+        return List.of();
     }
 
     private QuestionDifficulty getDifficultyFromRating(int rating) {

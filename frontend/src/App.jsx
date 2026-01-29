@@ -7,11 +7,13 @@ import { AuthProvider } from './UserAuth/AuthContext.jsx';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Questions from './Questions/Questions.jsx';
 import AuthService from './UserAuth/AuthService.js';
+import { checkStreak } from './Questions/QuestionService.js';
 
 function Dashboard() {
   const { logout, loading } = useAuth();
   const [user, setUser] = useState(null);
 
+  checkStreak();
   useEffect(() => {
     const loadUser = async () => {
       try {
@@ -24,22 +26,39 @@ function Dashboard() {
 
     loadUser(); // Initial load
 
-    const intervalId = setInterval(loadUser, 1000); 
+    const intervalId = setInterval(loadUser, 1000);
 
-    return () => clearInterval(intervalId); 
+    return () => clearInterval(intervalId);
   }, []);
 
-
   if (loading) return <div>Loading...</div>;
-
+  
   return (
-    <div>
-      <button onClick={logout}>Logout</button>
-      <p>Logged in as: {user?.email}</p>
-      <p>Id is : {user?.id}</p>
-      <p>Current streak is : {user?.currentStreak}</p>
-      <p>Long streak is: {user?.longestStreak}</p>
-      <p>Rating is: {user?.rating}</p>
+    <div className="dashboard-container">
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        <div>
+          <h1 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--primary)' }}>Reasonly</h1>
+          <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-muted)' }}>{user?.email}</p>
+        </div>
+        <button onClick={logout} className="btn-primary" style={{ background: 'var(--primary)', color: 'var(--text-main)', fontSize: '0.875rem' }}>
+          Logout
+        </button>
+      </header>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+        <div className="stat-card">
+          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Current Rating</span>
+          <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--primary)' }}>{user?.rating || 0}</span>
+        </div>
+        <div className="stat-card">
+          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Daily Streak</span>
+          <span style={{ fontSize: '1.5rem', fontWeight: 700 }}>{user?.currentStreak || 0} 🔥</span>
+        </div>
+        <div className="stat-card">
+          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Longest Streak</span>
+          <span style={{ fontSize: '1.5rem', fontWeight: 700 }}>{user?.longestStreak || 0} 🏆</span>
+        </div>
+      </div>
 
       <Questions />
     </div>

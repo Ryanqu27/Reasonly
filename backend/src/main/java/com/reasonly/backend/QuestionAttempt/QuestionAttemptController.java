@@ -32,8 +32,10 @@ public class QuestionAttemptController {
     }
 
     @PostMapping()
-    public void addQuestionAttempt(@RequestBody QuestionAttemptRequest request) {
-        questionAttemptService.insertQuestionAttempt(request);
+    public org.springframework.http.ResponseEntity<QuestionAttemptResult> addQuestionAttempt(
+            @RequestBody QuestionAttemptRequest request) {
+        QuestionAttemptResult result = questionAttemptService.insertQuestionAttempt(request);
+        return org.springframework.http.ResponseEntity.ok(result);
     }
 
     @DeleteMapping("{id}")

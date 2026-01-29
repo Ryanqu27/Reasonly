@@ -14,6 +14,11 @@ export const submitQuestionAttempt = async (questionAttempt) => {
     return api.post('/question-attempts', questionAttempt);
 };
 
+export const checkStreak = async () => {
+    const user = await AuthService.fetchCurrentUser();
+    return api.get(`/user/${user.id}/check-streak`);
+};
+
 //export const getEngineerById = (id) => api.get(`/${id}`);
 //export const createEngineer = (engineer) => api.post("/", engineer);
 //export const updateEngineer = (id, engineer) => api.put(`/${id}`, engineer);

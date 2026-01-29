@@ -5,37 +5,41 @@ export default function QuestionCard({ question, onAnswer, selectedAnswer, showF
     return <div>Loading question...</div>;
   }
 
-  // Determine button color based on answer status
-  const getButtonColor = (option) => {
-    if (!showFeedback) return ''; 
-    if (option === question.correctAnswer) return 'green'; 
-    if (selectedAnswer === option) return 'red'; 
-    return '';
+  const getButtonClass = (option) => {
+    if (!showFeedback) return 'answer-button';
+    if (option === question.correctAnswer) return 'answer-button correct';
+    if (selectedAnswer === option) return 'answer-button incorrect';
+    return 'answer-button muted';
   };
 
   return (
-    <div className="question-card" style={{ border: '1px solid #ccc', padding: '20px', borderRadius: '8px', maxWidth: '600px' }}>
-      <h3>{question.question}</h3>
-      <div className="answers-grid" style={{ display: 'grid', gap: '10px' }}>
+    <div className="question-card">
+      <h3 style={{ fontSize: '1.25rem', marginBottom: '1.5rem', textAlign: 'left', color: 'var(--text-main)' }}>
+        {question.question}
+      </h3>
+      <div className="answers-grid" style={{ display: 'grid', gap: '0.75rem' }}>
         {question.answers.map((option, index) => (
           <button
             key={index}
             onClick={() => onAnswer(option)}
-            disabled={showFeedback} 
-            style={{ 
-                backgroundColor: getButtonColor(option), 
-                padding: '10px', 
-                cursor: showFeedback ? 'default' : 'pointer'
-            }}
+            disabled={showFeedback}
+            className={getButtonClass(option)}
           >
             {option}
           </button>
         ))}
       </div>
-      
-      <p style={{ fontSize: '0.8rem', color: '#666', marginTop: '15px' }}>
-        {question.difficulty} | {question.type}
-      </p>
+
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        marginTop: '1.5rem',
+        fontSize: '0.875rem',
+        color: 'var(--text-muted)'
+      }}>
+        <span>{question.type}</span>
+        <span style={{ fontWeight: '600', color: 'var(--primary)' }}>{question.difficulty}</span>
+      </div>
     </div>
   );
 }

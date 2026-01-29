@@ -33,7 +33,11 @@ public class UserController {
     public void addUser(@RequestBody User user) {
         userService.addUser(user);
     }
-
+    @PostMapping("{id}/check-streak")
+    public void checkStreak(@PathVariable Long id) {
+        userService.checkStreak(id);
+    }
+    
     @PutMapping("/{id}/complete-today")
     public void updateCompletedDate(@PathVariable Long id) {
         userService.incrementStreak(id);

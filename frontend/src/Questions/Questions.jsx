@@ -8,6 +8,7 @@ function Questions() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const [attemptResult, setAttemptResult] = useState(null);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [sessionStarted, setSessionStarted] = useState(false);
@@ -25,6 +26,7 @@ function Questions() {
       }
       setSelectedAnswer(null);
       setShowFeedback(false);
+      setAttemptResult(null);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -49,9 +51,14 @@ function Questions() {
       answer: option
     };
 
-    submitQuestionAttempt(questionAttempt);
-    if (option === currentQuestion.correctAnswer) {
-      updateCompletedDate();
+    try {
+      const response = await submitQuestionAttempt(questionAttempt);
+      setAttemptResult(response.data);
+      if (option === currentQuestion.correctAnswer) {
+        updateCompletedDate();
+      }
+    } catch (err) {
+      console.error("Failed to submit attempt", err);
     }
   };
 
@@ -61,51 +68,67 @@ function Questions() {
 
   if (!sessionStarted) {
     return (
-      <div style={{ padding: '20px', maxWidth: '500px', margin: '0 auto', textAlign: 'center' }}>
-        <h2 style={{ marginBottom: '20px' }}>Adaptive Practice</h2>
-        <p style={{ marginBottom: '20px' }}>
-          Questions will be selected based on your current rating.
-          Correct answers increase your rating, incorrect answers decrease it.
-        </p>
-        <button
-          onClick={handleStartSession}
-          style={{
-            padding: '15px 30px',
-            fontSize: '18px',
-            backgroundColor: '#4CAF50',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontWeight: 'bold'
-          }}
-        >
-          Start Practice
-        </button>
+      <div className="dashboard-container">
+        <div className="stat-card" style={{ textAlign: 'center', padding: '3rem' }}>
+          <h2 style={{ fontSize: '2rem', marginBottom: '1rem', color: 'var(--primary)' }}>Adaptive Practice</h2>
+          <p style={{ color: 'var(--text-muted)', marginBottom: '2.5rem', lineHeight: '1.6' }}>
+            Get questions tailored to your current rating.
+          </p>
+          <div>
+            <button
+              onClick={handleStartSession}
+              className="btn-primary"
+              style={{ padding: '1rem 2.5rem', fontSize: '1.125rem' }}
+            >
+              Start Session
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
 
-  if (loading) return <div>Loading next question...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (loading) return (
+    <div className="dashboard-container" style={{ textAlign: 'center', padding: '3rem' }}>
+      <p style={{ color: 'var(--text-muted)' }}>Preparing your next challenge...</p>
+    </div>
+  );
+
+  if (error) return (
+    <div className="dashboard-container">
+      <div className="feedback-container incorrect">
+        Error: {error}
+      </div>
+    </div>
+  );
 
   if (!currentQuestion) return (
-    <div style={{ textAlign: 'center', padding: '20px' }}>
-      <p>No more questions available for your current difficulty level!</p>
-      <button onClick={() => window.location.reload()} style={{ padding: '10px 20px', marginTop: '10px' }}>
-        Refresh
-      </button>
+    <div className="dashboard-container">
+      <div className="stat-card" style={{ textAlign: 'center', padding: '3rem' }}>
+        <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
+          No more questions available for your current level. Great job!
+        </p>
+        <button className="btn-primary" onClick={() => window.location.reload()}>
+          Refresh Dashboard
+        </button>
+      </div>
     </div>
   );
 
   return (
-    <div style={{ padding: '20px' }}>
-      <div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+    <div className="dashboard-container">
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '-1rem' }}>
         <button
           onClick={() => setSessionStarted(false)}
-          style={{ padding: '8px 16px', fontSize: '14px' }}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: 'var(--text-muted)',
+            cursor: 'pointer',
+            fontSize: '0.875rem'
+          }}
         >
-          End Session
+          &larr; Exit Session
         </button>
       </div>
 
@@ -117,12 +140,37 @@ function Questions() {
       />
 
       {showFeedback && (
-        <button
-          onClick={handleNextQuestion}
-          style={{ marginTop: '20px', padding: '10px 20px' }}
-        >
-          Next Question
-        </button>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          {attemptResult && (
+            <div className={`feedback-container ${attemptResult.correct ? 'correct' : 'incorrect'}`}>
+              <h3 style={{ margin: '0 0 0.5rem 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                {attemptResult.correct ? 'Correct!' : 'Incorrect'}
+              </h3>
+              <p style={{ margin: 0, fontWeight: '500' }}>
+                Rating:
+                <span style={{ margin: '0 0.5rem' }}>{attemptResult.newRating - attemptResult.ratingChange}</span>
+                <span style={{
+                  color: attemptResult.ratingChange >= 0 ? 'var(--success)' : 'var(--error)',
+                  fontWeight: '700'
+                }}>
+                  {attemptResult.ratingChange >= 0 ? `+${attemptResult.ratingChange}` : attemptResult.ratingChange}
+                </span>
+                <span style={{ margin: '0 0.5rem' }}>&rarr;</span>
+                <span style={{ color: 'var(--text-main)', fontWeight: '700' }}>{attemptResult.newRating}</span>
+              </p>
+            </div>
+          )}
+
+          <div style={{ textAlign: 'center' }}>
+            <button
+              onClick={handleNextQuestion}
+              className="btn-primary"
+              style={{ width: '100%', padding: '1rem' }}
+            >
+              Continue to Next Question
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

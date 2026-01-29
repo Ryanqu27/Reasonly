@@ -35,7 +35,13 @@ public class UserService {
             return;
         }
 
-        int newStreak = currentUser.getCurrentStreak() + 1;
+        int newStreak;
+        if (lastCompleted != null && lastCompleted.equals(today.minusDays(1))) {
+            newStreak = currentUser.getCurrentStreak() + 1;
+        } else {
+            newStreak = 1;
+        }
+
         currentUser.setCurrentStreak(newStreak);
         currentUser.setLastCompletedDate(today);
         if (newStreak > currentUser.getLongestStreak()) {
@@ -52,4 +58,17 @@ public class UserService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
     }
+
+    public void checkStreak(Long id) {
+        User currentUser = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+        LocalDate today = LocalDate.now();
+        LocalDate lastCompleted = currentUser.getLastCompletedDate();
+        if (lastCompleted != null && lastCompleted.equals(today.minusDays(1))) {
+            return;
+        }
+        currentUser.setCurrentStreak(0);
+        userRepository.save(currentUser);
+    }
+
 }
