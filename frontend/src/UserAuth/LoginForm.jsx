@@ -32,24 +32,23 @@ export default function LoginForm() {
 
     return (
         <form onSubmit={handleSubmit}>
+            <h1 style={{ textAlign: 'center', fontSize: '1.5rem', fontWeight: 600, color: 'var(--primary)' }}>Welcome back! Please login to continue</h1>
             <div>
-                <label>Email</label>
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                <input type="email" placeholder='Email' value={email} onChange={(e) => setEmail(e.target.value)} required />
             </div>
 
             <div>
-                <label>Password</label>
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                <input type="password" placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} required />
             </div>
 
             {error && <div style={{ color: "red" }}>{error}</div>}
 
-            <button type="submit" disabled={loading}>
+            <button style={{ background: 'var(--primary)', color: 'var(--text-main)', fontSize: '0.875rem', padding: '0.5rem 1rem', borderRadius: '5px', border: 'none', cursor: 'pointer' }} type="submit" disabled={loading}>
                 {loading ? "Loggin in... " : "Log in"}
             </button>
 
             <div>
-                Don't have an account? <Link to="/register">Register</Link>
+                Don't have an account? <Link to="/register" style={{ color: 'var(--primary)' }}>Register</Link>
             </div>
         </form>
     );

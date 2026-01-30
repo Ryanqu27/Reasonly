@@ -72,7 +72,7 @@ function Questions() {
         <div className="stat-card" style={{ textAlign: 'center', padding: '3rem' }}>
           <h2 style={{ fontSize: '2rem', marginBottom: '1rem', color: 'var(--primary)' }}>Adaptive Practice</h2>
           <p style={{ color: 'var(--text-muted)', marginBottom: '2.5rem', lineHeight: '1.6' }}>
-            Get questions tailored to your current rating.
+            Solve questions tailored to your current rating
           </p>
           <div>
             <button

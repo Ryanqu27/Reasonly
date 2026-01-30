@@ -37,29 +37,27 @@ export default function RegisterForm() {
 
     return (
         <form onSubmit={handleSubmit}>
+            <h1 style={{ textAlign: 'center', fontSize: '1.5rem', fontWeight: 600, color: 'var(--primary)' }}>Welcome to Reasonly! Please register to continue</h1>
             <div>
-                <label>Email</label>
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                <input placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </div>
 
             <div>
-                <label>Password</label>
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                <input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
             </div>
 
             <div>
-                <label>Confirm Password</label>
-                <input type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} required />
+                <input placeholder="Confirm Password" type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} required />
             </div>
 
-            {error && <div stye={{ color: "red" }}>{error}</div>}
+            {error && <div style={{ color: "red" }}>{error}</div>}
 
-            <button type="submit" disabled={loading}>
+            <button style={{ background: 'var(--primary)', color: 'var(--text-main)', fontSize: '0.875rem', padding: '0.5rem 1rem', borderRadius: '5px', border: 'none', cursor: 'pointer' }} type="submit" disabled={loading}>
                 {loading ? "Registering..." : "Register"}
             </button>
                 
             <div>
-                Already have an account? <Link to="/login">Login</Link>
+                Already have an account? <Link to="/login" style={{ color: 'var(--primary)' }}>Login</Link>
             </div>
         </form>
     );
