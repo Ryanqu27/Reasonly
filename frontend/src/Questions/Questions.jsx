@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { getQuestions, updateCompletedDate, submitQuestionAttempt } from './QuestionService'
 import AuthService from '../UserAuth/AuthService'
 
-function Questions() {
+function Questions({ onUserUpdate }) {
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -55,11 +55,12 @@ function Questions() {
       const response = await submitQuestionAttempt(questionAttempt);
       setAttemptResult(response.data);
       if (option === currentQuestion.correctAnswer) {
-        updateCompletedDate();
+        const _ = await updateCompletedDate();
       }
     } catch (err) {
       console.error("Failed to submit attempt", err);
     }
+    onUserUpdate();
   };
 
   const handleNextQuestion = () => {

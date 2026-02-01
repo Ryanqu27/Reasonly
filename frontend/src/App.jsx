@@ -14,22 +14,21 @@ function Dashboard() {
   const [user, setUser] = useState(null);
 
   checkStreak();
+  const loadUser = async () => {
+    try {
+      const userData = await AuthService.fetchCurrentUser();
+      setUser(userData);
+    } catch (err) {
+      console.error("Failed to load user", err);
+    }
+  };
+
   useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const userData = await AuthService.fetchCurrentUser();
-        setUser(userData);
-      } catch (err) {
-        console.error("Failed to load user", err);
-      }
-    };
-
-    loadUser(); // Initial load
-
-    const intervalId = setInterval(loadUser, 1000);
-
-    return () => clearInterval(intervalId);
+    loadUser();
   }, []);
+
+    
+
 
   if (loading) return <div>Loading...</div>;
   
@@ -60,7 +59,7 @@ function Dashboard() {
         </div>
       </div>
 
-      <Questions />
+      <Questions onUserUpdate={loadUser}/>
     </div>
   );
 }
