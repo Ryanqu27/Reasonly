@@ -1,0 +1,71 @@
+services:
+
+  # PostgreSQL Database
+  db:
+    container_name: reasonly-db
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: ryanqu27
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: reasonly
+      PGDATA: /data/postgres
+    volumes:
+      - db:/data/postgres
+    ports:
+      - "5332:5432"
+    networks:
+    - reasonly-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ryanqu27 -d reasonly"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Spring Boot Backend
+  backend:
+    container_name: reasonly-backend
+    build:
+      context: ./backend 
+      dockerfile: Dockerfile 
+    ports:
+      - "8080:8080"
+    networks:
+      - reasonly-network
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/reasonly
+      SPRING_DATASOURCE_USERNAME: ryanqu27
+      SPRING_DATASOURCE_PASSWORD: password
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+  
+
+  # React Frontend
+  frontend:
+    container_name: reasonly-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    networks:
+      - reasonly-network
+    environment:
+      VITE_API_URL: http://localhost:8080
+    depends_on:
+      -  backend
+    restart: unless-stopped
+  
+
+networks:
+  reasonly-network:
+    driver: bridge
+
+volumes:
+  db:
+
+    
+    
+    
