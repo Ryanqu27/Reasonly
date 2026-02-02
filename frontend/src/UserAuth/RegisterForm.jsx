@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from './AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
+import './Auth.css';
 
 export default function RegisterForm() {
     const { register } = useAuth();
@@ -36,29 +37,64 @@ export default function RegisterForm() {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h1 style={{ textAlign: 'center', fontSize: '1.5rem', fontWeight: 600, color: 'var(--primary)' }}>Welcome to Reasonly! Please register to continue</h1>
-            <div>
-                <input placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-            </div>
+        <div className="auth-container">
+            <div className="auth-card">
+                <div className="auth-header">
+                    <h1 className="auth-logo">Reasonly</h1>
+                    <p className="auth-subtitle">Create your account to get started.</p>
+                </div>
 
-            <div>
-                <input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-            </div>
+                <form className="auth-form" onSubmit={handleSubmit}>
+                    <div className="auth-input-group">
+                        <label className="auth-label">Email</label>
+                        <input
+                            className="auth-input"
+                            type="email"
+                            placeholder="you@example.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                    </div>
 
-            <div>
-                <input placeholder="Confirm Password" type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} required />
-            </div>
+                    <div className="auth-input-group">
+                        <label className="auth-label">Password</label>
+                        <input
+                            className="auth-input"
+                            type="password"
+                            placeholder="••••••••"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                    </div>
 
-            {error && <div style={{ color: "red" }}>{error}</div>}
+                    <div className="auth-input-group">
+                        <label className="auth-label">Confirm Password</label>
+                        <input
+                            className="auth-input"
+                            type="password"
+                            placeholder="••••••••"
+                            value={confirm}
+                            onChange={(e) => setConfirm(e.target.value)}
+                            required
+                        />
+                    </div>
 
-            <button style={{ background: 'var(--primary)', color: 'var(--text-main)', fontSize: '0.875rem', padding: '0.5rem 1rem', borderRadius: '5px', border: 'none', cursor: 'pointer' }} type="submit" disabled={loading}>
-                {loading ? "Registering..." : "Register"}
-            </button>
-                
-            <div>
-                Already have an account? <Link to="/login" style={{ color: 'var(--primary)' }}>Login</Link>
+                    {error && <div className="auth-error">{error}</div>}
+
+                    <button className="auth-button" type="submit" disabled={loading}>
+                        {loading ? "Creating account..." : "Create Account"}
+                    </button>
+                </form>
+
+                <div className="auth-footer">
+                    <span className="auth-footer-text">
+                        Already have an account?
+                        <Link to="/login" className="auth-footer-link">Sign in</Link>
+                    </span>
+                </div>
             </div>
-        </form>
+        </div>
     );
 }

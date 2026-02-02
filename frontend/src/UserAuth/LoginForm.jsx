@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from './AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
+import './Auth.css';
 
 export default function LoginForm() {
     const { login } = useAuth();
@@ -31,25 +32,52 @@ export default function LoginForm() {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h1 style={{ textAlign: 'center', fontSize: '1.5rem', fontWeight: 600, color: 'var(--primary)' }}>Welcome back! Please login to continue</h1>
-            <div>
-                <input type="email" placeholder='Email' value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <div className="auth-container">
+            <div className="auth-card">
+                <div className="auth-header">
+                    <h1 className="auth-logo">Reasonly</h1>
+                    <p className="auth-subtitle">Welcome back! Sign in to continue.</p>
+                </div>
+
+                <form className="auth-form" onSubmit={handleSubmit}>
+                    <div className="auth-input-group">
+                        <label className="auth-label">Email</label>
+                        <input
+                            className="auth-input"
+                            type="email"
+                            placeholder="you@example.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                    </div>
+
+                    <div className="auth-input-group">
+                        <label className="auth-label">Password</label>
+                        <input
+                            className="auth-input"
+                            type="password"
+                            placeholder="••••••••"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                    </div>
+
+                    {error && <div className="auth-error">{error}</div>}
+
+                    <button className="auth-button" type="submit" disabled={loading}>
+                        {loading ? "Signing in..." : "Sign In"}
+                    </button>
+                </form>
+
+                <div className="auth-footer">
+                    <span className="auth-footer-text">
+                        Don't have an account?
+                        <Link to="/register" className="auth-footer-link">Sign up</Link>
+                    </span>
+                </div>
             </div>
-
-            <div>
-                <input type="password" placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} required />
-            </div>
-
-            {error && <div style={{ color: "red" }}>{error}</div>}
-
-            <button style={{ background: 'var(--primary)', color: 'var(--text-main)', fontSize: '0.875rem', padding: '0.5rem 1rem', borderRadius: '5px', border: 'none', cursor: 'pointer' }} type="submit" disabled={loading}>
-                {loading ? "Loggin in... " : "Log in"}
-            </button>
-
-            <div>
-                Don't have an account? <Link to="/register" style={{ color: 'var(--primary)' }}>Register</Link>
-            </div>
-        </form>
+        </div>
     );
 }
