@@ -3,6 +3,7 @@ package com.reasonly.backend.QuestionAttempt;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.reasonly.backend.Question.Question;
 import com.reasonly.backend.Question.QuestionDifficulty;
@@ -33,7 +34,7 @@ public class QuestionAttemptService {
     }
 
     public List<QuestionAttempt> getQuestionAttemptsByUser(User user) {
-        return questionAttemptRepository.findByUser(user);
+        return questionAttemptRepository.findByUserId(user.getId());
     }
 
     public List<QuestionAttempt> getQuestionAttemptsByQuestion(Question question) {
@@ -41,7 +42,7 @@ public class QuestionAttemptService {
     }
 
     public List<QuestionAttempt> getQuestionAttemptsByUserAndQuestion(User user, Question question) {
-        return questionAttemptRepository.findByUserAndQuestion(user, question);
+        return questionAttemptRepository.findByUserIdAndQuestion(user.getId(), question);
     }
 
     public QuestionAttemptResult insertQuestionAttempt(QuestionAttemptRequest request) {
@@ -51,7 +52,7 @@ public class QuestionAttemptService {
                 .orElseThrow(() -> new RuntimeException("Question not found with id: " + request.getQuestionId()));
 
         QuestionAttempt attempt = new QuestionAttempt();
-        attempt.setUser(user);
+        attempt.setUserId(user.getId());
         attempt.setQuestion(question);
         attempt.setAnswer(request.getAnswer());
 
@@ -74,16 +75,16 @@ public class QuestionAttemptService {
         if (questionDiff.getValue() < userLevel.getValue()) {
             // Easier question
             if (isCorrect) {
-                ratingChange = 20; // Small reward
+                ratingChange = 20;
             } else {
-                ratingChange = -60; // Large penalty
+                ratingChange = -60;
             }
         } else if (questionDiff.getValue() > userLevel.getValue()) {
             // Harder question
             if (isCorrect) {
-                ratingChange = 60; // Large reward
+                ratingChange = 60;
             } else {
-                ratingChange = -20; // Small penalty
+                ratingChange = -20;
             }
         } else {
             // Matched difficulty
@@ -120,9 +121,14 @@ public class QuestionAttemptService {
     public void updateQuestionAttempt(Long id, QuestionAttempt updatedQuestionAttempt) {
         QuestionAttempt existingQuestionAttempt = questionAttemptRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Question attempt not found with id: " + id));
-        existingQuestionAttempt.setUser(updatedQuestionAttempt.getUser());
+        existingQuestionAttempt.setUserId(updatedQuestionAttempt.getUserId());
         existingQuestionAttempt.setQuestion(updatedQuestionAttempt.getQuestion());
         existingQuestionAttempt.setAnswer(updatedQuestionAttempt.getAnswer());
         questionAttemptRepository.save(existingQuestionAttempt);
+    }
+
+    @Transactional
+    public void resetQuestionAttempts(Long userId) {
+        questionAttemptRepository.deleteAllByUserId(userId);
     }
 }

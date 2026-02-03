@@ -1,6 +1,8 @@
 import axios from 'axios';
 import AuthService from './UserAuth/AuthService';
 
+// Abstraction on axios to make API calls easier and more consistent
+
 
 const API_BASE_URL = 'http://localhost:8080/api';
 

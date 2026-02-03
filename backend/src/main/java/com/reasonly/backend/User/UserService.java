@@ -64,7 +64,7 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
         LocalDate today = LocalDate.now();
         LocalDate lastCompleted = currentUser.getLastCompletedDate();
-        if (lastCompleted != null && lastCompleted.equals(today.minusDays(1))) {
+        if (lastCompleted != null && (lastCompleted.equals(today.minusDays(1)) || lastCompleted.equals(today))) {
             return;
         }
         currentUser.setCurrentStreak(0);

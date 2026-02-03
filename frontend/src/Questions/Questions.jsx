@@ -1,6 +1,6 @@
 import QuestionCard from "./QuestionCard";
 import { useState, useEffect } from 'react';
-import { getQuestions, updateCompletedDate, submitQuestionAttempt } from './QuestionService'
+import { getQuestions, updateCompletedDate, submitQuestionAttempt, resetQuestionAttempts } from './QuestionService'
 import AuthService from '../UserAuth/AuthService'
 
 function Questions({ onUserUpdate }) {
@@ -55,7 +55,7 @@ function Questions({ onUserUpdate }) {
       const response = await submitQuestionAttempt(questionAttempt);
       setAttemptResult(response.data);
       if (option === currentQuestion.correctAnswer) {
-        const _ = await updateCompletedDate();
+        await updateCompletedDate();
       }
     } catch (err) {
       console.error("Failed to submit attempt", err);
@@ -67,6 +67,11 @@ function Questions({ onUserUpdate }) {
     fetchNextQuestion();
   };
 
+  const handleResetQuestions = async () => {
+    await resetQuestionAttempts();
+    fetchNextQuestion();
+  };
+  
   if (!sessionStarted) {
     return (
       <div className="dashboard-container">
@@ -109,8 +114,8 @@ function Questions({ onUserUpdate }) {
         <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
           No more questions available for your current level. Great job!
         </p>
-        <button className="btn-primary" onClick={() => window.location.reload()}>
-          Refresh Dashboard
+        <button className="btn-primary" onClick={() => handleResetQuestions()}>
+          Reset Questions
         </button>
       </div>
     </div>

@@ -36,13 +36,13 @@ class QuestionServiceTest {
         user.setRating(1500); // EASY target
 
         // Mock empty for EASY
-        when(questionRepository.findUnansweredByDifficultyAndUser(eq(QuestionDifficulty.EASY), anyLong()))
+        when(questionRepository.findUnansweredByDifficultyAndUserId(eq(QuestionDifficulty.EASY), anyLong()))
                 .thenReturn(Collections.emptyList());
 
         // Mock success for BASIC
         Question basicQuestion = new Question();
         basicQuestion.setDifficulty(QuestionDifficulty.BASIC);
-        when(questionRepository.findUnansweredByDifficultyAndUser(eq(QuestionDifficulty.BASIC), anyLong()))
+        when(questionRepository.findUnansweredByDifficultyAndUserId(eq(QuestionDifficulty.BASIC), anyLong()))
                 .thenReturn(List.of(basicQuestion));
 
         List<Question> result = questionService.getPlayQuestions(user);

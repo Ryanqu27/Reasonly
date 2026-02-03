@@ -47,4 +47,9 @@ public class QuestionAttemptController {
     public void updateQuestionAttempt(@PathVariable Long id, @RequestBody QuestionAttempt updatedQuestionAttempt) {
         questionAttemptService.updateQuestionAttempt(id, updatedQuestionAttempt);
     }
+
+    @DeleteMapping("/reset-question-attempts/{userId}")
+    public void deleteQuestionAttemptsByUserId(@PathVariable Long userId) {
+        questionAttemptService.resetQuestionAttempts(userId);
+    }
 }

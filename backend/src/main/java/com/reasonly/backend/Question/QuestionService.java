@@ -50,7 +50,7 @@ public class QuestionService {
         QuestionDifficulty targetDifficulty = getDifficultyFromRating(rating);
         QuestionDifficulty selectedDifficulty = selectProbabilisticDifficulty(targetDifficulty);
 
-        List<Question> potentialQuestions = questionRepository.findUnansweredByDifficultyAndUser(selectedDifficulty,
+        List<Question> potentialQuestions = questionRepository.findUnansweredByDifficultyAndUserId(selectedDifficulty,
                 user.getId());
 
         if (!potentialQuestions.isEmpty()) {
@@ -60,19 +60,18 @@ public class QuestionService {
 
         // Fallback 1: Try exact target difficulty if we diverted
         if (selectedDifficulty != targetDifficulty) {
-            potentialQuestions = questionRepository.findUnansweredByDifficultyAndUser(targetDifficulty, user.getId());
+            potentialQuestions = questionRepository.findUnansweredByDifficultyAndUserId(targetDifficulty, user.getId());
             if (!potentialQuestions.isEmpty()) {
                 java.util.Collections.shuffle(potentialQuestions);
                 return List.of(potentialQuestions.get(0));
             }
         }
 
-        // Fallback 2: Try ANY difficulty, prioritizing closest to target
-        // Simple approach: check all difficulties in order of distance from target
+        // Fallback 2: Try any difficulty, prioritizing closest to target
         for (QuestionDifficulty d : QuestionDifficulty.values()) {
             if (d == selectedDifficulty || d == targetDifficulty)
                 continue;
-            potentialQuestions = questionRepository.findUnansweredByDifficultyAndUser(d, user.getId());
+            potentialQuestions = questionRepository.findUnansweredByDifficultyAndUserId(d, user.getId());
             if (!potentialQuestions.isEmpty()) {
                 java.util.Collections.shuffle(potentialQuestions);
                 return List.of(potentialQuestions.get(0));

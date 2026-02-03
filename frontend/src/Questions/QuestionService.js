@@ -16,10 +16,10 @@ export const submitQuestionAttempt = async (questionAttempt) => {
 
 export const checkStreak = async () => {
     const user = await AuthService.fetchCurrentUser();
-    return api.get(`/user/${user.id}/check-streak`);
+    return api.post(`/user/${user.id}/check-streak`);
 };
 
-//export const getEngineerById = (id) => api.get(`/${id}`);
-//export const createEngineer = (engineer) => api.post("/", engineer);
-//export const updateEngineer = (id, engineer) => api.put(`/${id}`, engineer);
-//export const deleteEngineer = (id) => api.delete(`/${id}`);
+export const resetQuestionAttempts = async () => {
+    const user = await AuthService.fetchCurrentUser();
+    return api.delete(`/question-attempts/reset-question-attempts/${user.id}`);
+};

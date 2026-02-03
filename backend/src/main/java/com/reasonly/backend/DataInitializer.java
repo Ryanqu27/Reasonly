@@ -15,6 +15,30 @@ import com.reasonly.backend.Question.QuestionType;
 @Configuration
 public class DataInitializer {
 
+    // Method for testing purposes
+    /* 
+    @Bean
+    CommandLineRunner init(QuestionRepository repository) {
+        return args -> {
+            if (repository.count() > 0)
+                return;
+            List<Question> questions = new ArrayList<>();
+            questions.add(new Question(null, QuestionType.DATA_STRUCTURES_AND_ALGORITHMS, QuestionDifficulty.BASIC,
+                "Which data structure provides average O(1) lookup time?",
+                List.of("Array", "Linked List", "Hash Table", "Binary Tree"), "Hash Table"));
+            questions.add(new Question(null, QuestionType.DATA_STRUCTURES_AND_ALGORITHMS, QuestionDifficulty.EASY,
+                "Which traversal of a binary search tree outputs sorted values?",
+                List.of("Preorder", "Postorder", "Level-order", "Inorder"), "Inorder"));
+            questions.add(new Question(null, QuestionType.DATA_STRUCTURES_AND_ALGORITHMS, QuestionDifficulty.MEDIUM,
+                "What happens to time complexity when a recursive algorithm recomputes overlapping subproblems?",
+                List.of("Becomes linear", "Becomes exponential", "Remains constant", "Becomes logarithmic"),
+                "Becomes exponential"));
+
+            repository.saveAll(questions);
+        };
+    }
+    */
+
     @Bean
     CommandLineRunner init(QuestionRepository repository) {
         return args -> {
@@ -1288,4 +1312,6 @@ public class DataInitializer {
                 "Automatic conversion between primitive types and their wrapper classes"));
         return q;
     }
+    
 }
+
