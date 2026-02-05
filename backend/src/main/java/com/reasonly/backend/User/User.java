@@ -59,6 +59,10 @@ public class User implements UserDetails {
 
     private int rating = 0;
 
+    private int questionsAnsweredCorrectly = 0;
+    private int questionsAnsweredIncorrectly = 0;
+    private double accuracy = 0;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));

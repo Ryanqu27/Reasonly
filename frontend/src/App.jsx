@@ -4,14 +4,16 @@ import LoginForm from './UserAuth/LoginForm.jsx';
 import './App.css';
 import RegisterForm from './UserAuth/RegisterForm.jsx'
 import { AuthProvider } from './UserAuth/AuthContext.jsx';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Questions from './Questions/Questions.jsx';
 import AuthService from './UserAuth/AuthService.js';
 import { checkStreak } from './Questions/QuestionService.js';
+import ProfilePage from './User/ProfilePage.jsx';
 
 function Dashboard() {
   const { logout, loading } = useAuth();
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   checkStreak();
   const loadUser = async () => {
@@ -27,11 +29,11 @@ function Dashboard() {
     loadUser();
   }, []);
 
-    
+
 
 
   if (loading) return <div>Loading...</div>;
-  
+
   return (
     <div className="dashboard-container">
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
@@ -39,9 +41,18 @@ function Dashboard() {
           <h1 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--primary)' }}>Reasonly</h1>
           <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-muted)' }}>{user?.email}</p>
         </div>
-        <button onClick={logout} className="btn-primary" style={{ background: 'var(--primary)', color: 'var(--text-main)', fontSize: '0.875rem' }}>
-          Logout
-        </button>
+        <div>
+          <button
+            onClick={() => navigate('/profile')}
+            className="btn-secondary"
+            style={{ marginRight: '0.5rem', background: 'var(--secondary)', color: 'var(--text-main)', fontSize: '0.875rem' }}
+          >
+            Profile
+          </button>
+          <button onClick={logout} className="btn-primary" style={{ background: 'var(--primary)', color: 'var(--text-main)', fontSize: '0.875rem' }}>
+            Logout
+          </button>
+        </div>
       </header>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
@@ -59,7 +70,7 @@ function Dashboard() {
         </div>
       </div>
 
-      <Questions onUserUpdate={loadUser}/>
+      <Questions onUserUpdate={loadUser} />
     </div>
   );
 }
@@ -86,6 +97,11 @@ function App() {
           <Route path="/" element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <ProfilePage />
             </ProtectedRoute>
           } />
         </Routes>

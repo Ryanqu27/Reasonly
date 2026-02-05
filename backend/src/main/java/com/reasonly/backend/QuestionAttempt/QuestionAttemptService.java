@@ -57,7 +57,10 @@ public class QuestionAttemptService {
         attempt.setAnswer(request.getAnswer());
 
         boolean isCorrect = request.getAnswer().equals(question.getCorrectAnswer());
-
+        user.setQuestionsAnsweredCorrectly(user.getQuestionsAnsweredCorrectly() + (isCorrect ? 1 : 0));
+        user.setQuestionsAnsweredIncorrectly(user.getQuestionsAnsweredIncorrectly() + (isCorrect ? 0 : 1));
+        user.setAccuracy((double) user.getQuestionsAnsweredCorrectly() / (user.getQuestionsAnsweredCorrectly() + user.getQuestionsAnsweredIncorrectly()));
+        userRepository.save(user);
         QuestionAttemptResult result = updateUserRating(user, question, isCorrect);
         if (isCorrect) {
             questionAttemptRepository.save(attempt);

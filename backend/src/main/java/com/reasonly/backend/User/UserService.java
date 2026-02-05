@@ -50,15 +50,7 @@ public class UserService {
         userRepository.save(currentUser);
     }
 
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
-    }
-
-    public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
-    }
-
+    @Transactional
     public void checkStreak(Long id) {
         User currentUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
@@ -69,6 +61,23 @@ public class UserService {
         }
         currentUser.setCurrentStreak(0);
         userRepository.save(currentUser);
+    }
+
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+    }
+
+    public UserProfile getUserProfile(String email) {
+        User user = getUserByEmail(email);
+        return new UserProfile(user.getEmail(), user.getCurrentStreak(), 
+        user.getLongestStreak(), user.getRating(), user.getCreatedAt(), 
+        user.getQuestionsAnsweredCorrectly(), user.getQuestionsAnsweredIncorrectly(), 
+        user.getAccuracy());
     }
 
 }
