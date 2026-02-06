@@ -21,7 +21,6 @@ api.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
-//Automatically logs user out if backend returns a 401 unauthorized status
 api.interceptors.response.use(
     (response) => response,
     (error) => {

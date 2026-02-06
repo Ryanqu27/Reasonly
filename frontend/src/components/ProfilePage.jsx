@@ -61,9 +61,6 @@ export default function ProfilePage() {
     return (
         <div className="profile-container">
             <header className="profile-header">
-                <button onClick={() => navigate("/")} className="back-button">
-                    ← Back to Dashboard
-                </button>
                 <h1>Your Profile</h1>
             </header>
 
@@ -105,9 +102,9 @@ export default function ProfilePage() {
                 <div className="stat-card stat-answered">
                     <div className="stat-icon">📝</div>
                     <div className="stat-content">
-                        <span className="stat-value">{profile.questionsAnsweredCorrectly 
-                        + profile.questionsAnsweredIncorrectly}</span>
-                        <span className="stat-label">Total Questions Answered</span>
+                        <span className="stat-value">{profile.questionsAnsweredCorrectly
+                            + profile.questionsAnsweredIncorrectly}</span>
+                        <span className="stat-label">Questions Answered</span>
                     </div>
                 </div>
 

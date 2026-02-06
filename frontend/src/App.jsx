@@ -4,16 +4,28 @@ import LoginForm from './UserAuth/LoginForm.jsx';
 import './App.css';
 import RegisterForm from './UserAuth/RegisterForm.jsx'
 import { AuthProvider } from './UserAuth/AuthContext.jsx';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Questions from './Questions/Questions.jsx';
 import AuthService from './UserAuth/AuthService.js';
 import { checkStreak } from './Questions/QuestionService.js';
-import ProfilePage from './User/ProfilePage.jsx';
+import ProfilePage from './components/ProfilePage.jsx';
+import Sidebar from './components/Sidebar.jsx';
+
+// Layout component that includes the sidebar
+function AppLayout({ children }) {
+  return (
+    <div className="app-layout">
+      <Sidebar />
+      <main className="main-content">
+        {children}
+      </main>
+    </div>
+  );
+}
 
 function Dashboard() {
-  const { logout, loading } = useAuth();
+  const { loading } = useAuth();
   const [user, setUser] = useState(null);
-  const navigate = useNavigate();
 
   checkStreak();
   const loadUser = async () => {
@@ -29,44 +41,29 @@ function Dashboard() {
     loadUser();
   }, []);
 
-
-
-
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div className="loading-screen">Loading...</div>;
 
   return (
     <div className="dashboard-container">
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+      <header className="dashboard-header">
         <div>
-          <h1 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--primary)' }}>Reasonly</h1>
-          <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-muted)' }}>{user?.email}</p>
-        </div>
-        <div>
-          <button
-            onClick={() => navigate('/profile')}
-            className="btn-secondary"
-            style={{ marginRight: '0.5rem', background: 'var(--secondary)', color: 'var(--text-main)', fontSize: '0.875rem' }}
-          >
-            Profile
-          </button>
-          <button onClick={logout} className="btn-primary" style={{ background: 'var(--primary)', color: 'var(--text-main)', fontSize: '0.875rem' }}>
-            Logout
-          </button>
+          <h1 className="page-title">Practice Questions</h1>
+          <p className="user-email">{user?.email}</p>
         </div>
       </header>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+      <div className="stats-row">
         <div className="stat-card">
-          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Current Rating</span>
-          <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--primary)' }}>{user?.rating || 0}</span>
+          <span className="stat-label">Current Rating</span>
+          <span className="stat-value stat-rating">{user?.rating || 0}</span>
         </div>
         <div className="stat-card">
-          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Daily Streak</span>
-          <span style={{ fontSize: '1.5rem', fontWeight: 700 }}>{user?.currentStreak || 0} 🔥</span>
+          <span className="stat-label">Daily Streak</span>
+          <span className="stat-value">{user?.currentStreak || 0} 🔥</span>
         </div>
         <div className="stat-card">
-          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Longest Streak</span>
-          <span style={{ fontSize: '1.5rem', fontWeight: 700 }}>{user?.longestStreak || 0} 🏆</span>
+          <span className="stat-label">Longest Streak</span>
+          <span className="stat-value">{user?.longestStreak || 0} 🏆</span>
         </div>
       </div>
 
@@ -79,12 +76,11 @@ function Dashboard() {
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div className="loading-screen">Loading...</div>;
   return isAuthenticated ? children : <Navigate to="/login" />;
 };
 
 function App() {
-
   return (
     <AuthProvider>
       <Router>
@@ -93,22 +89,24 @@ function App() {
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
 
-          {/* Private Routes for logged in users */}
+          {/* Private Routes for logged in users - wrapped with sidebar layout */}
           <Route path="/" element={
             <ProtectedRoute>
-              <Dashboard />
+              <AppLayout>
+                <Dashboard />
+              </AppLayout>
             </ProtectedRoute>
           } />
           <Route path="/profile" element={
             <ProtectedRoute>
-              <ProfilePage />
+              <AppLayout>
+                <ProfilePage />
+              </AppLayout>
             </ProtectedRoute>
           } />
         </Routes>
       </Router>
     </AuthProvider>
-
-
   )
 }
 
