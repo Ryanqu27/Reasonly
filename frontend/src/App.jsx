@@ -27,7 +27,11 @@ function Dashboard() {
   const { loading } = useAuth();
   const [user, setUser] = useState(null);
 
-  checkStreak();
+  const checkUserStreak = async () => {
+    await checkStreak();
+  }
+  checkUserStreak();
+
   const loadUser = async () => {
     try {
       const userData = await AuthService.fetchCurrentUser();

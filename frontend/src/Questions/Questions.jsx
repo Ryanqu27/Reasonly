@@ -67,11 +67,14 @@ function Questions({ onUserUpdate }) {
     fetchNextQuestion();
   };
 
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+
   const handleResetQuestions = async () => {
+    setShowResetConfirm(false);
     await resetQuestionAttempts();
     fetchNextQuestion();
   };
-  
+
   if (!sessionStarted) {
     return (
       <div className="dashboard-container">
@@ -112,11 +115,45 @@ function Questions({ onUserUpdate }) {
     <div className="dashboard-container">
       <div className="stat-card" style={{ textAlign: 'center', padding: '3rem' }}>
         <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
-          No more questions available for your current level. Great job!
+          No more questions available for your current level today.
+          <br />
+          Great job! Come back tomorrow for more questions or reset all question history to start over.
         </p>
-        <button className="btn-primary" onClick={() => handleResetQuestions()}>
-          Reset Questions
-        </button>
+
+        {!showResetConfirm ? (
+          <button className="btn-primary" onClick={() => setShowResetConfirm(true)}>
+            Reset All Question History
+          </button>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
+            <p style={{ color: 'var(--text-muted)', fontWeight: 'bold' }}>
+              Are you sure? This will delete all your progress.
+            </p>
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <button
+                className="btn-primary"
+                onClick={handleResetQuestions}
+                style={{ backgroundColor: 'var(--error)', borderColor: 'var(--error)' }}
+              >
+                Confirm Reset
+              </button>
+              <button
+                className="btn-secondary"
+                onClick={() => setShowResetConfirm(false)}
+                style={{
+                  background: 'transparent',
+                  border: '1px solid var(--text-muted)',
+                  color: 'var(--text-muted)',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '0.25rem',
+                  cursor: 'pointer'
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
