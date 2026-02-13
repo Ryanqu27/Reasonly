@@ -67,7 +67,7 @@ const AuthService = {
    */
   fetchCurrentUser: async () => {
     try {
-      const response = await api.get(`${API_BASE_URL}/api/user/me`);
+      const response = await api.get('/user/me');
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
