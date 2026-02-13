@@ -30,7 +30,6 @@ function Dashboard() {
   const checkUserStreak = async () => {
     await checkStreak();
   }
-  checkUserStreak();
 
   const loadUser = async () => {
     try {
@@ -42,6 +41,7 @@ function Dashboard() {
   };
 
   useEffect(() => {
+    checkUserStreak();
     loadUser();
   }, []);
 

@@ -46,6 +46,7 @@ public class QuestionAttemptService {
         return questionAttemptRepository.findByUserIdAndQuestion(user.getId(), question);
     }
 
+    @Transactional
     public QuestionAttemptResult insertQuestionAttempt(QuestionAttemptRequest request) {
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + request.getUserId()));
