@@ -49,7 +49,12 @@ public class QuestionService {
         int rating = user.getRating();
         QuestionDifficulty targetDifficulty = getDifficultyFromRating(rating);
         QuestionDifficulty selectedDifficulty = selectProbabilisticDifficulty(targetDifficulty);
-
+        if (Math.random() < 0.5) {
+            Question result = getReviewQuestion(user);
+            if (result != null) {
+                return List.of(result);
+            }
+        }
         List<Question> potentialQuestions = questionRepository.findUnansweredByDifficultyAndUserId(selectedDifficulty,
                 user.getId());
 
@@ -77,7 +82,11 @@ public class QuestionService {
                 return List.of(potentialQuestions.get(0));
             }
         }
-
+        // If no unanswered questions left, give review question. If no review question, return empty list.
+        Question result = getReviewQuestion(user);
+        if (result != null) {
+            return List.of(result);
+        }
         return List.of();
     }
 
@@ -130,5 +139,9 @@ public class QuestionService {
                 return d;
         }
         return QuestionDifficulty.BASIC;
+    }
+
+    private Question getReviewQuestion(User user) {
+        return questionRepository.findRandomDueReview(user.getId()).orElse(null);
     }
 }

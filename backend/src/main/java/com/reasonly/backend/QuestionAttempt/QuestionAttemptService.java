@@ -1,5 +1,6 @@
 package com.reasonly.backend.QuestionAttempt;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -51,23 +52,37 @@ public class QuestionAttemptService {
         Question question = questionRepository.findById(request.getQuestionId())
                 .orElseThrow(() -> new RuntimeException("Question not found with id: " + request.getQuestionId()));
 
-        QuestionAttempt attempt = new QuestionAttempt();
-        attempt.setUserId(user.getId());
-        attempt.setQuestion(question);
-        attempt.setAnswer(request.getAnswer());
-
+        List<QuestionAttempt> questionAttempts = questionAttemptRepository.findByUserIdAndQuestion(user.getId(), question);
+        if (!questionAttempts.isEmpty()) {
+            // Update existing attempt if it exists
+            if (questionAttempts.get(0).getQuestion().getCorrectAnswer().equals(request.getAnswer())) {
+                questionAttempts.get(0).setInterval(questionAttempts.get(0).getInterval() * 2);
+                questionAttempts.get(0).setNextReviewDate(LocalDate.now().plusDays(questionAttempts.get(0).getInterval()));
+            }
+            else {
+                questionAttempts.get(0).setInterval(1);
+                questionAttempts.get(0).setNextReviewDate(LocalDate.now().plusDays(1));
+            }
+        
+            questionAttemptRepository.save(questionAttempts.get(0));
+        }
+        else {
+            QuestionAttempt attempt = new QuestionAttempt();
+            attempt.setUserId(user.getId());
+            attempt.setQuestion(question);
+            attempt.setAnswer(request.getAnswer());
+            questionAttemptRepository.save(attempt);
+        }
+        
         boolean isCorrect = request.getAnswer().equals(question.getCorrectAnswer());
         user.setQuestionsAnsweredCorrectly(user.getQuestionsAnsweredCorrectly() + (isCorrect ? 1 : 0));
         user.setQuestionsAnsweredIncorrectly(user.getQuestionsAnsweredIncorrectly() + (isCorrect ? 0 : 1));
         user.setAccuracy((double) user.getQuestionsAnsweredCorrectly() / (user.getQuestionsAnsweredCorrectly() + user.getQuestionsAnsweredIncorrectly()));
         userRepository.save(user);
         QuestionAttemptResult result = updateUserRating(user, question, isCorrect);
-        if (isCorrect) {
-            questionAttemptRepository.save(attempt);
-        }
         return result;
     }
-
+    
     private QuestionAttemptResult updateUserRating(User user, Question question, boolean isCorrect) {
         int currentRating = user.getRating();
         QuestionDifficulty questionDiff = question.getDifficulty();
@@ -101,7 +116,6 @@ public class QuestionAttemptService {
         int newRating = Math.max(0, currentRating + ratingChange); // Prevent negative rating
         user.setRating(newRating);
         userRepository.save(user);
-
         return new QuestionAttemptResult(isCorrect, ratingChange, newRating);
     }
 

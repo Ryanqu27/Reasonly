@@ -14,10 +14,10 @@ services:
     ports:
       - "5332:5432"
     networks:
-    - reasonly-network
+      - reasonly-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ryanqu27 -d reasonly"]
+      test: [ "CMD-SHELL", "pg_isready -U ryanqu27 -d reasonly" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -26,8 +26,8 @@ services:
   backend:
     container_name: reasonly-backend
     build:
-      context: ./backend 
-      dockerfile: Dockerfile 
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     networks:
@@ -41,7 +41,6 @@ services:
       db:
         condition: service_healthy
     restart: unless-stopped
-  
 
   # React Frontend
   frontend:
@@ -56,9 +55,8 @@ services:
     environment:
       VITE_API_URL: http://localhost:8080
     depends_on:
-      -  backend
+      - backend
     restart: unless-stopped
-  
 
 networks:
   reasonly-network:
@@ -67,6 +65,4 @@ networks:
 volumes:
   db:
 
-    
-    
-    
+

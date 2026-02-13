@@ -113,11 +113,25 @@ function Questions({ onUserUpdate }) {
 
   if (!currentQuestion) return (
     <div className="dashboard-container">
+      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <button
+            onClick={() => setSessionStarted(false)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'var(--text-muted)',
+              cursor: 'pointer',
+              fontSize: '0.875rem'
+            }}
+          >
+            &larr; Exit Session
+          </button>
+      </div>
       <div className="stat-card" style={{ textAlign: 'center', padding: '3rem' }}>
         <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
           No more questions available for your current level today.
           <br />
-          Great job! Come back tomorrow for more questions or reset all question history to start over.
+          Come back tomorrow for more questions or reset all question history to start over.
         </p>
 
         {!showResetConfirm ? (
