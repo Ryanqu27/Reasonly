@@ -1,6 +1,7 @@
 package com.reasonly.backend.Question;
 
 import java.util.List;
+import java.util.Random;
 
 import com.reasonly.backend.User.User;
 
@@ -9,9 +10,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class QuestionService {
     private final QuestionRepository questionRepository;
-
+    private final Random random;
+    
     public QuestionService(QuestionRepository questionRepository) {
+        this(questionRepository, new Random());
+    }
+
+    public QuestionService(QuestionRepository questionRepository, Random random) {
         this.questionRepository = questionRepository;
+        this.random = random;
     }
 
     public List<Question> getQuestions(QuestionType type) {
@@ -103,7 +110,7 @@ public class QuestionService {
     }
 
     private QuestionDifficulty selectProbabilisticDifficulty(QuestionDifficulty target) {
-        int roll = (int) (Math.random() * 100); // 0-99
+        int roll = (int) (random.nextDouble() * 100);
 
         // 70% chance for target difficulty
         if (roll < 70) {

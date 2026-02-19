@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,31 +24,231 @@ class QuestionServiceTest {
 
     private QuestionService questionService;
 
+    // Helper: creates a Question with the given difficulty
+    private Question questionOf(QuestionDifficulty difficulty) {
+        Question q = new Question();
+        q.setDifficulty(difficulty);
+        return q;
+    }
+
+    // Helper: sets up mocks so every difficulty tier has exactly one question
+    // available
+    private void mockAllDifficultiesAvailable() {
+        for (QuestionDifficulty d : QuestionDifficulty.values()) {
+            when(questionRepository.findUnansweredByDifficultyAndUserId(eq(d), anyLong()))
+                            .thenReturn(List.of(questionOf(d)));
+        }
+    }
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        questionService = new QuestionService(questionRepository);
     }
+
+    // ─── Fallback Logic ──────────────────────────────────────────────────────────
 
     @Test
     void getPlayQuestions_FallbackToAny_WhenTargetEmpty() {
+        // Target difficulty (EASY) is empty → falls back to BASIC
+        questionService = new QuestionService(questionRepository);
         User user = new User();
         user.setId(1L);
-        user.setRating(1500); // EASY target
+        user.setRating(1500); // EASY
 
-        // Mock empty for EASY
         when(questionRepository.findUnansweredByDifficultyAndUserId(eq(QuestionDifficulty.EASY), anyLong()))
-                .thenReturn(Collections.emptyList());
-
-        // Mock success for BASIC
-        Question basicQuestion = new Question();
-        basicQuestion.setDifficulty(QuestionDifficulty.BASIC);
+                        .thenReturn(Collections.emptyList());
         when(questionRepository.findUnansweredByDifficultyAndUserId(eq(QuestionDifficulty.BASIC), anyLong()))
-                .thenReturn(List.of(basicQuestion));
+                        .thenReturn(List.of(questionOf(QuestionDifficulty.BASIC)));
 
         List<Question> result = questionService.getPlayQuestions(user);
 
         assertFalse(result.isEmpty());
         assertEquals(QuestionDifficulty.BASIC, result.get(0).getDifficulty());
+    }
+
+    @Test
+    void getPlayQuestions_AllQuestionsAnswered_ReturnsEmptyList() {
+        // No unanswered questions anywhere, no review questions → empty result
+        Random fixedRandom = new Random() {
+            @Override
+            public double nextDouble() {
+                return 0.50;
+            }
+        };
+        questionService = new QuestionService(questionRepository, fixedRandom);
+
+        User user = new User();
+        user.setId(1L);
+        user.setRating(1500);
+
+        for (QuestionDifficulty d : QuestionDifficulty.values()) {
+            when(questionRepository.findUnansweredByDifficultyAndUserId(eq(d), anyLong()))
+                            .thenReturn(Collections.emptyList());
+        }
+        when(questionRepository.findRandomDueReview(anyLong()))
+                        .thenReturn(java.util.Optional.empty());
+
+        List<Question> result = questionService.getPlayQuestions(user);
+
+        assertEquals(0, result.size());
+    }
+
+    // ─── Target Difficulty Mapping ───────────────────────────────────────────────
+
+    @Test
+    void getPlayQuestions_SelectsCorrectDifficulty_ForEachRatingBracket() {
+        // Roll = 0.50 → always lands in the 70% "target" branch
+        Random fixedRandom = new Random() {
+            @Override
+            public double nextDouble() {
+                return 0.50;
+            }
+        };
+        questionService = new QuestionService(questionRepository, fixedRandom);
+        mockAllDifficultiesAvailable();
+
+        User user = new User();
+        user.setId(1L);
+
+        user.setRating(800); // BASIC (≤1000)
+        assertEquals(QuestionDifficulty.BASIC, questionService.getPlayQuestions(user).get(0).getDifficulty());
+
+        user.setRating(1200); // EASY (≤2000)
+        assertEquals(QuestionDifficulty.EASY, questionService.getPlayQuestions(user).get(0).getDifficulty());
+
+        user.setRating(2200); // MEDIUM (≤3000)
+        assertEquals(QuestionDifficulty.MEDIUM, questionService.getPlayQuestions(user).get(0).getDifficulty());
+
+        user.setRating(3200); // HARD (≤4000)
+        assertEquals(QuestionDifficulty.HARD, questionService.getPlayQuestions(user).get(0).getDifficulty());
+
+        user.setRating(4500); // EXTREME (>4000)
+        assertEquals(QuestionDifficulty.EXTREME, questionService.getPlayQuestions(user).get(0).getDifficulty());
+    }
+
+    // ─── Probabilistic Branch Tests ──────────────────────────────────────────────
+
+    @Test
+    void getPlayQuestions_Roll50_SelectsTargetDifficulty() {
+        // Roll = 0.50 → 50 < 70 → target branch
+        Random fixedRandom = new Random() {
+            @Override
+            public double nextDouble() {
+                return 0.50;
+            }
+        };
+        questionService = new QuestionService(questionRepository, fixedRandom);
+        mockAllDifficultiesAvailable();
+
+        User user = new User();
+        user.setId(1L);
+        user.setRating(2200); // MEDIUM target
+
+        List<Question> result = questionService.getPlayQuestions(user);
+
+        assertFalse(result.isEmpty());
+        assertEquals(QuestionDifficulty.MEDIUM, result.get(0).getDifficulty());
+    }
+
+    @Test
+    void getPlayQuestions_Roll75_SelectsEasierDifficulty() {
+        // Roll = 0.75 → 75 is >= 70 and < 85 → easier branch
+        Random fixedRandom = new Random() {
+            @Override
+            public double nextDouble() {
+                return 0.75;
+            }
+        };
+        questionService = new QuestionService(questionRepository, fixedRandom);
+
+        User user = new User();
+        user.setId(1L);
+        user.setRating(2200); // MEDIUM target → easier = EASY
+
+        when(questionRepository.findUnansweredByDifficultyAndUserId(eq(QuestionDifficulty.EASY), anyLong()))
+            .thenReturn(List.of(questionOf(QuestionDifficulty.EASY)));
+        when(questionRepository.findUnansweredByDifficultyAndUserId(eq(QuestionDifficulty.MEDIUM), anyLong()))
+            .thenReturn(Collections.emptyList());
+
+        List<Question> result = questionService.getPlayQuestions(user);
+
+        assertFalse(result.isEmpty());
+        assertEquals(QuestionDifficulty.EASY, result.get(0).getDifficulty());
+    }
+
+    @Test
+    void getPlayQuestions_Roll90_SelectsHarderDifficulty() {
+        // Roll = 0.90 → 90 >= 85 → harder branch
+        Random fixedRandom = new Random() {
+            @Override
+            public double nextDouble() {
+                return 0.90;
+            }
+        };
+        questionService = new QuestionService(questionRepository, fixedRandom);
+
+        User user = new User();
+        user.setId(1L);
+        user.setRating(2200); // MEDIUM target → harder = HARD
+
+        when(questionRepository.findUnansweredByDifficultyAndUserId(eq(QuestionDifficulty.HARD), anyLong()))
+            .thenReturn(List.of(questionOf(QuestionDifficulty.HARD)));
+        when(questionRepository.findUnansweredByDifficultyAndUserId(eq(QuestionDifficulty.MEDIUM), anyLong()))
+            .thenReturn(Collections.emptyList());
+
+        List<Question> result = questionService.getPlayQuestions(user);
+
+        assertFalse(result.isEmpty());
+        assertEquals(QuestionDifficulty.HARD, result.get(0).getDifficulty());
+    }
+
+    // ─── Boundary Clamp Tests ────────────────────────────────────────────────────
+
+    @Test
+    void getPlayQuestions_AtLowestDifficulty_EasierRollClampsToBasic() {
+        // Roll tries to go easier than BASIC — should clamp and still return BASIC
+        Random fixedRandom = new Random() {
+            @Override
+            public double nextDouble() {
+                return 0.75;
+            }
+        };
+        questionService = new QuestionService(questionRepository, fixedRandom);
+
+        User user = new User();
+        user.setId(1L);
+        user.setRating(500); // BASIC — already lowest
+
+        when(questionRepository.findUnansweredByDifficultyAndUserId(eq(QuestionDifficulty.BASIC), anyLong()))
+            .thenReturn(List.of(questionOf(QuestionDifficulty.BASIC)));
+
+        List<Question> result = questionService.getPlayQuestions(user);
+
+        assertFalse(result.isEmpty());
+        assertEquals(QuestionDifficulty.BASIC, result.get(0).getDifficulty());
+    }
+
+    @Test
+    void getPlayQuestions_AtHighestDifficulty_HarderRollClampsToExtreme() {
+        // Roll tries to go harder than EXTREME — should clamp and still return EXTREME
+        Random fixedRandom = new Random() {
+            @Override
+            public double nextDouble() {
+                return 0.90;
+            }
+        };
+        questionService = new QuestionService(questionRepository, fixedRandom);
+
+        User user = new User();
+        user.setId(1L);
+        user.setRating(5000); // EXTREME — already highest
+
+        when(questionRepository.findUnansweredByDifficultyAndUserId(eq(QuestionDifficulty.EXTREME), anyLong()))
+            .thenReturn(List.of(questionOf(QuestionDifficulty.EXTREME)));
+
+        List<Question> result = questionService.getPlayQuestions(user);
+
+        assertFalse(result.isEmpty());
+        assertEquals(QuestionDifficulty.EXTREME, result.get(0).getDifficulty());
     }
 }
