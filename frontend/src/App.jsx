@@ -10,6 +10,7 @@ import AuthService from './UserAuth/AuthService.js';
 import { checkStreak } from './Questions/QuestionService.js';
 import ProfilePage from './components/ProfilePage.jsx';
 import Sidebar from './components/Sidebar.jsx';
+import UserQuestions from './UserAuth/UserQuestions.jsx';
 
 // Layout component that includes the sidebar
 function AppLayout({ children }) {
@@ -92,6 +93,11 @@ function App() {
           {/* Public Routes */}
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
+          <Route path="/onboarding" element={
+            <ProtectedRoute>
+              <UserQuestions />
+            </ProtectedRoute>
+          } />
 
           {/* Private Routes for logged in users - wrapped with sidebar layout */}
           <Route path="/" element={

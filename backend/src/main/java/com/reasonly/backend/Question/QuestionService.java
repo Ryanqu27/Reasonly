@@ -5,13 +5,15 @@ import java.util.Random;
 
 import com.reasonly.backend.User.User;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class QuestionService {
     private final QuestionRepository questionRepository;
     private final Random random;
-    
+
+    @Autowired
     public QuestionService(QuestionRepository questionRepository) {
         this(questionRepository, new Random());
     }
@@ -89,7 +91,8 @@ public class QuestionService {
                 return List.of(potentialQuestions.get(0));
             }
         }
-        // If no unanswered questions left, give review question. If no review question, return empty list.
+        // If no unanswered questions left, give review question. If no review question,
+        // return empty list.
         Question result = getReviewQuestion(user);
         if (result != null) {
             return List.of(result);

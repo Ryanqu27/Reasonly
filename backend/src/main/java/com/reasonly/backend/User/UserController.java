@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/api/user")
@@ -37,4 +38,8 @@ public class UserController {
         userService.incrementStreak(id);
     }
 
+    @PutMapping("/{id}/onboard")
+    public void setExperience(@PathVariable Long id, @RequestBody OnboardRequest request) {
+        userService.setExperience(id, request.experience());
+    }
 }

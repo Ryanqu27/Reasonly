@@ -37,7 +37,6 @@ class UserServiceTest {
         return user;
     }
 
-
     @Test
     void incrementStreak_NewDay_IncrementsStreak() {
         User user = userWithStreak(5, LocalDate.now().minusDays(1));
@@ -121,7 +120,6 @@ class UserServiceTest {
         assertThrows(RuntimeException.class, () -> userService.incrementStreak(99L));
     }
 
-
     @Test
     void checkStreak_LastCompletedToday_StreakUnchanged() {
         User user = userWithStreak(5, LocalDate.now());
@@ -162,7 +160,6 @@ class UserServiceTest {
         assertEquals(0, user.getCurrentStreak());
     }
 
-
     @Test
     void getUserById_UserExists_ReturnsUser() {
         User mockUser = new User();
@@ -180,5 +177,65 @@ class UserServiceTest {
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class, () -> userService.getUserById(99L));
+    }
+
+    @Test
+    void setExperience_Beginner_SetsRatingToZero() {
+        User user = userWithStreak(0, null);
+
+        userService.setExperience(1L, UserExperience.BEGINNER);
+
+        assertEquals(UserExperience.BEGINNER, user.getExperience());
+        assertEquals(0, user.getRating());
+        verify(userRepository).save(user);
+    }
+
+    @Test
+    void setExperience_Intermediate_SetsRatingTo500() {
+        User user = userWithStreak(0, null);
+
+        userService.setExperience(1L, UserExperience.INTERMEDIATE);
+
+        assertEquals(UserExperience.INTERMEDIATE, user.getExperience());
+        assertEquals(500, user.getRating());
+    }
+
+    @Test
+    void setExperience_Advanced_SetsRatingTo1000() {
+        User user = userWithStreak(0, null);
+
+        userService.setExperience(1L, UserExperience.ADVANCED);
+
+        assertEquals(UserExperience.ADVANCED, user.getExperience());
+        assertEquals(1000, user.getRating());
+    }
+
+    @Test
+    void setExperience_Expert_SetsRatingTo1500() {
+        User user = userWithStreak(0, null);
+
+        userService.setExperience(1L, UserExperience.EXPERT);
+
+        assertEquals(UserExperience.EXPERT, user.getExperience());
+        assertEquals(1500, user.getRating());
+    }
+
+    @Test
+    void setExperience_AlreadySet_DoesNothing() {
+        User user = userWithStreak(0, null);
+        user.setExperience(UserExperience.BEGINNER);
+        user.setRating(0);
+
+        userService.setExperience(1L, UserExperience.EXPERT);
+
+        assertEquals(UserExperience.BEGINNER, user.getExperience());
+        assertEquals(0, user.getRating()); // Should not have changed to 1500
+    }
+
+    @Test
+    void setExperience_UserNotFound_ThrowsException() {
+        when(userRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> userService.setExperience(99L, UserExperience.BEGINNER));
     }
 }

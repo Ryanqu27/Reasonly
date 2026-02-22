@@ -20,7 +20,7 @@ const AuthService = {
       return response.data;
     }
     catch (error) {
-      throw error.response?.data || error.message;
+      throw error.response?.data?.message || error.response?.data || error.message || "Registration failed";
     }
   },
 
@@ -42,7 +42,7 @@ const AuthService = {
       return response.data;
     }
     catch (error) {
-      throw error.response?.data || error.message;
+      throw error.response?.data?.message || error.response?.data || error.message || "Login failed";
     }
   },
 
@@ -70,7 +70,7 @@ const AuthService = {
       const response = await api.get('/user/me');
       return response.data;
     } catch (error) {
-      throw error.response?.data || error.message;
+      throw error.response?.data?.message || error.response?.data || error.message || "An unexpected error occurred";
     }
   },
 
@@ -89,7 +89,24 @@ const AuthService = {
   getAuthHeader: () => {
     const token = AuthService.getToken();
     return token ? { Authorization: `Bearer ${token}` } : {};
+  },
+
+  /**
+   * Onboard user
+   * @param {string} userId - User ID
+   * @param {string} experience - Experience level
+   * @returns {Promise} Response with user data
+   */
+  onboardUser: async (userId, experience) => {
+    try {
+      const response = await api.put(`/user/${userId}/onboard`, { experience });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data?.message || error.response?.data || error.message || "Failed to save experience level";
+    }
   }
 };
+
+
 
 export default AuthService;

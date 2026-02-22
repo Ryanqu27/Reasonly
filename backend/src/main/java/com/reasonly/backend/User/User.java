@@ -57,7 +57,10 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
 
-    private int rating = 0;
+    @Enumerated(EnumType.STRING)
+    private UserExperience experience;
+
+    private int rating;
 
     private int questionsAnsweredCorrectly = 0;
     private int questionsAnsweredIncorrectly = 0;

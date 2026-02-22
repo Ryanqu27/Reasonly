@@ -80,4 +80,26 @@ public class UserService {
         user.getAccuracy());
     }
 
+    @Transactional
+    public void setExperience(Long id, UserExperience experience) {
+        User currentUser = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+        if (currentUser.getExperience() != null) {
+            return;
+        }
+        currentUser.setExperience(experience);
+        if (experience == UserExperience.BEGINNER) {
+            currentUser.setRating(0);
+        } 
+        else if (experience == UserExperience.INTERMEDIATE) {
+            currentUser.setRating(500);
+        } 
+        else if (experience == UserExperience.ADVANCED) {
+            currentUser.setRating(1000);
+        } 
+        else if (experience == UserExperience.EXPERT) {
+            currentUser.setRating(1500);
+        }
+        userRepository.save(currentUser);
+    }
 }
