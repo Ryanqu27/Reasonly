@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -180,10 +181,10 @@ class UserServiceTest {
     }
 
     @Test
-    void setExperience_Beginner_SetsRatingToZero() {
+    void onboardUser_Beginner_SetsRatingToZero() {
         User user = userWithStreak(0, null);
 
-        userService.setExperience(1L, UserExperience.BEGINNER);
+        userService.onboardUser(1L, new OnboardRequest(UserExperience.BEGINNER, null, null, null));
 
         assertEquals(UserExperience.BEGINNER, user.getExperience());
         assertEquals(0, user.getRating());
@@ -191,51 +192,67 @@ class UserServiceTest {
     }
 
     @Test
-    void setExperience_Intermediate_SetsRatingTo500() {
+    void onboardUser_Intermediate_SetsRatingTo500() {
         User user = userWithStreak(0, null);
 
-        userService.setExperience(1L, UserExperience.INTERMEDIATE);
+        userService.onboardUser(1L, new OnboardRequest(UserExperience.INTERMEDIATE, null, null, null));
 
         assertEquals(UserExperience.INTERMEDIATE, user.getExperience());
         assertEquals(500, user.getRating());
     }
 
     @Test
-    void setExperience_Advanced_SetsRatingTo1000() {
+    void onboardUser_Advanced_SetsRatingTo1000() {
         User user = userWithStreak(0, null);
 
-        userService.setExperience(1L, UserExperience.ADVANCED);
+        userService.onboardUser(1L, new OnboardRequest(UserExperience.ADVANCED, null, null, null));
 
         assertEquals(UserExperience.ADVANCED, user.getExperience());
         assertEquals(1000, user.getRating());
     }
 
     @Test
-    void setExperience_Expert_SetsRatingTo1500() {
+    void onboardUser_Expert_SetsRatingTo1500() {
         User user = userWithStreak(0, null);
 
-        userService.setExperience(1L, UserExperience.EXPERT);
+        userService.onboardUser(1L, new OnboardRequest(UserExperience.EXPERT, null, null, null));
 
         assertEquals(UserExperience.EXPERT, user.getExperience());
         assertEquals(1500, user.getRating());
     }
 
     @Test
-    void setExperience_AlreadySet_DoesNothing() {
+    void onboardUser_AlreadySet_DoesNothing() {
         User user = userWithStreak(0, null);
         user.setExperience(UserExperience.BEGINNER);
         user.setRating(0);
 
-        userService.setExperience(1L, UserExperience.EXPERT);
+        userService.onboardUser(1L, new OnboardRequest(UserExperience.EXPERT, null, null, null));
 
         assertEquals(UserExperience.BEGINNER, user.getExperience());
         assertEquals(0, user.getRating()); // Should not have changed to 1500
     }
 
     @Test
-    void setExperience_UserNotFound_ThrowsException() {
+    void onboardUser_UserNotFound_ThrowsException() {
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> userService.setExperience(99L, UserExperience.BEGINNER));
+        assertThrows(RuntimeException.class,
+                () -> userService.onboardUser(99L, new OnboardRequest(UserExperience.BEGINNER, null, null, null)));
+    }
+
+    @Test
+    void onboardUser_WithLanguagesAndInterestsAndMotivation() {
+        User user = userWithStreak(0, null);
+
+        userService.onboardUser(1L, new OnboardRequest(UserExperience.BEGINNER, 
+            UserMotivation.ACADEMIC, UserLanguage.JAVA, List.of(UserInterest.DATABASES, UserInterest.DATA_STRUCTURES_AND_ALGORITHMS)));
+
+        assertEquals(UserExperience.BEGINNER, user.getExperience());
+        assertEquals(0, user.getRating());
+        assertEquals(UserMotivation.ACADEMIC, user.getMotivation());
+        assertEquals(UserLanguage.JAVA, user.getPreferredLanguage());
+        assertEquals(List.of(UserInterest.DATABASES, UserInterest.DATA_STRUCTURES_AND_ALGORITHMS), user.getInterests());
+        verify(userRepository).save(user);
     }
 }

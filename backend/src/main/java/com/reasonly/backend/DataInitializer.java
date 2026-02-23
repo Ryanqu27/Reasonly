@@ -16,7 +16,7 @@ import com.reasonly.backend.Question.QuestionType;
 public class DataInitializer {
 
     // Method for testing purposes
-     
+    /* 
     @Bean
     CommandLineRunner init(QuestionRepository repository) {
         return args -> {
@@ -37,8 +37,9 @@ public class DataInitializer {
             repository.saveAll(questions);
         };
     }
+    */
     
-    /* 
+    
     @Bean
     CommandLineRunner init(QuestionRepository repository) {
         return args -> {
@@ -1312,6 +1313,5 @@ public class DataInitializer {
                 "Automatic conversion between primitive types and their wrapper classes"));
         return q;
     }
-    */
 }
 

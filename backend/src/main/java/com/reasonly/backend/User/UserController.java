@@ -32,14 +32,14 @@ public class UserController {
     public void checkStreak(@PathVariable Long id) {
         userService.checkStreak(id);
     }
-    
+
     @PutMapping("/{id}/complete-today")
     public void updateCompletedDate(@PathVariable Long id) {
         userService.incrementStreak(id);
     }
 
     @PutMapping("/{id}/onboard")
-    public void setExperience(@PathVariable Long id, @RequestBody OnboardRequest request) {
-        userService.setExperience(id, request.experience());
+    public void onboardUser(@PathVariable Long id, @RequestBody OnboardRequest request) {
+        userService.onboardUser(id, request);
     }
 }

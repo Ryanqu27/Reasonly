@@ -94,12 +94,12 @@ const AuthService = {
   /**
    * Onboard user
    * @param {string} userId - User ID
-   * @param {string} experience - Experience level
+   * @param {object} data - Onboarding data payload
    * @returns {Promise} Response with user data
    */
-  onboardUser: async (userId, experience) => {
+  onboardUser: async (userId, data) => {
     try {
-      const response = await api.put(`/user/${userId}/onboard`, { experience });
+      const response = await api.put(`/user/${userId}/onboard`, data);
       return response.data;
     } catch (error) {
       throw error.response?.data?.message || error.response?.data || error.message || "Failed to save experience level";

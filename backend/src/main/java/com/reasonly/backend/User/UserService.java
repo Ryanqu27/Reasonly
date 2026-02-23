@@ -74,30 +74,31 @@ public class UserService {
 
     public UserProfile getUserProfile(String email) {
         User user = getUserByEmail(email);
-        return new UserProfile(user.getEmail(), user.getCurrentStreak(), 
-        user.getLongestStreak(), user.getRating(), user.getCreatedAt(), 
-        user.getQuestionsAnsweredCorrectly(), user.getQuestionsAnsweredIncorrectly(), 
-        user.getAccuracy());
+        return new UserProfile(user.getEmail(), user.getCurrentStreak(),
+                user.getLongestStreak(), user.getRating(), user.getCreatedAt(),
+                user.getQuestionsAnsweredCorrectly(), user.getQuestionsAnsweredIncorrectly(),
+                user.getAccuracy());
     }
 
     @Transactional
-    public void setExperience(Long id, UserExperience experience) {
+    public void onboardUser(Long id, OnboardRequest request) {
         User currentUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
         if (currentUser.getExperience() != null) {
             return;
         }
-        currentUser.setExperience(experience);
-        if (experience == UserExperience.BEGINNER) {
+        currentUser.setExperience(request.experience());
+        currentUser.setMotivation(request.motivation());
+        currentUser.setPreferredLanguage(request.preferredLanguage());
+        currentUser.setInterests(request.interests());
+
+        if (request.experience() == UserExperience.BEGINNER) {
             currentUser.setRating(0);
-        } 
-        else if (experience == UserExperience.INTERMEDIATE) {
+        } else if (request.experience() == UserExperience.INTERMEDIATE) {
             currentUser.setRating(500);
-        } 
-        else if (experience == UserExperience.ADVANCED) {
+        } else if (request.experience() == UserExperience.ADVANCED) {
             currentUser.setRating(1000);
-        } 
-        else if (experience == UserExperience.EXPERT) {
+        } else if (request.experience() == UserExperience.EXPERT) {
             currentUser.setRating(1500);
         }
         userRepository.save(currentUser);

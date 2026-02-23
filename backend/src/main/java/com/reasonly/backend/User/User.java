@@ -13,9 +13,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -59,6 +61,16 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private UserExperience experience;
+
+    @Enumerated(EnumType.STRING)
+    private UserMotivation motivation;
+
+    @Enumerated(EnumType.STRING)
+    private UserLanguage preferredLanguage;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    private List<UserInterest> interests;
 
     private int rating;
 
