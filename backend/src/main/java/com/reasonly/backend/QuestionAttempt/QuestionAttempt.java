@@ -2,6 +2,7 @@ package com.reasonly.backend.QuestionAttempt;
 
 import java.time.LocalDate;
 import com.reasonly.backend.Question.Question;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -34,5 +35,6 @@ public class QuestionAttempt {
 
     private LocalDate nextReviewDate = LocalDate.now().plusDays(1);
 
+    @Column(name = "\"interval\"")
     private int interval = 1;
 }
