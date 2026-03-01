@@ -21,5 +21,5 @@ export const checkStreak = async () => {
 
 export const resetQuestionAttempts = async () => {
     const user = await AuthService.fetchCurrentUser();
-    return api.delete(`/question-attempts/reset-question-attempts/${user.id}`);
+    return api.delete(`/question-attempts/reset/${user.id}`);
 };

@@ -48,7 +48,7 @@ public class QuestionAttemptController {
         questionAttemptService.updateQuestionAttempt(id, updatedQuestionAttempt);
     }
 
-    @DeleteMapping("/reset-question-attempts/{userId}")
+    @DeleteMapping("/reset/{userId}")
     public void deleteQuestionAttemptsByUserId(@PathVariable Long userId) {
         questionAttemptService.resetQuestionAttempts(userId);
     }

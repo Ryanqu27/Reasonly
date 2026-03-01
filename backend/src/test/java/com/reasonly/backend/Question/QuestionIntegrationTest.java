@@ -13,7 +13,6 @@ import com.reasonly.backend.User.User;
 import com.reasonly.backend.User.UserRepository;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -22,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-public class QuestionControllerIntegrationTest {
+public class QuestionIntegrationTest {
 
    @Autowired
    private MockMvc mockMvc;
