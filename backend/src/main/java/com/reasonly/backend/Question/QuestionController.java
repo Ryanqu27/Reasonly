@@ -25,8 +25,8 @@ public class QuestionController {
 
     @GetMapping()
     public ResponseEntity<List<Question>> getAllQuestions(
-            @RequestParam(required = false) QuestionType type) {
-        List<Question> questions = questionService.getQuestions(type);
+            @RequestParam(required = false) QuestionTopic topic) {
+        List<Question> questions = questionService.getQuestions(topic);
         return ResponseEntity.ok(questions);
     }
 

@@ -23,11 +23,11 @@ public class QuestionService {
         this.random = random;
     }
 
-    public List<Question> getQuestions(QuestionType type) {
-        if (type == null) {
+    public List<Question> getQuestions(QuestionTopic topic) {
+        if (topic == null) {
             return questionRepository.findAll();
         }
-        return questionRepository.findByType(type);
+        return questionRepository.findByTopic(topic);
     }
 
     public Question getQuestionById(Long id) {
@@ -46,6 +46,7 @@ public class QuestionService {
     public void updateQuestion(Long id, Question updatedQuestion) {
         Question existingQuestion = questionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Question not found with id: " + id));
+        existingQuestion.setTopic(updatedQuestion.getTopic());
         existingQuestion.setType(updatedQuestion.getType());
         existingQuestion.setDifficulty(updatedQuestion.getDifficulty());
         existingQuestion.setQuestion(updatedQuestion.getQuestion());

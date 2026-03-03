@@ -3,15 +3,12 @@ package com.reasonly.backend.Question;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 public enum QuestionType {
-    DATA_STRUCTURES_AND_ALGORITHMS,     // Recursion, greedy, DP intuitionArrays, stacks, trees, graphs, hash tables
-    SYSTEMS,                            // OS, memory, processes, threads, scheduling
-    NETWORKING,                         // HTTP, TCP/IP, latency, reliability
-    DATABASES,                          // SQL, indexing, normalization, transactions
-    CONCURRENCY,                        // Locks, deadlocks, race conditions
-    SOFTWARE_DESIGN,                    // OOP, design patterns, abstractions
-    DEBUGGING,                          // Code tracing, finding logical errors
-    CODE_REASONING;                     // Read code, predict output, edge cases
-
+    MULTIPLE_CHOICE, // Standard pick-one-answer format
+    SELECT_ALL, // Select all correct answers
+    CODE_WRITING, // Write code to solve a problem
+    FIND_THE_BUG, // Identify the incorrect line in a code snippet
+    ORDER_CODE, // Arrange code blocks in the correct order
+    FILL_IN_THE_BLANK; // Fill in missing keywords or values
 
     @JsonCreator
     public static QuestionType fromString(String value) {

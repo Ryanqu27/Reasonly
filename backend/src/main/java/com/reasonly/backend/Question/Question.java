@@ -21,10 +21,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @Table(name = "questions")
 public class Question {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; 
+    private Long id;
+
+    @Enumerated(EnumType.STRING)
+    private QuestionTopic topic;
 
     @Enumerated(EnumType.STRING)
     private QuestionType type;
@@ -40,8 +43,10 @@ public class Question {
     @Column(nullable = false)
     private String correctAnswer;
 
-    public Question(Long id, QuestionType type, QuestionDifficulty difficulty, String question, List<String> answers, String correctAnswer) {
+    public Question(Long id, QuestionTopic topic, QuestionType type, QuestionDifficulty difficulty, String question,
+            List<String> answers, String correctAnswer) {
         this.id = id;
+        this.topic = topic;
         this.type = type;
         this.difficulty = difficulty;
         this.question = question;

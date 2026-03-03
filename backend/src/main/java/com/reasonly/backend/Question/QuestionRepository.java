@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface QuestionRepository extends JpaRepository<Question, Long> {
-        List<Question> findByType(QuestionType type);
+        List<Question> findByTopic(QuestionTopic topic);
 
         @Query("SELECT q FROM Question q WHERE q.difficulty = :difficulty AND q.id NOT IN (SELECT qa.question.id FROM QuestionAttempt qa WHERE qa.userId = :userId)")
         List<Question> findUnansweredByDifficultyAndUserId(@Param("difficulty") QuestionDifficulty difficulty,
