@@ -32,6 +32,7 @@ public class Question {
     @Enumerated(EnumType.STRING)
     private QuestionType type;
 
+    @Enumerated(EnumType.STRING)
     private QuestionDifficulty difficulty;
 
     private String question;
@@ -40,11 +41,12 @@ public class Question {
     @Column(name = "answer")
     private List<String> answers;
 
-    @Column(nullable = false)
-    private String correctAnswer;
+    @ElementCollection
+    @Column(name = "correct_answer")
+    private List<String> correctAnswer;
 
     public Question(Long id, QuestionTopic topic, QuestionType type, QuestionDifficulty difficulty, String question,
-            List<String> answers, String correctAnswer) {
+            List<String> answers, List<String> correctAnswer) {
         this.id = id;
         this.topic = topic;
         this.type = type;

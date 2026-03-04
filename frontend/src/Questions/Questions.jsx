@@ -1,4 +1,5 @@
-import QuestionCard from "./QuestionCard";
+import MultipleChoiceQuestion from "./Formats/MultipleChoiceQuestion";
+import SelectAllQuestion from "./Formats/SelectAllQuestion";
 import { useState, useEffect } from 'react';
 import { getQuestions, updateCompletedDate, submitQuestionAttempt, resetQuestionAttempts } from './QuestionService'
 import AuthService from '../UserAuth/AuthService'
@@ -39,22 +40,27 @@ function Questions({ onUserUpdate }) {
     fetchNextQuestion();
   };
 
-  const handleAnswerClick = async (option) => {
+  const handleAnswerClick = async (answerArray) => {
     if (!currentQuestion) return;
 
-    setSelectedAnswer(option);
+    setSelectedAnswer(answerArray);
     setShowFeedback(true);
     const user = await AuthService.fetchCurrentUser();
     const questionAttempt = {
       userId: user.id,
       questionId: currentQuestion.id,
-      answer: option
+      answer: answerArray
     };
 
     try {
       const response = await submitQuestionAttempt(questionAttempt);
       setAttemptResult(response.data);
-      if (option === currentQuestion.correctAnswer) {
+
+      const isCorrect =
+        answerArray.length === currentQuestion.correctAnswer.length &&
+        answerArray.every(val => currentQuestion.correctAnswer.includes(val));
+
+      if (isCorrect) {
         await updateCompletedDate();
       }
     } catch (err) {
@@ -114,18 +120,18 @@ function Questions({ onUserUpdate }) {
   if (!currentQuestion) return (
     <div className="dashboard-container">
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <button
-            onClick={() => setSessionStarted(false)}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--text-muted)',
-              cursor: 'pointer',
-              fontSize: '0.875rem'
-            }}
-          >
-            &larr; Exit Session
-          </button>
+        <button
+          onClick={() => setSessionStarted(false)}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: 'var(--text-muted)',
+            cursor: 'pointer',
+            fontSize: '0.875rem'
+          }}
+        >
+          &larr; Exit Session
+        </button>
       </div>
       <div className="stat-card" style={{ textAlign: 'center', padding: '3rem' }}>
         <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
@@ -189,13 +195,28 @@ function Questions({ onUserUpdate }) {
         </button>
       </div>
 
-      <QuestionCard
-        question={currentQuestion}
-        onAnswer={handleAnswerClick}
-        selectedAnswer={selectedAnswer}
-        showFeedback={showFeedback}
-      />
+      {/* Question Component rendering based on type */}
+      {currentQuestion.type === 'MULTIPLE_CHOICE' ? (
+        <MultipleChoiceQuestion
+          question={currentQuestion}
+          onAnswer={handleAnswerClick}
+          selectedAnswer={selectedAnswer}
+          showFeedback={showFeedback}
+        />
+      ) : currentQuestion.type === 'SELECT_ALL' ? (
+        <SelectAllQuestion
+          question={currentQuestion}
+          onAnswer={handleAnswerClick}
+          selectedAnswer={selectedAnswer}
+          showFeedback={showFeedback}
+        />
+      ) : (
+        <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+          Unsupported question format: {currentQuestion.type}
+        </div>
+      )}
 
+      {/* Feedback & Next */}
       {showFeedback && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           {attemptResult && (

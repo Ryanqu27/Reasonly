@@ -1,8 +1,11 @@
 package com.reasonly.backend.QuestionAttempt;
 
 import java.time.LocalDate;
+import java.util.List;
+
 import com.reasonly.backend.Question.Question;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,7 +34,9 @@ public class QuestionAttempt {
     @ManyToOne
     private Question question;
 
-    private String answer;
+    @ElementCollection
+    @Column(name = "answer")
+    private List<String> answer;
 
     private LocalDate nextReviewDate = LocalDate.now().plusDays(1);
 

@@ -19,6 +19,7 @@ import org.mockito.MockitoAnnotations;
 import com.reasonly.backend.Question.Question;
 import com.reasonly.backend.Question.QuestionDifficulty;
 import com.reasonly.backend.Question.QuestionRepository;
+import com.reasonly.backend.Question.QuestionType;
 import com.reasonly.backend.User.User;
 import com.reasonly.backend.User.UserRepository;
 
@@ -54,12 +55,13 @@ class QuestionAttemptServiceTest {
 
         question = new Question();
         question.setDifficulty(QuestionDifficulty.EASY);
-        question.setCorrectAnswer("correct");
+        question.setType(QuestionType.MULTIPLE_CHOICE);
+        question.setCorrectAnswer(List.of("correct"));
 
         request = new QuestionAttemptRequest();
         request.setUserId(1L);
         request.setQuestionId(10L);
-        request.setAnswer("correct");
+        request.setAnswer(List.of("correct"));
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(questionRepository.findById(10L)).thenReturn(Optional.of(question));
@@ -85,7 +87,7 @@ class QuestionAttemptServiceTest {
     void insertQuestionAttempt_WrongAnswer_MatchedDifficulty_Loses40Rating() {
         // User is EASY (1500), question is EASY — matched difficulty
         // Wrong answer → -40
-        request.setAnswer("wrong");
+        request.setAnswer(List.of("wrong"));
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
                 .thenReturn(Collections.emptyList());
 
@@ -115,7 +117,7 @@ class QuestionAttemptServiceTest {
         // User is EASY (1500), question is MEDIUM (harder)
         // Wrong answer on harder question → -20
         question.setDifficulty(QuestionDifficulty.MEDIUM);
-        request.setAnswer("wrong");
+        request.setAnswer(List.of("wrong"));
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
                 .thenReturn(Collections.emptyList());
 
@@ -144,7 +146,7 @@ class QuestionAttemptServiceTest {
         // User is EASY (1500), question is BASIC (easier)
         // Wrong answer on easier question → -60 (big penalty)
         question.setDifficulty(QuestionDifficulty.BASIC);
-        request.setAnswer("wrong");
+        request.setAnswer(List.of("wrong"));
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
                 .thenReturn(Collections.emptyList());
 
@@ -160,7 +162,7 @@ class QuestionAttemptServiceTest {
         // 0
         user.setRating(20); // BASIC level (≤1000)
         question.setDifficulty(QuestionDifficulty.BASIC);
-        request.setAnswer("wrong");
+        request.setAnswer(List.of("wrong"));
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
                 .thenReturn(Collections.emptyList());
 
@@ -185,7 +187,7 @@ class QuestionAttemptServiceTest {
     @Test
     void insertQuestionAttempt_WrongAnswer_UpdatesAccuracyCorrectly() {
         // 0 correct, 1 incorrect → accuracy = 0.0
-        request.setAnswer("wrong");
+        request.setAnswer(List.of("wrong"));
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
                 .thenReturn(Collections.emptyList());
 
@@ -213,7 +215,6 @@ class QuestionAttemptServiceTest {
         assertEquals(1, user.getQuestionsAnsweredIncorrectly());
         assertEquals(0.8, user.getAccuracy(), 0.001);
     }
-
 
     @Test
     void insertQuestionAttempt_FirstAttempt_SavesNewAttempt() {
@@ -254,7 +255,7 @@ class QuestionAttemptServiceTest {
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
                 .thenReturn(List.of(existingAttempt));
 
-        request.setAnswer("wrong");
+        request.setAnswer(List.of("wrong"));
         questionAttemptService.insertQuestionAttempt(request);
 
         assertEquals(1, existingAttempt.getInterval());

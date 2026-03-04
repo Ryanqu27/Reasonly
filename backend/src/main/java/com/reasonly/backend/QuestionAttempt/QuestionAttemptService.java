@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.reasonly.backend.Question.Question;
 import com.reasonly.backend.Question.QuestionDifficulty;
+import com.reasonly.backend.Question.QuestionType;
 import com.reasonly.backend.User.User;
 import com.reasonly.backend.User.UserRepository;
 
@@ -46,6 +47,15 @@ public class QuestionAttemptService {
         return questionAttemptRepository.findByUserIdAndQuestion(user.getId(), question);
     }
 
+    public boolean validateAnswer(List<String> correctAnswer, List<String> userAnswer, QuestionType questionType) {
+        if (questionType == QuestionType.MULTIPLE_CHOICE || questionType == QuestionType.SELECT_ALL) {
+            return correctAnswer.size() == userAnswer.size() && correctAnswer.containsAll(userAnswer);
+        } else {
+            // Implement other question type logics here in future
+            return correctAnswer.equals(userAnswer);
+        }
+    }
+
     @Transactional
     public QuestionAttemptResult insertQuestionAttempt(QuestionAttemptRequest request) {
         User user = userRepository.findById(request.getUserId())
@@ -53,37 +63,38 @@ public class QuestionAttemptService {
         Question question = questionRepository.findById(request.getQuestionId())
                 .orElseThrow(() -> new RuntimeException("Question not found with id: " + request.getQuestionId()));
 
-        List<QuestionAttempt> questionAttempts = questionAttemptRepository.findByUserIdAndQuestion(user.getId(), question);
+        List<QuestionAttempt> questionAttempts = questionAttemptRepository.findByUserIdAndQuestion(user.getId(),
+                question);
         if (!questionAttempts.isEmpty()) {
             // Update existing attempt if it exists
             if (questionAttempts.get(0).getQuestion().getCorrectAnswer().equals(request.getAnswer())) {
                 questionAttempts.get(0).setInterval(questionAttempts.get(0).getInterval() * 2);
-                questionAttempts.get(0).setNextReviewDate(LocalDate.now().plusDays(questionAttempts.get(0).getInterval()));
-            }
-            else {
+                questionAttempts.get(0)
+                        .setNextReviewDate(LocalDate.now().plusDays(questionAttempts.get(0).getInterval()));
+            } else {
                 questionAttempts.get(0).setInterval(1);
                 questionAttempts.get(0).setNextReviewDate(LocalDate.now().plusDays(1));
             }
-        
+
             questionAttemptRepository.save(questionAttempts.get(0));
-        }
-        else {
+        } else {
             QuestionAttempt attempt = new QuestionAttempt();
             attempt.setUserId(user.getId());
             attempt.setQuestion(question);
             attempt.setAnswer(request.getAnswer());
             questionAttemptRepository.save(attempt);
         }
-        
-        boolean isCorrect = request.getAnswer().equals(question.getCorrectAnswer());
+
+        boolean isCorrect = validateAnswer(question.getCorrectAnswer(), request.getAnswer(), question.getType());
         user.setQuestionsAnsweredCorrectly(user.getQuestionsAnsweredCorrectly() + (isCorrect ? 1 : 0));
         user.setQuestionsAnsweredIncorrectly(user.getQuestionsAnsweredIncorrectly() + (isCorrect ? 0 : 1));
-        user.setAccuracy((double) user.getQuestionsAnsweredCorrectly() / (user.getQuestionsAnsweredCorrectly() + user.getQuestionsAnsweredIncorrectly()));
+        user.setAccuracy((double) user.getQuestionsAnsweredCorrectly()
+                / (user.getQuestionsAnsweredCorrectly() + user.getQuestionsAnsweredIncorrectly()));
         userRepository.save(user);
         QuestionAttemptResult result = updateUserRating(user, question, isCorrect);
         return result;
     }
-    
+
     private QuestionAttemptResult updateUserRating(User user, Question question, boolean isCorrect) {
         int currentRating = user.getRating();
         QuestionDifficulty questionDiff = question.getDifficulty();
