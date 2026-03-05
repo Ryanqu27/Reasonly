@@ -74,7 +74,7 @@ class QuestionAttemptServiceTest {
         // User is EASY (rating 1500), question is EASY — matched difficulty
         // Correct answer → +40
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
-                .thenReturn(Collections.emptyList());
+            .thenReturn(Collections.emptyList());
 
         QuestionAttemptResult result = questionAttemptService.insertQuestionAttempt(request);
 
@@ -89,7 +89,7 @@ class QuestionAttemptServiceTest {
         // Wrong answer → -40
         request.setAnswer(List.of("wrong"));
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
-                .thenReturn(Collections.emptyList());
+            .thenReturn(Collections.emptyList());
 
         QuestionAttemptResult result = questionAttemptService.insertQuestionAttempt(request);
 
@@ -104,7 +104,7 @@ class QuestionAttemptServiceTest {
         // Correct answer on harder question → +60
         question.setDifficulty(QuestionDifficulty.MEDIUM);
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
-                .thenReturn(Collections.emptyList());
+            .thenReturn(Collections.emptyList());
 
         QuestionAttemptResult result = questionAttemptService.insertQuestionAttempt(request);
 
@@ -119,7 +119,7 @@ class QuestionAttemptServiceTest {
         question.setDifficulty(QuestionDifficulty.MEDIUM);
         request.setAnswer(List.of("wrong"));
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
-                .thenReturn(Collections.emptyList());
+            .thenReturn(Collections.emptyList());
 
         QuestionAttemptResult result = questionAttemptService.insertQuestionAttempt(request);
 
@@ -133,7 +133,7 @@ class QuestionAttemptServiceTest {
         // Correct answer on easier question → +20
         question.setDifficulty(QuestionDifficulty.BASIC);
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
-                .thenReturn(Collections.emptyList());
+            .thenReturn(Collections.emptyList());
 
         QuestionAttemptResult result = questionAttemptService.insertQuestionAttempt(request);
 
@@ -148,7 +148,7 @@ class QuestionAttemptServiceTest {
         question.setDifficulty(QuestionDifficulty.BASIC);
         request.setAnswer(List.of("wrong"));
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
-                .thenReturn(Collections.emptyList());
+            .thenReturn(Collections.emptyList());
 
         QuestionAttemptResult result = questionAttemptService.insertQuestionAttempt(request);
 
@@ -164,7 +164,7 @@ class QuestionAttemptServiceTest {
         question.setDifficulty(QuestionDifficulty.BASIC);
         request.setAnswer(List.of("wrong"));
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
-                .thenReturn(Collections.emptyList());
+            .thenReturn(Collections.emptyList());
 
         QuestionAttemptResult result = questionAttemptService.insertQuestionAttempt(request);
 
@@ -175,7 +175,7 @@ class QuestionAttemptServiceTest {
     void insertQuestionAttempt_CorrectAnswer_UpdatesAccuracyCorrectly() {
         // 1 correct, 0 incorrect → accuracy = 1.0
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
-                .thenReturn(Collections.emptyList());
+            .thenReturn(Collections.emptyList());
 
         questionAttemptService.insertQuestionAttempt(request);
 
@@ -189,7 +189,7 @@ class QuestionAttemptServiceTest {
         // 0 correct, 1 incorrect → accuracy = 0.0
         request.setAnswer(List.of("wrong"));
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
-                .thenReturn(Collections.emptyList());
+            .thenReturn(Collections.emptyList());
 
         questionAttemptService.insertQuestionAttempt(request);
 
@@ -206,7 +206,7 @@ class QuestionAttemptServiceTest {
         user.setAccuracy(0.75);
 
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
-                .thenReturn(Collections.emptyList());
+            .thenReturn(Collections.emptyList());
 
         // Another correct answer → 4 correct, 1 incorrect → 80%
         questionAttemptService.insertQuestionAttempt(request);
@@ -220,7 +220,7 @@ class QuestionAttemptServiceTest {
     void insertQuestionAttempt_FirstAttempt_SavesNewAttempt() {
         // No previous attempt — should save a brand new QuestionAttempt
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
-                .thenReturn(Collections.emptyList());
+            .thenReturn(Collections.emptyList());
 
         questionAttemptService.insertQuestionAttempt(request);
 
@@ -236,7 +236,7 @@ class QuestionAttemptServiceTest {
         existingAttempt.setNextReviewDate(LocalDate.now());
 
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
-                .thenReturn(List.of(existingAttempt));
+            .thenReturn(List.of(existingAttempt));
 
         questionAttemptService.insertQuestionAttempt(request);
 
@@ -253,7 +253,7 @@ class QuestionAttemptServiceTest {
         existingAttempt.setNextReviewDate(LocalDate.now().plusDays(8));
 
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
-                .thenReturn(List.of(existingAttempt));
+            .thenReturn(List.of(existingAttempt));
 
         request.setAnswer(List.of("wrong"));
         questionAttemptService.insertQuestionAttempt(request);
@@ -268,7 +268,7 @@ class QuestionAttemptServiceTest {
         request.setUserId(99L);
 
         assertThrows(RuntimeException.class,
-                () -> questionAttemptService.insertQuestionAttempt(request));
+            () -> questionAttemptService.insertQuestionAttempt(request));
     }
 
     @Test
@@ -277,6 +277,6 @@ class QuestionAttemptServiceTest {
         request.setQuestionId(99L);
 
         assertThrows(RuntimeException.class,
-                () -> questionAttemptService.insertQuestionAttempt(request));
+            () -> questionAttemptService.insertQuestionAttempt(request));
     }
 }

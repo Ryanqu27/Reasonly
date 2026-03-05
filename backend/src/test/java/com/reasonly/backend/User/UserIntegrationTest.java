@@ -42,24 +42,24 @@ public class UserIntegrationTest {
         testUser.setPasswordHash("password");
         testUser = userRepository.save(testUser);
         SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(testUser, null, testUser.getAuthorities()));
+            new UsernamePasswordAuthenticationToken(testUser, null, testUser.getAuthorities()));
     }
 
     @Test
     void getCurrentUser_ReturnsCurrentUser() throws Exception {
         mockMvc.perform(get("/api/user/me"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value("test@gmail.com"));
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.email").value("test@gmail.com"));
     }
 
     @Test
     void getUserProfile_ReturnsUserProfile() throws Exception {
         mockMvc.perform(get("/api/user/profile"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value("test@gmail.com"))
-                .andExpect(jsonPath("$.currentStreak").value(0))
-                .andExpect(jsonPath("$.createdAt").value(testUser.getCreatedAt().toString()))
-                .andExpect(jsonPath("$.rating").value(0));
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.email").value("test@gmail.com"))
+            .andExpect(jsonPath("$.currentStreak").value(0))
+            .andExpect(jsonPath("$.createdAt").value(testUser.getCreatedAt().toString()))
+            .andExpect(jsonPath("$.rating").value(0));
     }
 
     @Test

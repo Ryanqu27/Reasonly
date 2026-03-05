@@ -43,15 +43,15 @@ public class QuestionIntegrationTest {
    @WithMockUser
    void getAllQuestions_ReturnsSuccessAndData() throws Exception {
       mockMvc.perform(get("/api/questions"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$").isArray());
+         .andExpect(status().isOk())
+         .andExpect(jsonPath("$").isArray());
    }
 
    @Test
    void getPlayQuestions_RequiresAuthentication() throws Exception {
       // Without any authentication, the endpoint should return 403 Forbidden
       mockMvc.perform(get("/api/questions/play"))
-            .andExpect(status().isForbidden());
+         .andExpect(status().isForbidden());
    }
 
    @Test
@@ -59,9 +59,9 @@ public class QuestionIntegrationTest {
    void getPlayQuestions_ReturnsSuccessAndData() throws Exception {
       User testUser = userRepository.findByEmail("test@gmail.com").orElseThrow();
       SecurityContextHolder.getContext().setAuthentication(
-            new UsernamePasswordAuthenticationToken(testUser, null, testUser.getAuthorities()));
+         new UsernamePasswordAuthenticationToken(testUser, null, testUser.getAuthorities()));
       mockMvc.perform(get("/api/questions/play"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$").isArray());
+         .andExpect(status().isOk())
+         .andExpect(jsonPath("$").isArray());
    }
 }
