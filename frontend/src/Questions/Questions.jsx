@@ -1,5 +1,6 @@
 import MultipleChoiceQuestion from "./Formats/MultipleChoiceQuestion";
 import SelectAllQuestion from "./Formats/SelectAllQuestion";
+import FindTheBugQuestion from "./Formats/FindTheBugQuestion";
 import { useState, useEffect } from 'react';
 import { getQuestions, updateCompletedDate, submitQuestionAttempt, resetQuestionAttempts } from './QuestionService'
 import AuthService from '../UserAuth/AuthService'
@@ -205,6 +206,13 @@ function Questions({ onUserUpdate }) {
         />
       ) : currentQuestion.type === 'SELECT_ALL' ? (
         <SelectAllQuestion
+          question={currentQuestion}
+          onAnswer={handleAnswerClick}
+          selectedAnswer={selectedAnswer}
+          showFeedback={showFeedback}
+        />
+      ) : currentQuestion.type === 'FIND_THE_BUG' ? (
+        <FindTheBugQuestion
           question={currentQuestion}
           onAnswer={handleAnswerClick}
           selectedAnswer={selectedAnswer}

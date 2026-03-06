@@ -16,7 +16,7 @@ import com.reasonly.backend.Question.QuestionType;
 @Configuration
 public class DataInitializer {
 
-    // Method for testing purposes
+        // Method for testing purposes
     @Bean
     CommandLineRunner init(QuestionRepository repository) {
         return args -> {
@@ -35,13 +35,19 @@ public class DataInitializer {
                 QuestionDifficulty.MEDIUM,
                 "What happens to time complexity when a recursive algorithm recomputes overlapping subproblems?",
                 List.of("Becomes linear", "Becomes exponential", "Remains constant",
-                "Becomes logarithmic"), List.of("Becomes exponential")));
-             repository.saveAll(questions);
-         };
-     }
+                "Becomes logarithmic"),
+                List.of("Becomes exponential")));
+            questions.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.FIND_THE_BUG,
+                QuestionDifficulty.EASY,
+                "Identify the line number containing the bug in the following Java code:\n\n```java\n1: public class Test {\n2:     public static void main(String[] args) {\n3:         int x = 5;\n4:         if (x = 5) { System.out.println(x); }\n5:     }\n6: }\n```",
+                List.of(),
+                List.of("4")));
+            repository.saveAll(questions);
+        };
+    }
 
-    // Method for production
-    /* 
+        // Method for production
+        /*
     @Bean
     CommandLineRunner init(QuestionRepository repository) {
         return args -> {
@@ -1503,5 +1509,5 @@ public class DataInitializer {
             "Memory allocation", "Package importing"), List.of("Automatic conversion between primitive types and their wrapper classes")));
         return q;
     }
-    */
+         */
 }
