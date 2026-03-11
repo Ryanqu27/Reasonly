@@ -71,8 +71,8 @@ export default function FindTheBugQuestion({ question, onAnswer, selectedAnswer,
             {showFeedback && (
                 <div className={`format-bug-feedback ${question.correctAnswer.includes(input.trim()) ? 'correct' : 'incorrect'}`}>
                     {question.correctAnswer.includes(input.trim())
-                        ? '✓ Correct! You found the bug.'
-                        : `✗ Incorrect — the bug was on line ${question.correctAnswer?.join(', ')}`}
+                        ? ''
+                        : `Incorrect — the bug was on line ${question.correctAnswer?.join(', ')}`}
                 </div>
             )}
 

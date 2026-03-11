@@ -42,6 +42,9 @@ public class QuestionAttemptIntegrationTest {
     private QuestionRepository questionRepository;
 
     @Autowired
+    private QuestionAttemptRepository questionAttemptRepository;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
     private User testUser;
@@ -49,6 +52,7 @@ public class QuestionAttemptIntegrationTest {
 
     @BeforeEach
     void setUp() {
+        questionAttemptRepository.deleteAll();
         userRepository.deleteAll();
         testUser = new User();
         testUser.setEmail("test@gmail.com");
@@ -196,6 +200,75 @@ public class QuestionAttemptIntegrationTest {
             .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.correct").value(true))
+            .andExpect(jsonPath("$.ratingChange").isNumber())
+            .andExpect(jsonPath("$.newRating").isNumber());
+    }
+
+    @Test
+    @WithMockUser
+    void insertQuestionAttempt_FindTheBugIncorrect_ReturnsFailure() throws Exception {
+        testQuestion = new Question();
+        testQuestion.setDifficulty(QuestionDifficulty.EASY);
+        testQuestion.setType(QuestionType.FIND_THE_BUG);
+        testQuestion.setCorrectAnswer(List.of("2"));
+        testQuestion = questionRepository.save(testQuestion);
+
+        QuestionAttemptRequest request = new QuestionAttemptRequest();
+        request.setUserId(testUser.getId());
+        request.setQuestionId(testQuestion.getId());
+        request.setAnswer(List.of("1"));
+
+        mockMvc.perform(post("/api/question-attempts")
+            .contentType("application/json")
+            .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.correct").value(false))
+            .andExpect(jsonPath("$.ratingChange").isNumber())
+            .andExpect(jsonPath("$.newRating").isNumber());
+    }
+
+    @Test
+    @WithMockUser
+    void insertQuestionAttempt_FillInTheBlankCorrect_ReturnsSuccess() throws Exception {
+        testQuestion = new Question();
+        testQuestion.setDifficulty(QuestionDifficulty.EASY);
+        testQuestion.setType(QuestionType.FILL_IN_THE_BLANK);
+        testQuestion.setCorrectAnswer(List.of("i"));
+        testQuestion = questionRepository.save(testQuestion);
+
+        QuestionAttemptRequest request = new QuestionAttemptRequest();
+        request.setUserId(testUser.getId());
+        request.setQuestionId(testQuestion.getId());
+        request.setAnswer(List.of("i"));
+
+        mockMvc.perform(post("/api/question-attempts")
+            .contentType("application/json")
+            .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.correct").value(true))
+            .andExpect(jsonPath("$.ratingChange").isNumber())
+            .andExpect(jsonPath("$.newRating").isNumber());
+    }
+
+    @Test
+    @WithMockUser
+    void insertQuestionAttempt_FillInTheBlankIncorrect_ReturnsFailure() throws Exception {
+        testQuestion = new Question();
+        testQuestion.setDifficulty(QuestionDifficulty.EASY);
+        testQuestion.setType(QuestionType.FILL_IN_THE_BLANK);
+        testQuestion.setCorrectAnswer(List.of("i"));
+        testQuestion = questionRepository.save(testQuestion);
+
+        QuestionAttemptRequest request = new QuestionAttemptRequest();
+        request.setUserId(testUser.getId());
+        request.setQuestionId(testQuestion.getId());
+        request.setAnswer(List.of("j"));
+
+        mockMvc.perform(post("/api/question-attempts")
+            .contentType("application/json")
+            .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.correct").value(false))
             .andExpect(jsonPath("$.ratingChange").isNumber())
             .andExpect(jsonPath("$.newRating").isNumber());
     }

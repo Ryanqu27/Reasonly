@@ -9,7 +9,6 @@ public enum QuestionTopic {
     DATABASES, // SQL, indexing, normalization, transactions
     CONCURRENCY, // Locks, deadlocks, race conditions
     SOFTWARE_DESIGN, // OOP, design patterns, abstractions
-    DEBUGGING, // Code tracing, finding logical errors
     CODE_REASONING; // Read code, predict output, edge cases
 
     @JsonCreator

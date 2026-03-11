@@ -48,7 +48,10 @@ public class QuestionAttemptService {
     }
 
     public boolean validateAnswer(List<String> correctAnswer, List<String> userAnswer, QuestionType questionType) {
-        if (questionType == QuestionType.MULTIPLE_CHOICE || questionType == QuestionType.SELECT_ALL || questionType == QuestionType.FIND_THE_BUG) {
+        if (questionType == QuestionType.MULTIPLE_CHOICE || 
+            questionType == QuestionType.SELECT_ALL || 
+            questionType == QuestionType.FIND_THE_BUG ||
+            questionType == QuestionType.FILL_IN_THE_BLANK) {
             return correctAnswer.size() == userAnswer.size() && correctAnswer.containsAll(userAnswer);
         } else {
             // Implement other question type logics here in future

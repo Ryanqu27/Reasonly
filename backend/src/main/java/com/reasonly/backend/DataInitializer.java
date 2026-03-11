@@ -37,11 +37,16 @@ public class DataInitializer {
                 List.of("Becomes linear", "Becomes exponential", "Remains constant",
                 "Becomes logarithmic"),
                 List.of("Becomes exponential")));
-            questions.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.FIND_THE_BUG,
+            questions.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.FIND_THE_BUG,
                 QuestionDifficulty.EASY,
                 "Identify the line number containing the bug in the following Java code:\n\n```java\n1: public class Test {\n2:     public static void main(String[] args) {\n3:         int x = 5;\n4:         if (x = 5) { System.out.println(x); }\n5:     }\n6: }\n```",
                 List.of(),
                 List.of("4")));
+            questions.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.FILL_IN_THE_BLANK,
+                QuestionDifficulty.EASY,
+                "Fill in the blank to complete the loop that prints numbers 1 through 5:\n\n```java\nfor (int i = 1; i <= ___ ; i++) {\n    System.out.println(i);\n}\n```",
+                List.of(),
+                List.of("5")));
             repository.saveAll(questions);
         };
     }
@@ -1140,196 +1145,6 @@ public class DataInitializer {
         return q;
     }
 
-    private List<Question> getDebuggingQuestions() {
-        List<Question> q = new ArrayList<>();
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.BASIC,
-            "What is the first step in debugging unexpected behavior?",
-            List.of("Rewrite the code", "Add more features", "Reproduce the issue",
-            "Deploy to production"), List.of("Reproduce the issue")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.MEDIUM,
-            "Why are logs useful in debugging?",
-            List.of("They improve performance", "They replace tests",
-            "They provide execution context",
-            "They reduce memory usage"), List.of("They provide execution context")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE, QuestionDifficulty.HARD,
-            "What makes concurrency bugs difficult to reproduce?",
-            List.of("They depend on timing and thread scheduling", "They only occur in production",
-            "They cause compile errors", "They occur deterministically"), List.of("They depend on timing and thread scheduling")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE, QuestionDifficulty.HARD,
-            "What is a 'Heisenbug'?",
-            List.of("A bug caused by Heisenberg uncertainty",
-            "A bug that only happens in production",
-            "A bug that seems to disappear or change behavior when you try to study it",
-            "A deterministic logic error"), List.of("A bug that seems to disappear or change behavior when you try to study it")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.MEDIUM,
-            "What is the primary use of a performance profiler?",
-            List.of("Finding syntax errors", "Automating unit tests",
-            "Identifying bottlenecks and resource usage",
-            "Managing version control"), List.of("Identifying bottlenecks and resource usage")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.BASIC,
-            "What does 'Rubber Duck Debugging' involve?",
-            List.of("Using a script to find bugs",
-            "Explaining your code line-by-line to an inanimate object",
-            "Hiring a consultant", "Rewriting the entire module"), List.of("Explaining your code line-by-line to an inanimate object")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.MEDIUM, "What is a 'Breakpoint'?",
-            List.of("A point where the code crashes",
-            "A spot in the code where execution is paused to allow inspection",
-            "A network disconnection",
-            "A syntax error"), List.of("A spot in the code where execution is paused to allow inspection")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE, QuestionDifficulty.HARD,
-            "What is 'Differential Debugging'?",
-            List.of("Debugging math equations",
-            "Comparing a working version of the code with a non-working version to find the cause of a bug",
-            "Debugging different languages", "Using calculus to find errors"), List.of("Comparing a working version of the code with a non-working version to find the cause of a bug")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.BASIC, "What is a 'Stack Trace'?",
-            List.of(
-            "A list of open files",
-            "A report that shows the active stack frames at a certain point in time during the execution of a program",
-            "A memory map", "A history of Git commits"), List.of("A report that shows the active stack frames at a certain point in time during the execution of a program")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.MEDIUM, "What is a 'Watchpoint'?",
-            List.of("A type of clock",
-            "A special breakpoint that stops execution when the value of a specific variable changes",
-            "A security monitor", "A point where a function is called"), List.of("A special breakpoint that stops execution when the value of a specific variable changes")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE, QuestionDifficulty.HARD,
-            "What is 'Memory Leak' debugging primarily focused on?",
-            List.of("Finding syntax errors",
-            "Identifying objects that are no longer needed but are still taking up memory",
-            "Speeding up disk I/O", "Fixing network latency"), List.of("Identifying objects that are no longer needed but are still taking up memory")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE, QuestionDifficulty.EASY,
-            "Which tool is commonly used to debug Java applications?",
-            List.of("JDB", "Chrome DevTools", "Wireshark", "Valgrind"), List.of("JDB")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.MEDIUM,
-            "What is 'Post-mortem Debugging'?",
-            List.of("Debugging a program while it's running",
-            "Debugging a program after it has crashed using a saved state (e.g., core dump)",
-            "Writing tests before code", "Fixing bugs in old software"), List.of("Debugging a program after it has crashed using a saved state (e.g., core dump)")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE, QuestionDifficulty.HARD,
-            "What is the purpose of 'Tracepoints'?",
-            List.of("To stop the program",
-            "To log information without stopping the execution of the program",
-            "To find network routes", "To measure code coverage"), List.of("To log information without stopping the execution of the program")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.BASIC,
-            "What is an 'Off-by-one Error'?",
-            List.of("A type of network delay",
-            "A logic error where a loop iterates one time too many or too few",
-            "A hardware failure", "A typo in a variable name"), List.of("A logic error where a loop iterates one time too many or too few")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.MEDIUM,
-            "What is 'Logging Level' used for?",
-            List.of("To speed up logging",
-            "To control the severity and volume of log messages generated",
-            "To categorize logs by user", "To encrypt log files"), List.of("To control the severity and volume of log messages generated")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE, QuestionDifficulty.HARD,
-            "What is 'Static Analysis' in the context of debugging?",
-            List.of("Running the code with many inputs",
-            "Examining code without executing it to find potential bugs",
-            "Measuring CPU usage",
-            "Analyzing network traffic"), List.of("Examining code without executing it to find potential bugs")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE, QuestionDifficulty.EASY,
-            "What does it mean to 'step over' during debugging?",
-            List.of("Skipping the next line",
-            "Executing the current line of code and staying in the same function",
-            "Exiting the current function", "Entering into a function call"), List.of("Executing the current line of code and staying in the same function")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.MEDIUM,
-            "What is 'Regression Testing'?",
-            List.of("Testing old hardware",
-            "Re-running tests to ensure that recent changes haven't broken existing functionality",
-            "Predicting future bugs", "Testing the app with many users"), List.of("Re-running tests to ensure that recent changes haven't broken existing functionality")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE, QuestionDifficulty.HARD,
-            "What is a 'Race-condition Detector'?",
-            List.of("A tool that speeds up threads",
-            "A tool used to find data races in multi-threaded programs",
-            "A type of firewall", "A fast compiler"), List.of("A tool used to find data races in multi-threaded programs")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.BASIC,
-            "What is a 'Heuristic' in debugging?",
-            List.of("A rule of thumb or mental shortcut used to find bugs",
-            "A type of algorithm", "A syntax error", "A network tool"), List.of("A rule of thumb or mental shortcut used to find bugs")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.MEDIUM,
-            "What is 'Remote Debugging'?",
-            List.of("Debugging with a remote control",
-            "Debugging a program running on a different machine than the debugger",
-            "Debugging without a screen", "Moving a bug to another file"), List.of("Debugging a program running on a different machine than the debugger")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE, QuestionDifficulty.HARD,
-            "What is the 'Salami Slicing' bug?",
-            List.of("A very thin bug",
-            "A series of many small, barely noticeable errors that accumulate to a large error",
-            "A bug in a food app", "A fragmented file"), List.of("A series of many small, barely noticeable errors that accumulate to a large error")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.BASIC,
-            "What does 'Triage' mean in bug management?",
-            List.of("Fixing all bugs at once", "Prioritizing bugs based on severity and impact",
-            "Deleting old bugs", "Categorizing bugs by language"), List.of("Prioritizing bugs based on severity and impact")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.MEDIUM,
-            "What is a 'Sandbox' used for in debugging?",
-            List.of("Playing games",
-            "An isolated environment for testing and debugging code safely",
-            "A type of memory segment", "A high-speed network"), List.of("An isolated environment for testing and debugging code safely")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.EXTREME,
-            "What is symbolic execution in debugging?",
-            List.of("Using symbols instead of variable names",
-            "A technique that analyzes code by treating inputs as symbolic values to explore all execution paths",
-            "Debugging with icons", "A compression technique"), List.of("A technique that analyzes code by treating inputs as symbolic values to explore all execution paths")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.EXTREME,
-            "What is fuzzing (fuzz testing)?",
-            List.of("Testing with unclear requirements",
-            "Automated testing that provides random or malformed data as input to find bugs",
-            "Manual exploratory testing", "Performance testing"), List.of("Automated testing that provides random or malformed data as input to find bugs")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE, QuestionDifficulty.HARD,
-            "What is a core dump?",
-            List.of("Deleted memory",
-            "A file containing the recorded state of a program's memory at crash time",
-            "A disk backup", "A log file"), List.of("A file containing the recorded state of a program's memory at crash time")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.MEDIUM,
-            "What is a conditional breakpoint?",
-            List.of("A breakpoint that only works sometimes",
-            "A breakpoint that triggers only when a specified condition is true",
-            "A broken condition",
-            "An if statement"), List.of("A breakpoint that triggers only when a specified condition is true")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.EXTREME, "What is delta debugging?",
-            List.of("Debugging Greek code",
-            "A technique that systematically narrows down failure-inducing input to a minimal subset",
-            "Debugging incremental changes", "Version control debugging"), List.of("A technique that systematically narrows down failure-inducing input to a minimal subset")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE, QuestionDifficulty.HARD,
-            "What is an assertion?",
-            List.of("A confident statement",
-            "A statement that tests a condition and halts execution if false during debugging",
-            "A type of comment", "A variable declaration"), List.of("A statement that tests a condition and halts execution if false during debugging")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.MEDIUM,
-            "What is 'stepping into' during debugging?",
-            List.of("Taking a break", "Entering into a function call to debug its internals",
-            "Skipping a line",
-            "Exiting the debugger"), List.of("Entering into a function call to debug its internals")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.EXTREME, "What is taint analysis?",
-            List.of("Checking for dirty code",
-            "Tracking the flow of untrusted data through a program to find security vulnerabilities",
-            "Code review process", "Memory cleanup"), List.of("Tracking the flow of untrusted data through a program to find security vulnerabilities")));
-        q.add(new Question(null, QuestionTopic.DEBUGGING, QuestionType.MULTIPLE_CHOICE, QuestionDifficulty.HARD,
-            "What is binary search debugging?",
-            List.of("Debugging binary files",
-            "Systematically dividing code or commits in half to isolate the source of a bug",
-            "Using binary numbers", "Low-level debugging"), List.of("Systematically dividing code or commits in half to isolate the source of a bug")));
-        return q;
-    }
-
     private List<Question> getCodeReasoningQuestions() {
         List<Question> q = new ArrayList<>();
         q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
@@ -1509,5 +1324,5 @@ public class DataInitializer {
             "Memory allocation", "Package importing"), List.of("Automatic conversion between primitive types and their wrapper classes")));
         return q;
     }
-         */
+    */
 }

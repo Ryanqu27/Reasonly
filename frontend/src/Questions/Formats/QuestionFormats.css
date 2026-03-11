@@ -227,6 +227,45 @@
     white-space: pre;
 }
 
+/* Inline input for Fill-in-the-Blank inside code blocks */
+.format-inline-input {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--primary, #3b82f6);
+    color: #7dd3fc;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: 600;
+    padding: 0 0.25rem;
+    width: 8ch;
+    min-width: 4ch;
+    outline: none;
+    transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.format-inline-input::placeholder {
+    color: rgba(148, 163, 184, 0.4);
+}
+
+.format-inline-input:focus {
+    border-bottom-color: #60a5fa;
+}
+
+.format-inline-input:disabled {
+    opacity: 0.8;
+    cursor: not-allowed;
+}
+
+.format-inline-input.correct {
+    border-bottom-color: var(--success, #10b981);
+    color: var(--success, #10b981);
+}
+
+.format-inline-input.incorrect {
+    border-bottom-color: var(--danger, #ef4444);
+    color: var(--danger, #ef4444);
+}
+
 .format-number-input-container {
     display: flex;
     flex-direction: column;
