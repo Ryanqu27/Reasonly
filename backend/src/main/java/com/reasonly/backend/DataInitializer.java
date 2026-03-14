@@ -47,6 +47,22 @@ public class DataInitializer {
                 "Fill in the blank to complete the loop that prints numbers 1 through 5:\n\n```java\nfor (int i = 1; i <= ___ ; i++) {\n    System.out.println(i);\n}\n```",
                 List.of(),
                 List.of("5")));
+            questions.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.ORDER_CODE,
+                QuestionDifficulty.MEDIUM,
+                "Order the following operations correctly to perform a standard Binary Search:",
+                List.of(
+                    "if (arr[mid] < target) left = mid + 1;", 
+                    "int mid = left + (right - left) / 2;", 
+                    "else right = mid - 1;",
+                    "if (arr[mid] == target) return mid;"
+                ), 
+                List.of(
+                    "int mid = left + (right - left) / 2;", 
+                    "if (arr[mid] == target) return mid;", 
+                    "if (arr[mid] < target) left = mid + 1;", 
+                    "else right = mid - 1;"
+                ) 
+            ));
             repository.saveAll(questions);
         };
     }

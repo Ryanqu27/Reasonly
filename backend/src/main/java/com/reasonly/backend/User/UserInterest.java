@@ -7,6 +7,5 @@ public enum UserInterest {
     DATABASES,
     CONCURRENCY,
     SOFTWARE_DESIGN,
-    DEBUGGING,
     CODE_REASONING
 }

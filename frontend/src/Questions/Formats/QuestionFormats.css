@@ -351,3 +351,62 @@
     color: var(--danger, #ef4444);
     border: 1px solid rgba(239, 68, 68, 0.3);
 }
+
+/* Order Code Specifics */
+.format-draggable-block {
+    display: flex;
+    align-items: center;
+    margin: 0 !important;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    cursor: grab;
+    transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s, background-color 0.2s, border-color 0.2s;
+    user-select: none;
+    background-color: var(--bg-surface, #1e293b);
+    border-color: var(--border-color, #334155);
+}
+
+.format-draggable-block:hover:not([draggable="false"]) {
+    background-color: var(--bg-surface-hover, #334155);
+    border-color: var(--primary, #3b82f6);
+}
+
+.format-draggable-block:active:not([draggable="false"]) {
+    cursor: grabbing;
+}
+
+.format-draggable-block.dragging {
+    opacity: 0.4;
+    transform: scale(0.98);
+}
+
+.drag-handle {
+    color: var(--text-muted, #94a3b8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.format-draggable-block:hover .drag-handle {
+    color: var(--text-main, #f8fafc);
+}
+
+.format-draggable-block code {
+    white-space: pre-wrap;
+    word-break: break-all;
+    font-size: 0.95rem;
+    color: #e2e8f0;
+}
+
+.format-draggable-block.correct-position {
+    border-color: var(--success, #10b981) !important;
+    background-color: rgba(16, 185, 129, 0.05) !important;
+}
+
+.format-draggable-block.incorrect-position {
+    border-color: var(--danger, #ef4444) !important;
+    background-color: rgba(239, 68, 68, 0.05) !important;
+}

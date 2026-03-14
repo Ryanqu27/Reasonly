@@ -51,7 +51,8 @@ public class QuestionAttemptService {
         if (questionType == QuestionType.MULTIPLE_CHOICE || 
             questionType == QuestionType.SELECT_ALL || 
             questionType == QuestionType.FIND_THE_BUG ||
-            questionType == QuestionType.FILL_IN_THE_BLANK) {
+            questionType == QuestionType.FILL_IN_THE_BLANK ||
+            questionType == QuestionType.ORDER_CODE) {
             return correctAnswer.size() == userAnswer.size() && correctAnswer.containsAll(userAnswer);
         } else {
             // Implement other question type logics here in future

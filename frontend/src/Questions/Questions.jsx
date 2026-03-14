@@ -2,6 +2,7 @@ import MultipleChoiceQuestion from "./Formats/MultipleChoiceQuestion";
 import SelectAllQuestion from "./Formats/SelectAllQuestion";
 import FindTheBugQuestion from "./Formats/FindTheBugQuestion";
 import FillInTheBlankQuestion from "./Formats/FillInTheBlankQuestion";
+import OrderCodeQuestion from "./Formats/OrderCodeQuestion";
 import { useState, useEffect } from 'react';
 import { getQuestions, updateCompletedDate, submitQuestionAttempt, resetQuestionAttempts } from './QuestionService'
 import AuthService from '../UserAuth/AuthService'
@@ -221,6 +222,13 @@ function Questions({ onUserUpdate }) {
         />
       ) : currentQuestion.type === 'FILL_IN_THE_BLANK' ? (
         <FillInTheBlankQuestion
+          question={currentQuestion}
+          onAnswer={handleAnswerClick}
+          selectedAnswer={selectedAnswer}
+          showFeedback={showFeedback}
+        />
+      ) : currentQuestion.type === 'ORDER_CODE' ? (
+        <OrderCodeQuestion
           question={currentQuestion}
           onAnswer={handleAnswerClick}
           selectedAnswer={selectedAnswer}
