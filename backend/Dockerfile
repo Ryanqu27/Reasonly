@@ -10,6 +10,9 @@ RUN ./mvnw clean package -DskipTests
 
 FROM eclipse-temurin:21-jre-alpine
 
+# Install Docker CLI to allow the backend container to spawn execution containers
+RUN apk add --no-cache docker-cli
+
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 

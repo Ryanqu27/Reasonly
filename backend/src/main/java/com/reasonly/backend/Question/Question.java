@@ -45,6 +45,9 @@ public class Question {
     @Column(name = "correct_answer")
     private List<String> correctAnswer;
 
+    // Only used by CODE_WRITING questions to specify which method the Runner should invoke
+    private String methodName;
+
     public Question(Long id, QuestionTopic topic, QuestionType type, QuestionDifficulty difficulty, String question,
             List<String> answers, List<String> correctAnswer) {
         this.id = id;
@@ -54,5 +57,12 @@ public class Question {
         this.question = question;
         this.answers = answers;
         this.correctAnswer = correctAnswer;
+    }
+
+    // Overloaded constructor for CODE_WRITING questions that require a methodName
+    public Question(Long id, QuestionTopic topic, QuestionType type, QuestionDifficulty difficulty, String question,
+            List<String> answers, List<String> correctAnswer, String methodName) {
+        this(id, topic, type, difficulty, question, answers, correctAnswer);
+        this.methodName = methodName;
     }
 }

@@ -9,21 +9,25 @@ import org.springframework.transaction.annotation.Transactional;
 import com.reasonly.backend.Question.Question;
 import com.reasonly.backend.Question.QuestionDifficulty;
 import com.reasonly.backend.Question.QuestionType;
+import com.reasonly.backend.Question.CodeWriting.CodeExecutionResult;
+import com.reasonly.backend.Question.CodeWriting.CodeExecutionService;
 import com.reasonly.backend.User.User;
+import com.reasonly.backend.User.UserLanguage;
 import com.reasonly.backend.User.UserRepository;
 
 @Service
 public class QuestionAttemptService {
     private final QuestionAttemptRepository questionAttemptRepository;
     private final UserRepository userRepository;
-
     private final com.reasonly.backend.Question.QuestionRepository questionRepository;
+    private final CodeExecutionService codeExecutionService;
 
     public QuestionAttemptService(QuestionAttemptRepository questionAttemptRepository, UserRepository userRepository,
-            com.reasonly.backend.Question.QuestionRepository questionRepository) {
+            com.reasonly.backend.Question.QuestionRepository questionRepository, CodeExecutionService codeExecutionService) {
         this.questionAttemptRepository = questionAttemptRepository;
         this.userRepository = userRepository;
         this.questionRepository = questionRepository;
+        this.codeExecutionService = codeExecutionService;
     }
 
     public List<QuestionAttempt> getQuestionAttempts() {
@@ -47,16 +51,23 @@ public class QuestionAttemptService {
         return questionAttemptRepository.findByUserIdAndQuestion(user.getId(), question);
     }
 
-    public boolean validateAnswer(List<String> correctAnswer, List<String> userAnswer, QuestionType questionType) {
-        if (questionType == QuestionType.MULTIPLE_CHOICE || 
-            questionType == QuestionType.SELECT_ALL || 
-            questionType == QuestionType.FIND_THE_BUG ||
-            questionType == QuestionType.FILL_IN_THE_BLANK ||
-            questionType == QuestionType.ORDER_CODE) {
-            return correctAnswer.size() == userAnswer.size() && correctAnswer.containsAll(userAnswer);
-        } else {
-            // Implement other question type logics here in future
-            return correctAnswer.equals(userAnswer);
+    public boolean validateAnswer(Question question, List<String> userAnswer) {
+        if (question.getType() == QuestionType.ORDER_CODE) {
+            for (int i = 0; i < question.getCorrectAnswer().size(); i++) {
+                if (!question.getCorrectAnswer().get(i).equals(userAnswer.get(i))) {
+                    return false;
+                }
+            }
+            return true;
+        } 
+        else if (question.getType() == QuestionType.MULTIPLE_CHOICE || 
+            question.getType() == QuestionType.SELECT_ALL || 
+            question.getType() == QuestionType.FIND_THE_BUG ||
+            question.getType() == QuestionType.FILL_IN_THE_BLANK) {
+            return question.getCorrectAnswer().size() == userAnswer.size() && question.getCorrectAnswer().containsAll(userAnswer);
+        } 
+        else {
+            return question.getCorrectAnswer().equals(userAnswer);
         }
     }
 
@@ -67,11 +78,33 @@ public class QuestionAttemptService {
         Question question = questionRepository.findById(request.getQuestionId())
                 .orElseThrow(() -> new RuntimeException("Question not found with id: " + request.getQuestionId()));
 
+        boolean isCorrect = false;
+        String errorMessage = null;
+        String consoleOutput = null;
+
+        if (question.getType() == QuestionType.CODE_WRITING) {
+            String userCode = request.getAnswer().get(0);
+            UserLanguage language = UserLanguage.valueOf(request.getAnswer().get(1));
+
+            CodeExecutionResult execResult = codeExecutionService.executeCode(
+                userCode,
+                question.getAnswers(),        // Test case inputs
+                question.getCorrectAnswer(),  // Expected outputs
+                question.getMethodName(),     // Target method name
+                language
+            );
+            isCorrect = execResult.isSuccess();
+            errorMessage = execResult.getErrorMessage();
+            consoleOutput = execResult.getConsoleOutput();
+        } else {
+            isCorrect = validateAnswer(question, request.getAnswer());
+        }
+
         List<QuestionAttempt> questionAttempts = questionAttemptRepository.findByUserIdAndQuestion(user.getId(),
                 question);
         if (!questionAttempts.isEmpty()) {
-            // Update existing attempt if it exists
-            if (questionAttempts.get(0).getQuestion().getCorrectAnswer().equals(request.getAnswer())) {
+            // Update existing attempt's spaced repetition interval
+            if (isCorrect) {
                 questionAttempts.get(0).setInterval(questionAttempts.get(0).getInterval() * 2);
                 questionAttempts.get(0)
                         .setNextReviewDate(LocalDate.now().plusDays(questionAttempts.get(0).getInterval()));
@@ -89,13 +122,14 @@ public class QuestionAttemptService {
             questionAttemptRepository.save(attempt);
         }
 
-        boolean isCorrect = validateAnswer(question.getCorrectAnswer(), request.getAnswer(), question.getType());
         user.setQuestionsAnsweredCorrectly(user.getQuestionsAnsweredCorrectly() + (isCorrect ? 1 : 0));
         user.setQuestionsAnsweredIncorrectly(user.getQuestionsAnsweredIncorrectly() + (isCorrect ? 0 : 1));
         user.setAccuracy((double) user.getQuestionsAnsweredCorrectly()
                 / (user.getQuestionsAnsweredCorrectly() + user.getQuestionsAnsweredIncorrectly()));
         userRepository.save(user);
         QuestionAttemptResult result = updateUserRating(user, question, isCorrect);
+        result.setErrorMessage(errorMessage);
+        result.setConsoleOutput(consoleOutput);
         return result;
     }
 

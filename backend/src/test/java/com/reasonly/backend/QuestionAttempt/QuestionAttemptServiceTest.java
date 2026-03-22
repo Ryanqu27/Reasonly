@@ -20,6 +20,7 @@ import com.reasonly.backend.Question.Question;
 import com.reasonly.backend.Question.QuestionDifficulty;
 import com.reasonly.backend.Question.QuestionRepository;
 import com.reasonly.backend.Question.QuestionType;
+import com.reasonly.backend.Question.CodeWriting.CodeExecutionService;
 import com.reasonly.backend.User.User;
 import com.reasonly.backend.User.UserRepository;
 
@@ -34,6 +35,9 @@ class QuestionAttemptServiceTest {
     @Mock
     private QuestionRepository questionRepository;
 
+    @Mock
+    private CodeExecutionService codeExecutionService;
+
     private QuestionAttemptService questionAttemptService;
 
     private User user;
@@ -44,7 +48,7 @@ class QuestionAttemptServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         questionAttemptService = new QuestionAttemptService(
-                questionAttemptRepository, userRepository, questionRepository);
+                questionAttemptRepository, userRepository, questionRepository, codeExecutionService);
 
         user = new User();
         user.setId(1L);

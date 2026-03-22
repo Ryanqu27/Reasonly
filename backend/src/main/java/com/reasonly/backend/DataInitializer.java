@@ -63,6 +63,13 @@ public class DataInitializer {
                     "else right = mid - 1;"
                 ) 
             ));
+            questions.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.CODE_WRITING,
+                QuestionDifficulty.EASY,
+                "Write a function named 'add' that takes in two integers and returns their sum.",
+                List.of("[2, 3]", "[10, -5]", "[0, 0]"), // Test Case Inputs (JSON parameters array)
+                List.of("5", "5", "0"),        // Expected Outputs
+                "add"                          // Method name the Runner should invoke
+            ));
             repository.saveAll(questions);
         };
     }

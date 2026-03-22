@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './QuestionFormats.css';
 
-export default function SelectAllQuestion({ question, onAnswer, selectedAnswer, showFeedback }) {
+export default function SelectAllQuestion({ question, onAnswer, selectedAnswer, showFeedback, isSubmitting }) {
     const [localSelection, setLocalSelection] = useState([]);
 
     // Default the local selection to what the parent holds, in case of re-renders
@@ -78,9 +78,23 @@ export default function SelectAllQuestion({ question, onAnswer, selectedAnswer, 
                     <button
                         onClick={() => onAnswer(localSelection)}
                         className="format-submit-btn"
-                        disabled={localSelection.length === 0}
+                        disabled={localSelection.length === 0 || isSubmitting}
                     >
-                        Submit
+                        {isSubmitting ? (
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                                <svg
+                                    style={{ animation: 'spin 1s linear infinite' }}
+                                    width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" strokeWidth="3" strokeLinecap="round"
+                                >
+                                    <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" />
+                                </svg>
+                                <style>{`@keyframes spin { 100% { transform: rotate(360deg); } }`}</style>
+                                Submitting...
+                            </span>
+                        ) : (
+                            'Submit'
+                        )}
                     </button>
                 </div>
             )}

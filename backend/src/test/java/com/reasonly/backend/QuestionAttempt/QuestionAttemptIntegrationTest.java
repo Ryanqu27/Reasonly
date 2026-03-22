@@ -275,6 +275,52 @@ public class QuestionAttemptIntegrationTest {
     
     @Test
     @WithMockUser
+    void insertQuestionAttempt_OrderCodeCorrect_ReturnsSuccess() throws Exception {
+        testQuestion = new Question();
+        testQuestion.setDifficulty(QuestionDifficulty.EASY);
+        testQuestion.setType(QuestionType.ORDER_CODE);
+        testQuestion.setCorrectAnswer(List.of("1", "2", "3"));
+        testQuestion = questionRepository.save(testQuestion);
+
+        QuestionAttemptRequest request = new QuestionAttemptRequest();
+        request.setUserId(testUser.getId());
+        request.setQuestionId(testQuestion.getId());
+        request.setAnswer(List.of("1", "2", "3"));
+
+        mockMvc.perform(post("/api/question-attempts")
+            .contentType("application/json")
+            .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.correct").value(true))
+            .andExpect(jsonPath("$.ratingChange").isNumber())
+            .andExpect(jsonPath("$.newRating").isNumber());
+    }
+
+    @Test
+    @WithMockUser
+    void insertQuestionAttempt_OrderCodeIncorrect_ReturnsFailure() throws Exception {
+        testQuestion = new Question();
+        testQuestion.setDifficulty(QuestionDifficulty.EASY);
+        testQuestion.setType(QuestionType.ORDER_CODE);
+        testQuestion.setCorrectAnswer(List.of("1", "2", "3"));
+        testQuestion = questionRepository.save(testQuestion);
+
+        QuestionAttemptRequest request = new QuestionAttemptRequest();
+        request.setUserId(testUser.getId());
+        request.setQuestionId(testQuestion.getId());
+        request.setAnswer(List.of("3", "2", "1"));
+
+        mockMvc.perform(post("/api/question-attempts")
+            .contentType("application/json")
+            .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.correct").value(false))
+            .andExpect(jsonPath("$.ratingChange").isNumber())
+            .andExpect(jsonPath("$.newRating").isNumber());
+    }
+
+    @Test
+    @WithMockUser
     void resetQuestionAttempts_ReturnsSuccess() throws Exception {
         testQuestion = new Question();
         testQuestion.setDifficulty(QuestionDifficulty.EASY);

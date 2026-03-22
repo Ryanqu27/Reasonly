@@ -3,6 +3,7 @@ import SelectAllQuestion from "./Formats/SelectAllQuestion";
 import FindTheBugQuestion from "./Formats/FindTheBugQuestion";
 import FillInTheBlankQuestion from "./Formats/FillInTheBlankQuestion";
 import OrderCodeQuestion from "./Formats/OrderCodeQuestion";
+import CodeWritingQuestion from "./Formats/CodeWritingQuestion";
 import { useState, useEffect } from 'react';
 import { getQuestions, updateCompletedDate, submitQuestionAttempt, resetQuestionAttempts } from './QuestionService'
 import AuthService from '../UserAuth/AuthService'
@@ -15,6 +16,7 @@ function Questions({ onUserUpdate }) {
   const [attemptResult, setAttemptResult] = useState(null);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [sessionStarted, setSessionStarted] = useState(false);
 
   const fetchNextQuestion = async () => {
@@ -47,7 +49,8 @@ function Questions({ onUserUpdate }) {
     if (!currentQuestion) return;
 
     setSelectedAnswer(answerArray);
-    setShowFeedback(true);
+    setIsSubmitting(true);
+    
     const user = await AuthService.fetchCurrentUser();
     const questionAttempt = {
       userId: user.id,
@@ -68,8 +71,11 @@ function Questions({ onUserUpdate }) {
       }
     } catch (err) {
       console.error("Failed to submit attempt", err);
+    } finally {
+      setIsSubmitting(false);
+      setShowFeedback(true);
+      onUserUpdate();
     }
-    onUserUpdate();
   };
 
   const handleNextQuestion = () => {
@@ -205,6 +211,7 @@ function Questions({ onUserUpdate }) {
           onAnswer={handleAnswerClick}
           selectedAnswer={selectedAnswer}
           showFeedback={showFeedback}
+          isSubmitting={isSubmitting}
         />
       ) : currentQuestion.type === 'SELECT_ALL' ? (
         <SelectAllQuestion
@@ -212,6 +219,7 @@ function Questions({ onUserUpdate }) {
           onAnswer={handleAnswerClick}
           selectedAnswer={selectedAnswer}
           showFeedback={showFeedback}
+          isSubmitting={isSubmitting}
         />
       ) : currentQuestion.type === 'FIND_THE_BUG' ? (
         <FindTheBugQuestion
@@ -219,6 +227,7 @@ function Questions({ onUserUpdate }) {
           onAnswer={handleAnswerClick}
           selectedAnswer={selectedAnswer}
           showFeedback={showFeedback}
+          isSubmitting={isSubmitting}
         />
       ) : currentQuestion.type === 'FILL_IN_THE_BLANK' ? (
         <FillInTheBlankQuestion
@@ -226,6 +235,7 @@ function Questions({ onUserUpdate }) {
           onAnswer={handleAnswerClick}
           selectedAnswer={selectedAnswer}
           showFeedback={showFeedback}
+          isSubmitting={isSubmitting}
         />
       ) : currentQuestion.type === 'ORDER_CODE' ? (
         <OrderCodeQuestion
@@ -233,6 +243,15 @@ function Questions({ onUserUpdate }) {
           onAnswer={handleAnswerClick}
           selectedAnswer={selectedAnswer}
           showFeedback={showFeedback}
+          isSubmitting={isSubmitting}
+        />
+      ) : currentQuestion.type === 'CODE_WRITING' ? (
+        <CodeWritingQuestion
+          question={currentQuestion}
+          onAnswer={handleAnswerClick}
+          selectedAnswer={selectedAnswer}
+          showFeedback={showFeedback}
+          isSubmitting={isSubmitting}
         />
       ) : (
         <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
@@ -248,6 +267,20 @@ function Questions({ onUserUpdate }) {
               <h3 style={{ margin: '0 0 0.5rem 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
                 {attemptResult.correct ? 'Correct!' : 'Incorrect'}
               </h3>
+              
+              {attemptResult.errorMessage && (
+                  <div style={{ textAlign: 'left', backgroundColor: '#1e1e1e', color: '#ff7b72', padding: '1rem', borderRadius: '0.5rem', fontFamily: 'monospace', whiteSpace: 'pre-wrap', marginBottom: '1rem', fontSize: '0.9rem', overflowX: 'auto', border: '1px solid #444' }}>
+                      <strong style={{color: '#fff', display: 'block', marginBottom: '0.5rem'}}>Execution Error / Failed Test:</strong>
+                      {attemptResult.errorMessage}
+                  </div>
+              )}
+              {attemptResult.consoleOutput && !attemptResult.errorMessage && (
+                  <div style={{ textAlign: 'left', backgroundColor: '#1e1e1e', color: '#7ee787', padding: '1rem', borderRadius: '0.5rem', fontFamily: 'monospace', whiteSpace: 'pre-wrap', marginBottom: '1rem', fontSize: '0.9rem', overflowX: 'auto', border: '1px solid #444' }}>
+                      <strong style={{color: '#fff', display: 'block', marginBottom: '0.5rem'}}>Execution Output:</strong>
+                      {attemptResult.consoleOutput}
+                  </div>
+              )}
+
               <p style={{ margin: 0, fontWeight: '500' }}>
                 Rating:
                 <span style={{ margin: '0 0.5rem' }}>{attemptResult.newRating - attemptResult.ratingChange}</span>
