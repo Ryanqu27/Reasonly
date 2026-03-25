@@ -33,7 +33,6 @@ const INTEREST_OPTIONS = [
     { id: 'DATABASES', label: 'Databases' },
     { id: 'CONCURRENCY', label: 'Concurrency' },
     { id: 'SOFTWARE_DESIGN', label: 'Software Design' },
-    { id: 'DEBUGGING', label: 'Debugging' },
     { id: 'CODE_REASONING', label: 'Code Reasoning' }
 ];
 

@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 
 export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer, showFeedback, isSubmitting, runCode }) {
-    const [input, setInput] = useState("");
     const [language, setLanguage] = useState("JAVA");
     const [localRunResult, setLocalRunResult] = useState(null);
     const [isRunning, setIsRunning] = useState(false);
@@ -26,31 +25,32 @@ export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer
         return "";
     };
 
+    // Separate editor state per language
+    const [codeByLang, setCodeByLang] = useState(() => ({
+        JAVA: getBoilerplate("JAVA", question.methodName),
+        PYTHON: getBoilerplate("PYTHON", question.methodName),
+        JAVASCRIPT: getBoilerplate("JAVASCRIPT", question.methodName),
+    }));
+
     useEffect(() => {
         if (selectedAnswer) {
-            setInput(selectedAnswer[0]);
-            if (selectedAnswer[1]) {
-                setLanguage(selectedAnswer[1]);
-            }
-        } else {
-            setInput(getBoilerplate(language, question.methodName));
+            const lang = selectedAnswer[1] || "JAVA";
+            setLanguage(lang);
+            setCodeByLang(prev => ({ ...prev, [lang]: selectedAnswer[0] }));
         }
     }, [selectedAnswer, question.methodName]);
 
-    const handleLanguageChange = (newLang) => {
-        // Only swap boilerplate if the user hasn't heavily modified the existing one
-        const currentBoilerplate = getBoilerplate(language, question.methodName);
-        if (input === "" || input === currentBoilerplate) {
-            setInput(getBoilerplate(newLang, question.methodName));
-        }
-        setLanguage(newLang);
+    const handleCodeChange = (value) => {
+        setCodeByLang(prev => ({ ...prev, [language]: value }));
     };
+
+    const currentCode = codeByLang[language] || "";
 
     const onRunClick = async () => {
         setIsRunning(true);
         setLocalRunResult(null);
         try {
-            const result = await runCode([input.trim(), language]);
+            const result = await runCode([currentCode.trim(), language]);
             setLocalRunResult(result.data);
         } catch (err) {
             setLocalRunResult({ success: false, errorMessage: "Failed to connect to execution server." });
@@ -68,61 +68,52 @@ export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer
                 {question.question}
             </h3>
             
-            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+            <div className="code-language-bar">
                 {['JAVA', 'PYTHON', 'JAVASCRIPT'].map((lang) => (
                     <button
                         key={lang}
-                        onClick={() => handleLanguageChange(lang)}
-                        style={{
-                            padding: '0.5rem 1rem',
-                            border: 'none',
-                            borderRadius: '4px',
-                            background: language === lang ? 'var(--primary)' : '#2d2d2d',
-                            color: language === lang ? '#fff' : '#aaa',
-                            cursor: 'pointer',
-                            fontWeight: language === lang ? 'bold' : 'normal',
-                            fontSize: '0.8rem'
-                        }}
+                        onClick={() => setLanguage(lang)}
+                        className={`code-language-btn ${language === lang ? 'active' : ''}`}
                     >
                         {lang}
                     </button>
                 ))}
             </div>
 
-            <div style={{ border: '1px solid #444', borderRadius: '4px', overflow: 'hidden' }}>
+            <div className="code-editor-wrapper">
                 <code>
                     <Editor
                         height="400px"
                         language={LANGUAGE_MAP[language]}
                         theme="vs-dark"
-                        value={input}
-                        onChange={(value) => setInput(value)}
+                        value={currentCode}
+                        onChange={handleCodeChange}
                     />
                 </code>
             </div>
-            <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+            
+            <div className="code-action-row">
                 <button
                     onClick={onRunClick}
-                    className="format-submit-btn"
-                    style={{ backgroundColor: '#2d2d2d', color: '#fff' }}
-                    disabled={!input.trim() || isSubmitting || isRunning}
+                    className="code-run-btn"
+                    disabled={!currentCode.trim() || isSubmitting || isRunning}
                 >
                     {isRunning ? "Running..." : "Run Code"}
                 </button>
             </div>
 
             {localRunResult && (
-                <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: '#1e1e1e', borderRadius: '4px', border: '1px solid #444' }}>
-                    <h4 style={{ margin: '0 0 0.5rem 0', color: localRunResult.success ? '#7ee787' : '#ff7b72' }}>
+                <div className="code-run-result">
+                    <h4 className={localRunResult.success ? 'success' : 'failure'}>
                         {localRunResult.success ? "✓ All Sample Test Cases Passed" : "✗ Execution Issue"}
                     </h4>
                     {localRunResult.errorMessage && (
-                        <pre style={{ margin: 0, fontSize: '0.85rem', color: '#ff7b72', whiteSpace: 'pre-wrap' }}>
+                        <pre className="error">
                             {localRunResult.errorMessage}
                         </pre>
                     )}
                     {localRunResult.consoleOutput && !localRunResult.success && !localRunResult.errorMessage && (
-                        <pre style={{ margin: 0, fontSize: '0.85rem', color: '#ccc', whiteSpace: 'pre-wrap' }}>
+                        <pre className="output">
                             {localRunResult.consoleOutput}
                         </pre>
                     )}
@@ -131,20 +122,19 @@ export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer
             {!showFeedback && (
                 <div className="format-submit-block">
                     <button
-                        onClick={() => onAnswer([input.trim(), language])}
+                        onClick={() => onAnswer([currentCode.trim(), language])}
                         className="format-submit-btn"
-                        disabled={!input.trim() || isSubmitting}
+                        disabled={!currentCode.trim() || isSubmitting}
                     >
                         {isSubmitting ? (
-                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                            <span className="format-spinner-container">
                                 <svg
-                                    style={{ animation: 'spin 1s linear infinite' }}
+                                    className="format-spinner"
                                     width="16" height="16" viewBox="0 0 24 24" fill="none"
                                     stroke="currentColor" strokeWidth="3" strokeLinecap="round"
                                 >
                                     <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" />
                                 </svg>
-                                <style>{`@keyframes spin { 100% { transform: rotate(360deg); } }`}</style>
                                 Running Code...
                             </span>
                         ) : (

@@ -410,3 +410,114 @@
     border-color: var(--danger, #ef4444) !important;
     background-color: rgba(239, 68, 68, 0.05) !important;
 }
+
+/* ── Code Writing Specifics ── */
+
+.code-language-bar {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.code-language-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    background: #2d2d2d;
+    color: #aaa;
+    cursor: pointer;
+    font-weight: normal;
+    font-size: 0.8rem;
+    font-family: inherit;
+    transition: background 0.15s, color 0.15s;
+}
+
+.code-language-btn.active {
+    background: var(--primary, #3b82f6);
+    color: #fff;
+    font-weight: bold;
+}
+
+.code-editor-wrapper {
+    border: 1px solid #444;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.code-action-row {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.code-run-btn {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 12px;
+    background: #2d2d2d;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.code-run-btn:hover:not(:disabled) {
+    background: #3a3a3a;
+}
+
+.code-run-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.code-run-result {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #1e1e1e;
+    border-radius: 4px;
+    border: 1px solid #444;
+}
+
+.code-run-result h4 {
+    margin: 0 0 0.5rem 0;
+}
+
+.code-run-result h4.success {
+    color: #7ee787;
+}
+
+.code-run-result h4.failure {
+    color: #ff7b72;
+}
+
+.code-run-result pre {
+    margin: 0;
+    font-size: 0.85rem;
+    white-space: pre-wrap;
+}
+
+.code-run-result pre.error {
+    color: #ff7b72;
+}
+
+.code-run-result pre.output {
+    color: #ccc;
+}
+
+/* Submit spinner animation */
+.format-spinner-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+@keyframes spin {
+    100% { transform: rotate(360deg); }
+}
+
+.format-spinner {
+    animation: spin 1s linear infinite;
+}

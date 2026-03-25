@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reasonly.backend.User.UserLanguage;
 
 // Responsible for executing the a user's code in a Docker container.
-// All test cases are batched into a SINGLE container run for performance.
+// All test cases are batched into a single container run for performance.
 @Service
 public class CodeExecutionService {
 
@@ -217,7 +217,6 @@ public class CodeExecutionService {
                "}\n";
     }
 
-    // Python runner: loops through all test cases in-process
     private String generatePythonRunner(String methodName) {
         return "import sys, json\n" +
                "import solution\n" +
@@ -240,7 +239,6 @@ public class CodeExecutionService {
                "    print(json.dumps(results), end='')\n";
     }
 
-    // JavaScript runner: loops through all test cases in-process
     private String generateJavaScriptRunner(String methodName) {
         return "const fs = require('fs');\n" +
                "const solution = require('./solution');\n" +
