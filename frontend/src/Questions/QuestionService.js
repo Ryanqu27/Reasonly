@@ -5,6 +5,10 @@ export const getQuestions = () => {
     return api.get('/questions/play');
 };
 
+export const runCode = (codeRunningRequest) => {
+    return api.post('/questions/run', codeRunningRequest);
+};
+
 export const updateCompletedDate = async () => {
     const user = await AuthService.fetchCurrentUser();
     return api.put(`/user/${user.id}/complete-today`);

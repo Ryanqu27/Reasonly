@@ -45,8 +45,16 @@ public class Question {
     @Column(name = "correct_answer")
     private List<String> correctAnswer;
 
-    // Only used by CODE_WRITING questions to specify which method the Runner should invoke
+    // Only used by CODE_WRITING questions to specify method and provide sample test cases
     private String methodName;
+
+    @ElementCollection
+    @Column(name = "sample_test_case")
+    private List<String> sampleTestCases;
+
+    @ElementCollection
+    @Column(name = "sample_expected_output")
+    private List<String> sampleExpectedOutputs;
 
     public Question(Long id, QuestionTopic topic, QuestionType type, QuestionDifficulty difficulty, String question,
             List<String> answers, List<String> correctAnswer) {
@@ -59,10 +67,14 @@ public class Question {
         this.correctAnswer = correctAnswer;
     }
 
-    // Overloaded constructor for CODE_WRITING questions that require a methodName
-    public Question(Long id, QuestionTopic topic, QuestionType type, QuestionDifficulty difficulty, String question,
-            List<String> answers, List<String> correctAnswer, String methodName) {
+    // Overloaded constructor for CODE_WRITING questions that require method name and sample test cases
+    public Question(Long id, QuestionTopic topic, QuestionType type, QuestionDifficulty difficulty, 
+            String question,
+            List<String> answers, List<String> correctAnswer, String methodName, 
+            List<String> sampleTestCases, List<String> sampleExpectedOutputs) {
         this(id, topic, type, difficulty, question, answers, correctAnswer);
         this.methodName = methodName;
+        this.sampleTestCases = sampleTestCases;
+        this.sampleExpectedOutputs = sampleExpectedOutputs;
     }
 }

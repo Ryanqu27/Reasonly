@@ -16,11 +16,15 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.reasonly.backend.User.User;
+import com.reasonly.backend.Question.CodeWriting.CodeExecutionService;
 
 class QuestionServiceTest {
 
     @Mock
     private QuestionRepository questionRepository;
+    
+    @Mock
+    private CodeExecutionService codeExecutionService;
 
     private QuestionService questionService;
 
@@ -50,7 +54,7 @@ class QuestionServiceTest {
     @Test
     void getPlayQuestions_FallbackToAny_WhenTargetEmpty() {
         // Target difficulty (EASY) is empty → falls back to BASIC
-        questionService = new QuestionService(questionRepository);
+        questionService = new QuestionService(questionRepository, codeExecutionService);
         User user = new User();
         user.setId(1L);
         user.setRating(1500); // EASY
@@ -75,7 +79,7 @@ class QuestionServiceTest {
                 return 0.50;
             }
         };
-        questionService = new QuestionService(questionRepository, fixedRandom);
+        questionService = new QuestionService(questionRepository, fixedRandom, codeExecutionService);
 
         User user = new User();
         user.setId(1L);
@@ -104,7 +108,7 @@ class QuestionServiceTest {
                 return 0.50;
             }
         };
-        questionService = new QuestionService(questionRepository, fixedRandom);
+        questionService = new QuestionService(questionRepository, fixedRandom, codeExecutionService);
         mockAllDifficultiesAvailable();
 
         User user = new User();
@@ -137,7 +141,7 @@ class QuestionServiceTest {
                 return 0.50;
             }
         };
-        questionService = new QuestionService(questionRepository, fixedRandom);
+        questionService = new QuestionService(questionRepository, fixedRandom, codeExecutionService);
         mockAllDifficultiesAvailable();
 
         User user = new User();
@@ -159,7 +163,7 @@ class QuestionServiceTest {
                 return 0.75;
             }
         };
-        questionService = new QuestionService(questionRepository, fixedRandom);
+        questionService = new QuestionService(questionRepository, fixedRandom, codeExecutionService);
 
         User user = new User();
         user.setId(1L);
@@ -185,7 +189,7 @@ class QuestionServiceTest {
                 return 0.90;
             }
         };
-        questionService = new QuestionService(questionRepository, fixedRandom);
+        questionService = new QuestionService(questionRepository, fixedRandom, codeExecutionService);
 
         User user = new User();
         user.setId(1L);
@@ -213,7 +217,7 @@ class QuestionServiceTest {
                 return 0.75;
             }
         };
-        questionService = new QuestionService(questionRepository, fixedRandom);
+        questionService = new QuestionService(questionRepository, fixedRandom, codeExecutionService);
 
         User user = new User();
         user.setId(1L);
@@ -237,7 +241,7 @@ class QuestionServiceTest {
                 return 0.90;
             }
         };
-        questionService = new QuestionService(questionRepository, fixedRandom);
+        questionService = new QuestionService(questionRepository, fixedRandom, codeExecutionService);
 
         User user = new User();
         user.setId(1L);

@@ -31,12 +31,6 @@ public class DataInitializer {
                 QuestionDifficulty.EASY,
                 "Which traversal of a binary search tree outputs sorted values?",
                 List.of("Preorder", "Postorder", "Level-order", "Inorder"), List.of("Inorder")));
-            questions.add(new Question(null, QuestionTopic.DATA_STRUCTURES_AND_ALGORITHMS, QuestionType.MULTIPLE_CHOICE,
-                QuestionDifficulty.MEDIUM,
-                "What happens to time complexity when a recursive algorithm recomputes overlapping subproblems?",
-                List.of("Becomes linear", "Becomes exponential", "Remains constant",
-                "Becomes logarithmic"),
-                List.of("Becomes exponential")));
             questions.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.FIND_THE_BUG,
                 QuestionDifficulty.EASY,
                 "Identify the line number containing the bug in the following Java code:\n\n```java\n1: public class Test {\n2:     public static void main(String[] args) {\n3:         int x = 5;\n4:         if (x = 5) { System.out.println(x); }\n5:     }\n6: }\n```",
@@ -66,9 +60,11 @@ public class DataInitializer {
             questions.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.CODE_WRITING,
                 QuestionDifficulty.EASY,
                 "Write a function named 'add' that takes in two integers and returns their sum.",
-                List.of("[2, 3]", "[10, -5]", "[0, 0]"), // Test Case Inputs (JSON parameters array)
-                List.of("5", "5", "0"),        // Expected Outputs
-                "add"                          // Method name the Runner should invoke
+                List.of("[2, 3]", "[10, -5]", "[0, 0]", "[-1, -1]", "[100, 200]", "[-10, -20]", "[5, 5]", "[1, 1]", "[0, 1]", "[1, 0]"), // Test Case Inputs (JSON parameters array)
+                List.of("5", "5", "0", "-2", "300", "-30", "10", "2", "1", "1"),        // Expected Outputs
+                "add", // Method name the Runner should invoke
+                List.of("[2, 3]", "[1, -5]"), // Sample Test Cases (JSON parameters array)
+                List.of("5", "-4") // Sample Expected Outputs
             ));
             repository.saveAll(questions);
         };

@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.reasonly.backend.Question.CodeWriting.CodeExecutionResult;
+import com.reasonly.backend.Question.CodeWriting.CodeRunningRequest;
+
 @RestController
 @RequestMapping("/api/questions")
 public class QuestionController {
@@ -33,6 +36,11 @@ public class QuestionController {
     @GetMapping("/play")
     public ResponseEntity<List<Question>> getPlayQuestions() {
         return ResponseEntity.ok(questionService.getPlayQuestions(getCurrentUser()));
+    }
+
+    @PostMapping("/run")
+    public ResponseEntity<CodeExecutionResult> runCode(@RequestBody CodeRunningRequest request) {
+        return ResponseEntity.ok(questionService.runCode(request));
     }
 
     private com.reasonly.backend.User.User getCurrentUser() {

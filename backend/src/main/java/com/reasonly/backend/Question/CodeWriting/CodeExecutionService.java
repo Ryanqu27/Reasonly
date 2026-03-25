@@ -6,14 +6,26 @@ import java.util.concurrent.TimeUnit;
 
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reasonly.backend.User.UserLanguage;
 
 // Responsible for executing the a user's code in a Docker container.
+// All test cases are batched into a SINGLE container run for performance.
 @Service
 public class CodeExecutionService {
 
+    private final ObjectMapper mapper = new ObjectMapper();
+
     public CodeExecutionResult executeCode(String userCode, List<String> inputs, List<String> expectedOutputs, String methodName, UserLanguage language) {
         CodeExecutionResult result = new CodeExecutionResult();
+
+        if (inputs == null || inputs.isEmpty()) {
+            result.setSuccess(false);
+            result.setErrorMessage("No test cases found for this question.");
+            return result;
+        }
+
         result.setTotalTestCases(inputs.size());
         int passed = 0;
 
@@ -34,26 +46,46 @@ public class CodeExecutionService {
                 throw new UnsupportedOperationException("Language " + language + " is not supported yet.");
             }
 
-            // Loop through each test case
+            // Combine ALL inputs into a single JSON array: [[2,3],[10,-5],[0,0],...]
+            StringBuilder allInputs = new StringBuilder("[");
             for (int i = 0; i < inputs.size(); i++) {
-                String inputJson = inputs.get(i);
-                String expectedJson = expectedOutputs.get(i);
+                allInputs.append(inputs.get(i));
+                if (i < inputs.size() - 1) allInputs.append(",");
+            }
+            allInputs.append("]");
 
-                ExecutionOutcome outcome = runDockerContainer(finalUserCode, runnerCode, language, inputJson);
-                
-                if (!outcome.isSuccess) {
+            // Run a single Docker container for all test cases
+            ExecutionOutcome outcome = runDockerContainer(finalUserCode, runnerCode, language, allInputs.toString());
+            
+            if (!outcome.isSuccess) {
+                result.setSuccess(false);
+                result.setErrorMessage("Execution Error:\n" + outcome.errorMessage);
+                result.setConsoleOutput(outcome.consoleOutput);
+                return result;
+            }
+
+            // Parse the JSON array of results from the runner
+            JsonNode resultsArray = mapper.readTree(outcome.consoleOutput.trim());
+
+            for (int i = 0; i < inputs.size(); i++) {
+                String expectedJson = expectedOutputs.get(i).trim();
+                JsonNode resultNode = resultsArray.get(i);
+
+                // Check if the runner reported a per-test-case runtime error
+                if (resultNode != null && resultNode.isObject() && resultNode.has("error")) {
                     result.setSuccess(false);
-                    result.setErrorMessage("Error on test case " + (i + 1) + ":\n" + outcome.errorMessage);
+                    result.setErrorMessage("Runtime error on test case " + (i + 1) + " with input " + inputs.get(i) + ":\n" + resultNode.get("error").asText());
                     result.setConsoleOutput(outcome.consoleOutput);
                     result.setTestCasesPassed(passed);
                     return result;
                 }
 
-                if (outcome.consoleOutput.trim().equals(expectedJson.trim())) {
+                String actualOutput = resultNode != null ? resultNode.asText() : "";
+                if (actualOutput.equals(expectedJson)) {
                     passed++;
                 } else {
                     result.setSuccess(false);
-                    result.setErrorMessage("Test case " + (i + 1) + " failed with input " + inputJson + ".\nExpected: " + expectedJson + "\nGot: " + outcome.consoleOutput.trim());
+                    result.setErrorMessage("Test case " + (i + 1) + " failed with input " + inputs.get(i) + ".\nExpected: " + expectedJson + "\nGot: " + actualOutput);
                     result.setConsoleOutput(outcome.consoleOutput);
                     result.setTestCasesPassed(passed);
                     return result;
@@ -109,7 +141,7 @@ public class CodeExecutionService {
         ProcessBuilder pb = new ProcessBuilder(command);
         Process process = pb.start();
         
-        boolean finished = process.waitFor(10, TimeUnit.SECONDS);
+        boolean finished = process.waitFor(15, TimeUnit.SECONDS);
         if (!finished) {
             process.destroyForcibly();
             return new ExecutionOutcome(false, "", "Execution Timed Out (Possible Infinite Loop)");
@@ -123,31 +155,26 @@ public class CodeExecutionService {
             return new ExecutionOutcome(false, stdout, stderr);
         }
 
-        // Expect the runner to just print the JSON result to stdout.
         return new ExecutionOutcome(true, stdout, stderr);
     }
 
-    // Generates a Runner.java class that uses Jackson (pre-installed in the reasonly-java Docker image)
-    // to deserialize JSON input into the exact Java types the user's method expects.
     private String generateJavaRunner(String methodName) {
         return "import java.util.*;\n" +
                "import java.lang.reflect.*;\n" +
                "import com.fasterxml.jackson.databind.*;\n" +
                "import com.fasterxml.jackson.databind.type.*;\n" +
+               "import com.fasterxml.jackson.databind.node.*;\n" +
                "\n" +
                "public class Runner {\n" +
                "    public static void main(String[] args) throws Exception {\n" +
-               "        // Read the JSON input array from stdin (e.g. \"[2, 3]\" or \"[[1,2,3], 5]\")\n" +
                "        Scanner scanner = new Scanner(System.in);\n" +
                "        StringBuilder sb = new StringBuilder();\n" +
                "        while (scanner.hasNextLine()) sb.append(scanner.nextLine());\n" +
                "        String input = sb.toString().trim();\n" +
                "\n" +
                "        ObjectMapper mapper = new ObjectMapper();\n" +
-               "        // Parse the top-level JSON array into a list of raw JsonNodes\n" +
-               "        JsonNode rootArray = mapper.readTree(input);\n" +
+               "        JsonNode allCases = mapper.readTree(input);\n" +
                "\n" +
-               "        // Find the target method on the user's Solution class using reflection\n" +
                "        Solution sol = new Solution();\n" +
                "        Method target = null;\n" +
                "        for (Method m : Solution.class.getDeclaredMethods()) {\n" +
@@ -158,49 +185,83 @@ public class CodeExecutionService {
                "        }\n" +
                "        if (target == null) throw new RuntimeException(\"Method '" + methodName + "' not found in Solution class\");\n" +
                "\n" +
-               "        // Use Jackson's TypeFactory to convert each JSON element into the exact Java type\n" +
                "        Type[] genericTypes = target.getGenericParameterTypes();\n" +
                "        TypeFactory tf = mapper.getTypeFactory();\n" +
-               "        Object[] methodArgs = new Object[genericTypes.length];\n" +
+               "        ArrayNode results = mapper.createArrayNode();\n" +
                "\n" +
-               "        for (int i = 0; i < genericTypes.length; i++) {\n" +
-               "            JavaType javaType = tf.constructType(genericTypes[i]);\n" +
-               "            methodArgs[i] = mapper.convertValue(rootArray.get(i), javaType);\n" +
+               "        for (int i = 0; i < allCases.size(); i++) {\n" +
+               "            JsonNode testCase = allCases.get(i);\n" +
+               "            try {\n" +
+               "                Object[] methodArgs = new Object[genericTypes.length];\n" +
+               "                for (int j = 0; j < genericTypes.length; j++) {\n" +
+               "                    JavaType javaType = tf.constructType(genericTypes[j]);\n" +
+               "                    methodArgs[j] = mapper.convertValue(testCase.get(j), javaType);\n" +
+               "                }\n" +
+               "                Object result = target.invoke(sol, methodArgs);\n" +
+               "                if (result instanceof Number || result instanceof Boolean) {\n" +
+               "                    results.add(String.valueOf(result));\n" +
+               "                } else if (result instanceof String) {\n" +
+               "                    results.add((String) result);\n" +
+               "                } else {\n" +
+               "                    results.add(mapper.writeValueAsString(result));\n" +
+               "                }\n" +
+               "            } catch (Exception e) {\n" +
+               "                ObjectNode errNode = mapper.createObjectNode();\n" +
+               "                String msg = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();\n" +
+               "                errNode.put(\"error\", msg != null ? msg : \"Unknown error\");\n" +
+               "                results.add(errNode);\n" +
+               "            }\n" +
                "        }\n" +
-               "\n" +
-               "        // Invoke the method and print the result as JSON\n" +
-               "        Object result = target.invoke(sol, methodArgs);\n" +
-               "        // For simple types (int, String), just print directly\n" +
-               "        if (result instanceof Number || result instanceof Boolean) {\n" +
-               "            System.out.print(result);\n" +
-               "        } else if (result instanceof String) {\n" +
-               "            System.out.print(result);\n" +
-               "        } else {\n" +
-               "            // For complex types (List, Map, Set, arrays), serialize as JSON\n" +
-               "            System.out.print(mapper.writeValueAsString(result));\n" +
-               "        }\n" +
+               "        System.out.print(mapper.writeValueAsString(results));\n" +
                "    }\n" +
                "}\n";
     }
 
+    // Python runner: loops through all test cases in-process
     private String generatePythonRunner(String methodName) {
         return "import sys, json\n" +
                "import solution\n" +
                "if __name__ == '__main__':\n" +
                "    input_data = sys.stdin.read().strip()\n" +
-               "    args = json.loads(input_data)\n" +
+               "    all_cases = json.loads(input_data)\n" +
                "    func = getattr(solution, '" + methodName + "')\n" +
-               "    res = func(*args)\n" +
-               "    print(json.dumps(res), end='')\n";
+               "    results = []\n" +
+               "    for case in all_cases:\n" +
+               "        try:\n" +
+               "            res = func(*case)\n" +
+               "            if isinstance(res, (int, float, bool)):\n" +
+               "                results.append(str(res))\n" +
+               "            elif isinstance(res, str):\n" +
+               "                results.append(res)\n" +
+               "            else:\n" +
+               "                results.append(json.dumps(res))\n" +
+               "        except Exception as e:\n" +
+               "            results.append({'error': str(e)})\n" +
+               "    print(json.dumps(results), end='')\n";
     }
 
+    // JavaScript runner: loops through all test cases in-process
     private String generateJavaScriptRunner(String methodName) {
         return "const fs = require('fs');\n" +
                "const solution = require('./solution');\n" +
                "const inputStr = fs.readFileSync(0, 'utf-8').trim();\n" +
-               "const args = JSON.parse(inputStr);\n" +
-               "const res = solution." + methodName + "(...args);\n" +
-               "process.stdout.write(JSON.stringify(res));\n";
+               "const allCases = JSON.parse(inputStr);\n" +
+               "const results = [];\n" +
+               "for (const testCase of allCases) {\n" +
+               "    try {\n" +
+               "        const res = solution." + methodName + "(...testCase);\n" +
+               "        if (typeof res === 'number' || typeof res === 'boolean') {\n" +
+               "            results.push(String(res));\n" +
+               "        } else if (typeof res === 'string') {\n" +
+               "            results.push(res);\n" +
+               "        } else {\n" +
+               "            results.push(JSON.stringify(res));\n" +
+               "        }\n" +
+               "    } catch (e) {\n" +
+               "        results.push({error: e.message || 'Unknown error'});\n" +
+               "    }\n" +
+               "}\n" +
+               "process.stdout.write(JSON.stringify(results));\n";
     }
 
     private static class ExecutionOutcome {

@@ -3,6 +3,9 @@ package com.reasonly.backend.Question;
 import java.util.List;
 import java.util.Random;
 
+import com.reasonly.backend.Question.CodeWriting.CodeExecutionResult;
+import com.reasonly.backend.Question.CodeWriting.CodeExecutionService;
+import com.reasonly.backend.Question.CodeWriting.CodeRunningRequest;
 import com.reasonly.backend.User.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,15 +15,17 @@ import org.springframework.stereotype.Service;
 public class QuestionService {
     private final QuestionRepository questionRepository;
     private final Random random;
+    private final CodeExecutionService codeExecutionService;
 
     @Autowired
-    public QuestionService(QuestionRepository questionRepository) {
-        this(questionRepository, new Random());
+    public QuestionService(QuestionRepository questionRepository, CodeExecutionService codeExecutionService) {
+        this(questionRepository, new Random(), codeExecutionService);
     }
 
-    public QuestionService(QuestionRepository questionRepository, Random random) {
+    public QuestionService(QuestionRepository questionRepository, Random random, CodeExecutionService codeExecutionService) {
         this.questionRepository = questionRepository;
         this.random = random;
+        this.codeExecutionService = codeExecutionService;
     }
 
     public List<Question> getQuestions(QuestionTopic topic) {
@@ -154,5 +159,12 @@ public class QuestionService {
 
     private Question getReviewQuestion(User user) {
         return questionRepository.findRandomDueReview(user.getId()).orElse(null);
+    }
+
+    public CodeExecutionResult runCode(CodeRunningRequest request) {
+        Question question = questionRepository.findById(request.getQuestionId())
+                .orElseThrow(() -> new RuntimeException("Question not found with id: " + request.getQuestionId()));
+        return codeExecutionService.executeCode(request.getUserCode(), question.getSampleTestCases(),
+                question.getSampleExpectedOutputs(), question.getMethodName(), request.getLanguage());
     }
 }

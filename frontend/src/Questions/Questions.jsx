@@ -5,7 +5,7 @@ import FillInTheBlankQuestion from "./Formats/FillInTheBlankQuestion";
 import OrderCodeQuestion from "./Formats/OrderCodeQuestion";
 import CodeWritingQuestion from "./Formats/CodeWritingQuestion";
 import { useState, useEffect } from 'react';
-import { getQuestions, updateCompletedDate, submitQuestionAttempt, resetQuestionAttempts } from './QuestionService'
+import { getQuestions, updateCompletedDate, submitQuestionAttempt, resetQuestionAttempts, runCode } from './QuestionService'
 import AuthService from '../UserAuth/AuthService'
 
 function Questions({ onUserUpdate }) {
@@ -75,6 +75,22 @@ function Questions({ onUserUpdate }) {
       setIsSubmitting(false);
       setShowFeedback(true);
       onUserUpdate();
+    }
+  };
+
+  const handleRunCode = async (userCodeRequest) => {
+    const runCodeRequest = {
+      userCode: userCodeRequest[0],
+      questionId: currentQuestion.id,
+      language: userCodeRequest[1],
+    };
+
+    try {
+      const response = await runCode(runCodeRequest);
+      return response;
+    } catch (err) {
+      console.error("Failed to run code", err);
+      throw err;
     }
   };
 
@@ -252,6 +268,7 @@ function Questions({ onUserUpdate }) {
           selectedAnswer={selectedAnswer}
           showFeedback={showFeedback}
           isSubmitting={isSubmitting}
+          runCode={handleRunCode}
         />
       ) : (
         <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
