@@ -456,16 +456,18 @@
     font-size: 1.1rem;
     font-weight: 600;
     border-radius: 12px;
-    background: #2d2d2d;
+    background: rgba(255, 255, 255, 0.03);
     color: #fff;
-    border: none;
+    border: 1px solid rgba(255, 255, 255, 0.15);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     font-family: inherit;
 }
 
 .code-run-btn:hover:not(:disabled) {
-    background: #3a3a3a;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
 }
 
 .code-run-btn:disabled {
