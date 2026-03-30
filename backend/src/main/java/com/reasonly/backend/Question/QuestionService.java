@@ -64,21 +64,32 @@ public class QuestionService {
         int rating = user.getRating();
         QuestionDifficulty targetDifficulty = getDifficultyFromRating(rating);
         QuestionDifficulty selectedDifficulty = selectProbabilisticDifficulty(targetDifficulty);
+        
         if (Math.random() < 0.5) {
             Question result = getReviewQuestion(user);
             if (result != null) {
                 return List.of(result);
             }
         }
-        List<Question> potentialQuestions = questionRepository.findUnansweredByDifficultyAndUserId(selectedDifficulty,
-                user.getId());
+
+        QuestionTopic questionTopic = getQuestionTopic(user);
+        List<Question> potentialQuestions = questionRepository.findUnansweredByDifficultyAndUserIdAndQuestionTopic(selectedDifficulty,
+                user.getId(), questionTopic);
 
         if (!potentialQuestions.isEmpty()) {
             java.util.Collections.shuffle(potentialQuestions);
             return List.of(potentialQuestions.get(0));
         }
 
-        // Fallback 1: Try exact target difficulty if we diverted
+        // Fallback 1: Get any question topic in selectedDifficulty
+        potentialQuestions = questionRepository.findUnansweredByDifficultyAndUserId(selectedDifficulty, user.getId());
+
+        if (!potentialQuestions.isEmpty()) {
+            java.util.Collections.shuffle(potentialQuestions);
+            return List.of(potentialQuestions.get(0));
+        }
+
+        // Fallback 2: Try exact target difficulty if we diverted
         if (selectedDifficulty != targetDifficulty) {
             potentialQuestions = questionRepository.findUnansweredByDifficultyAndUserId(targetDifficulty, user.getId());
             if (!potentialQuestions.isEmpty()) {
@@ -87,7 +98,7 @@ public class QuestionService {
             }
         }
 
-        // Fallback 2: Try any difficulty, prioritizing closest to target
+        // Fallback 3: Try any difficulty, prioritizing closest to target
         for (QuestionDifficulty d : QuestionDifficulty.values()) {
             if (d == selectedDifficulty || d == targetDifficulty)
                 continue;
@@ -104,6 +115,27 @@ public class QuestionService {
             return List.of(result);
         }
         return List.of();
+    }
+
+
+    // Preferred questions selected by the user are 2x more likely to show up
+    private QuestionTopic getQuestionTopic(User user) {
+        List<QuestionTopic> interests = user.getInterests() != null ? user.getInterests() : List.of();
+        int totalSlots = QuestionTopic.values().length + interests.size(); 
+        QuestionTopic[] topics = new QuestionTopic[totalSlots];
+        int currentIndex = 0;
+        
+        for (QuestionTopic topic : QuestionTopic.values()) {
+            topics[currentIndex++] = topic;
+            
+            // If the user is interested in this topic, add it a second time
+            if (interests.contains(topic)) {
+                topics[currentIndex++] = topic;
+            }
+        }
+        
+        int randomIndex = random.nextInt(totalSlots);
+        return topics[randomIndex];
     }
 
     private QuestionDifficulty getDifficultyFromRating(int rating) {

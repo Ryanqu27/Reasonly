@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.reasonly.backend.Question.QuestionTopic;
+
 class UserServiceTest {
 
     @Mock
@@ -246,13 +248,13 @@ class UserServiceTest {
         User user = userWithStreak(0, null);
 
         userService.onboardUser(1L, new OnboardRequest(UserExperience.BEGINNER, 
-            UserMotivation.ACADEMIC, UserLanguage.JAVA, List.of(UserInterest.DATABASES, UserInterest.DATA_STRUCTURES_AND_ALGORITHMS)));
+            UserMotivation.ACADEMIC, UserLanguage.JAVA, List.of(QuestionTopic.DATABASES, QuestionTopic.DATA_STRUCTURES_AND_ALGORITHMS)));
 
         assertEquals(UserExperience.BEGINNER, user.getExperience());
         assertEquals(0, user.getRating());
         assertEquals(UserMotivation.ACADEMIC, user.getMotivation());
         assertEquals(UserLanguage.JAVA, user.getPreferredLanguage());
-        assertEquals(List.of(UserInterest.DATABASES, UserInterest.DATA_STRUCTURES_AND_ALGORITHMS), user.getInterests());
+        assertEquals(List.of(QuestionTopic.DATABASES, QuestionTopic.DATA_STRUCTURES_AND_ALGORITHMS), user.getInterests());
         verify(userRepository).save(user);
     }
 }

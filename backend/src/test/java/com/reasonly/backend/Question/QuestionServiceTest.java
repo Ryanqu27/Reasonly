@@ -58,7 +58,7 @@ class QuestionServiceTest {
         User user = new User();
         user.setId(1L);
         user.setRating(1500); // EASY
-
+        user.setInterests(List.of(QuestionTopic.DATABASES));
         when(questionRepository.findUnansweredByDifficultyAndUserId(eq(QuestionDifficulty.EASY), anyLong()))
                         .thenReturn(Collections.emptyList());
         when(questionRepository.findUnansweredByDifficultyAndUserId(eq(QuestionDifficulty.BASIC), anyLong()))
@@ -84,6 +84,7 @@ class QuestionServiceTest {
         User user = new User();
         user.setId(1L);
         user.setRating(1500);
+        user.setInterests(List.of(QuestionTopic.DATABASES));
 
         for (QuestionDifficulty d : QuestionDifficulty.values()) {
             when(questionRepository.findUnansweredByDifficultyAndUserId(eq(d), anyLong()))
@@ -113,6 +114,7 @@ class QuestionServiceTest {
 
         User user = new User();
         user.setId(1L);
+        user.setInterests(List.of(QuestionTopic.DATABASES));
 
         user.setRating(800); // BASIC (≤1000)
         assertEquals(QuestionDifficulty.BASIC, questionService.getPlayQuestions(user).get(0).getDifficulty());
@@ -147,6 +149,7 @@ class QuestionServiceTest {
         User user = new User();
         user.setId(1L);
         user.setRating(2200); // MEDIUM target
+        user.setInterests(List.of(QuestionTopic.DATABASES));
 
         List<Question> result = questionService.getPlayQuestions(user);
 
@@ -168,6 +171,7 @@ class QuestionServiceTest {
         User user = new User();
         user.setId(1L);
         user.setRating(2200); // MEDIUM target → easier = EASY
+        user.setInterests(List.of(QuestionTopic.DATABASES));
 
         when(questionRepository.findUnansweredByDifficultyAndUserId(eq(QuestionDifficulty.EASY), anyLong()))
             .thenReturn(List.of(questionOf(QuestionDifficulty.EASY)));
@@ -194,6 +198,7 @@ class QuestionServiceTest {
         User user = new User();
         user.setId(1L);
         user.setRating(2200); // MEDIUM target → harder = HARD
+        user.setInterests(List.of(QuestionTopic.DATABASES));
 
         when(questionRepository.findUnansweredByDifficultyAndUserId(eq(QuestionDifficulty.HARD), anyLong()))
             .thenReturn(List.of(questionOf(QuestionDifficulty.HARD)));
@@ -222,6 +227,7 @@ class QuestionServiceTest {
         User user = new User();
         user.setId(1L);
         user.setRating(500); // BASIC — already lowest
+        user.setInterests(List.of(QuestionTopic.DATABASES));
 
         when(questionRepository.findUnansweredByDifficultyAndUserId(eq(QuestionDifficulty.BASIC), anyLong()))
             .thenReturn(List.of(questionOf(QuestionDifficulty.BASIC)));
@@ -246,6 +252,7 @@ class QuestionServiceTest {
         User user = new User();
         user.setId(1L);
         user.setRating(5000); // EXTREME — already highest
+        user.setInterests(List.of(QuestionTopic.DATABASES));
 
         when(questionRepository.findUnansweredByDifficultyAndUserId(eq(QuestionDifficulty.EXTREME), anyLong()))
             .thenReturn(List.of(questionOf(QuestionDifficulty.EXTREME)));

@@ -13,6 +13,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.reasonly.backend.Question.QuestionTopic;
+
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
@@ -70,7 +72,7 @@ public class User implements UserDetails {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    private List<UserInterest> interests;
+    private List<QuestionTopic> interests;
 
     private int rating;
 

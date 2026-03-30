@@ -14,6 +14,12 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
         List<Question> findUnansweredByDifficultyAndUserId(@Param("difficulty") QuestionDifficulty difficulty,
                         @Param("userId") Long userId);
 
+        @Query("SELECT q FROM Question q WHERE q.difficulty = :difficulty AND q.topic = :questionTopic " +
+        "AND q.id NOT IN (SELECT qa.question.id FROM QuestionAttempt qa WHERE qa.userId = :userId)")
+        List<Question> findUnansweredByDifficultyAndUserIdAndQuestionTopic(@Param("difficulty") QuestionDifficulty difficulty,
+                        @Param("userId") Long userId, @Param("questionTopic") QuestionTopic questionTopic);
+
+        
         @Query(value = "SELECT q.* FROM questions q " +
                         "JOIN question_attempts qa ON q.id = qa.question_id " +
                         "WHERE qa.user_id = :userId " +

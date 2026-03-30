@@ -18,6 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.reasonly.backend.Question.QuestionTopic;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -68,7 +69,7 @@ public class UserIntegrationTest {
         UserExperience.BEGINNER,
         UserMotivation.INTERVIEW_PREP,
         UserLanguage.JAVA,
-        List.of(UserInterest.DATA_STRUCTURES_AND_ALGORITHMS, UserInterest.DATABASES)
+        List.of(QuestionTopic.DATA_STRUCTURES_AND_ALGORITHMS, QuestionTopic.DATABASES)
         );
 
         mockMvc.perform(put("/api/user/" + testUser.getId() + "/onboard")
