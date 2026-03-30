@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 
-export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer, showFeedback, isSubmitting, runCode }) {
-    const [language, setLanguage] = useState("JAVA");
+export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer, showFeedback, isSubmitting, runCode, preferredLanguage }) {
+    const [language, setLanguage] = useState(preferredLanguage);
     const [localRunResult, setLocalRunResult] = useState(null);
     const [isRunning, setIsRunning] = useState(false);
-    
+
+
+
     // Maps Backend Enum -> Monaco Editor language string
     const LANGUAGE_MAP = {
         "JAVA": "java",
@@ -67,7 +69,7 @@ export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer
                 </span>
                 {question.question}
             </h3>
-            
+
             <div className="code-language-bar">
                 {['JAVA', 'PYTHON', 'JAVASCRIPT'].map((lang) => (
                     <button
@@ -91,7 +93,7 @@ export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer
                     />
                 </code>
             </div>
-            
+
             <div className="code-action-row">
                 <button
                     onClick={onRunClick}
