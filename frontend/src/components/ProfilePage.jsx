@@ -76,7 +76,6 @@ export default function ProfilePage() {
 
             <div className="stats-grid">
                 <div className="stat-card stat-rating">
-                    <div className="stat-icon">⭐</div>
                     <div className="stat-content">
                         <span className="stat-value">{profile.rating}</span>
                         <span className="stat-label">Rating</span>
@@ -84,7 +83,6 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="stat-card stat-streak">
-                    <div className="stat-icon">🔥</div>
                     <div className="stat-content">
                         <span className="stat-value">{profile.currentStreak}</span>
                         <span className="stat-label">Day Streak</span>
@@ -92,7 +90,6 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="stat-card stat-best">
-                    <div className="stat-icon">🏆</div>
                     <div className="stat-content">
                         <span className="stat-value">{profile.longestStreak}</span>
                         <span className="stat-label">Best Streak</span>
@@ -100,7 +97,6 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="stat-card stat-answered">
-                    <div className="stat-icon">📝</div>
                     <div className="stat-content">
                         <span className="stat-value">{profile.questionsAnsweredCorrectly
                             + profile.questionsAnsweredIncorrectly}</span>
@@ -109,7 +105,6 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="stat-card stat-accuracy">
-                    <div className="stat-icon">🎯</div>
                     <div className="stat-content">
                         <span className="stat-value">{(profile.accuracy * 100).toFixed(1)}%</span>
                         <span className="stat-label">Accuracy</span>
