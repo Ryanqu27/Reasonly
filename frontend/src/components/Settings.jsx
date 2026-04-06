@@ -8,6 +8,31 @@ export default function Settings() {
     const [error, setError] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
 
+    const LANGUAGE_DISPLAY = {
+        JAVA: "Java",
+        PYTHON: "Python",
+        C_PLUS_PLUS: "C++",
+        JAVASCRIPT: "JavaScript",
+        C_SHARP: "C#",
+        GO: "Go"
+    };
+
+    const EXPERIENCE_DISPLAY = {
+        BEGINNER: "Beginner",
+        INTERMEDIATE: "Intermediate",
+        ADVANCED: "Advanced",
+        EXPERT: "Expert"
+    };
+
+    const MOTIVATION_DISPLAY = {
+        INTERVIEW_PREP: "Interview Prep",
+        ACADEMIC: "Academic",
+        CAREER_TRANSITION: "Career Transition",
+        HOBBY: "Hobby"
+    }
+        
+
+
     useEffect(() => {
         const fetchSettings = async () => {
             try {
@@ -65,17 +90,17 @@ export default function Settings() {
                 <div className="settings-list">
                     <div className="setting-row">
                         <span className="setting-name">Programming Language</span>
-                        <span className="setting-value">{userSettingValues.preferredLanguage || "Not selected"}</span>
+                        <span className="setting-value">{LANGUAGE_DISPLAY[userSettingValues.preferredLanguage] || "Not selected"}</span>
                     </div>
 
                     <div className="setting-row">
                         <span className="setting-name">Experience Level</span>
-                        <span className="setting-value">{userSettingValues.experience || "Not selected"}</span>
+                        <span className="setting-value">{EXPERIENCE_DISPLAY[userSettingValues.experience] || "Not selected"}</span>
                     </div>
 
                     <div className="setting-row">
                         <span className="setting-name">Primary Motivation</span>
-                        <span className="setting-value">{userSettingValues.motivation || "Not selected"}</span>
+                        <span className="setting-value">{MOTIVATION_DISPLAY[userSettingValues.motivation] || "Not selected"}</span>
                     </div>
 
                     <div className="setting-row">
