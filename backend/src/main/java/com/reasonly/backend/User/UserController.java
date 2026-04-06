@@ -36,6 +36,11 @@ public class UserController {
         return userService.getUserSettings(user.getEmail());
     }
 
+    @PutMapping("/settings")
+    public void updateUserSettings(@AuthenticationPrincipal User user, @RequestBody UserSettings userSettings) {
+        userService.updateUserSettings(user.getEmail(), userSettings);
+    }
+
     @PostMapping("{id}/check-streak")
     public void checkStreak(@PathVariable Long id) {
         userService.checkStreak(id);

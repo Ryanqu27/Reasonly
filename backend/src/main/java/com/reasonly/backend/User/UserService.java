@@ -113,6 +113,21 @@ public class UserService {
         userRepository.save(currentUser);
     }
 
+    public void updateUserSettings(String email, UserSettings updatedSettings) {
+        User user = getUserByEmail(email);
+        UserSettings existingSettings = user.getUserSettings();
+        
+        existingSettings.setExperience(updatedSettings.getExperience());
+        existingSettings.setMotivation(updatedSettings.getMotivation());
+        existingSettings.setPreferredLanguage(updatedSettings.getPreferredLanguage());
+        existingSettings.setInterests(updatedSettings.getInterests());
+        existingSettings.setDarkMode(updatedSettings.isDarkMode());
+        existingSettings.setEditorFontSize(updatedSettings.getEditorFontSize());
+        
+        user.setUserSettings(existingSettings);
+        userRepository.save(user);
+    }
+
     public UserSettings getUserSettings(String email) {
         User user = getUserByEmail(email);
         UserSettings settings = user.getUserSettings();
