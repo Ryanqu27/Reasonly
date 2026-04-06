@@ -1,6 +1,6 @@
 package com.reasonly.backend.Question.CodeWriting;
 
-import com.reasonly.backend.User.UserLanguage;
+import com.reasonly.backend.User.UserSettings.UserLanguage;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

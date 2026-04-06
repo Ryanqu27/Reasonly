@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.reasonly.backend.User.UserLanguage;
+import com.reasonly.backend.User.UserSettings.UserLanguage;
 
 // Responsible for executing the a user's code in a Docker container.
 // All test cases are batched into a single container run for performance.

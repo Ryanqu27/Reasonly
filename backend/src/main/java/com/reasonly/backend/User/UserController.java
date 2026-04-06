@@ -3,6 +3,9 @@ package com.reasonly.backend.User;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.reasonly.backend.User.UserSettings.UserSettings;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +29,11 @@ public class UserController {
     @GetMapping("/profile")
     public UserProfile getUserProfile(@AuthenticationPrincipal User user) {
         return userService.getUserProfile(user.getEmail());
+    }
+
+    @GetMapping("/settings")
+    public UserSettings getUserSettings(@AuthenticationPrincipal User user) {
+        return userService.getUserSettings(user.getEmail());
     }
 
     @PostMapping("{id}/check-streak")

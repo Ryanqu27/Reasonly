@@ -15,6 +15,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.reasonly.backend.Question.QuestionTopic;
+import com.reasonly.backend.User.UserSettings.UserExperience;
+import com.reasonly.backend.User.UserSettings.UserLanguage;
+import com.reasonly.backend.User.UserSettings.UserMotivation;
 
 class UserServiceTest {
 
@@ -188,7 +191,7 @@ class UserServiceTest {
 
         userService.onboardUser(1L, new OnboardRequest(UserExperience.BEGINNER, null, null, null));
 
-        assertEquals(UserExperience.BEGINNER, user.getExperience());
+        assertEquals(UserExperience.BEGINNER, user.getUserSettings().getExperience());
         assertEquals(0, user.getRating());
         verify(userRepository).save(user);
     }
@@ -199,7 +202,7 @@ class UserServiceTest {
 
         userService.onboardUser(1L, new OnboardRequest(UserExperience.INTERMEDIATE, null, null, null));
 
-        assertEquals(UserExperience.INTERMEDIATE, user.getExperience());
+        assertEquals(UserExperience.INTERMEDIATE, user.getUserSettings().getExperience());
         assertEquals(500, user.getRating());
     }
 
@@ -209,7 +212,7 @@ class UserServiceTest {
 
         userService.onboardUser(1L, new OnboardRequest(UserExperience.ADVANCED, null, null, null));
 
-        assertEquals(UserExperience.ADVANCED, user.getExperience());
+        assertEquals(UserExperience.ADVANCED, user.getUserSettings().getExperience());
         assertEquals(1000, user.getRating());
     }
 
@@ -219,19 +222,21 @@ class UserServiceTest {
 
         userService.onboardUser(1L, new OnboardRequest(UserExperience.EXPERT, null, null, null));
 
-        assertEquals(UserExperience.EXPERT, user.getExperience());
+        assertEquals(UserExperience.EXPERT, user.getUserSettings().getExperience());
         assertEquals(1500, user.getRating());
     }
 
     @Test
     void onboardUser_AlreadySet_DoesNothing() {
         User user = userWithStreak(0, null);
-        user.setExperience(UserExperience.BEGINNER);
+        com.reasonly.backend.User.UserSettings.UserSettings settings = new com.reasonly.backend.User.UserSettings.UserSettings();
+        settings.setExperience(UserExperience.BEGINNER);
+        user.setUserSettings(settings);
         user.setRating(0);
 
         userService.onboardUser(1L, new OnboardRequest(UserExperience.EXPERT, null, null, null));
 
-        assertEquals(UserExperience.BEGINNER, user.getExperience());
+        assertEquals(UserExperience.BEGINNER, user.getUserSettings().getExperience());
         assertEquals(0, user.getRating()); // Should not have changed to 1500
     }
 
@@ -250,11 +255,11 @@ class UserServiceTest {
         userService.onboardUser(1L, new OnboardRequest(UserExperience.BEGINNER, 
             UserMotivation.ACADEMIC, UserLanguage.JAVA, List.of(QuestionTopic.DATABASES, QuestionTopic.DATA_STRUCTURES_AND_ALGORITHMS)));
 
-        assertEquals(UserExperience.BEGINNER, user.getExperience());
+        assertEquals(UserExperience.BEGINNER, user.getUserSettings().getExperience());
         assertEquals(0, user.getRating());
-        assertEquals(UserMotivation.ACADEMIC, user.getMotivation());
-        assertEquals(UserLanguage.JAVA, user.getPreferredLanguage());
-        assertEquals(List.of(QuestionTopic.DATABASES, QuestionTopic.DATA_STRUCTURES_AND_ALGORITHMS), user.getInterests());
+        assertEquals(UserMotivation.ACADEMIC, user.getUserSettings().getMotivation());
+        assertEquals(UserLanguage.JAVA, user.getUserSettings().getPreferredLanguage());
+        assertEquals(List.of(QuestionTopic.DATABASES, QuestionTopic.DATA_STRUCTURES_AND_ALGORITHMS), user.getUserSettings().getInterests());
         verify(userRepository).save(user);
     }
 }

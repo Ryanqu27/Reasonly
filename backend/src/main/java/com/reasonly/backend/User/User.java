@@ -13,17 +13,19 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.reasonly.backend.Question.QuestionTopic;
 
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.FetchType;
+import com.reasonly.backend.User.UserSettings.UserSettings;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -61,18 +63,8 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
 
-    @Enumerated(EnumType.STRING)
-    private UserExperience experience;
-
-    @Enumerated(EnumType.STRING)
-    private UserMotivation motivation;
-
-    @Enumerated(EnumType.STRING)
-    private UserLanguage preferredLanguage;
-
-    @ElementCollection(fetch = FetchType.EAGER)
-    @Enumerated(EnumType.STRING)
-    private List<QuestionTopic> interests;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private UserSettings userSettings;
 
     private int rating;
 

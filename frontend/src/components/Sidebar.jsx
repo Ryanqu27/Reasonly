@@ -19,6 +19,12 @@ export default function Sidebar() {
             label: 'Profile',
             icon: '👤',
             path: '/profile'
+        },
+        {
+            id: 'settings',
+            label: 'Settings',
+            icon: '⚙️',
+            path: '/settings'
         }
     ];
 

@@ -120,7 +120,7 @@ public class QuestionService {
 
     // Preferred questions selected by the user are 2x more likely to show up
     private QuestionTopic getQuestionTopic(User user) {
-        List<QuestionTopic> interests = user.getInterests() != null ? user.getInterests() : List.of();
+        List<QuestionTopic> interests = user.getUserSettings() != null && user.getUserSettings().getInterests() != null ? user.getUserSettings().getInterests() : List.of();
         int totalSlots = QuestionTopic.values().length + interests.size(); 
         QuestionTopic[] topics = new QuestionTopic[totalSlots];
         int currentIndex = 0;

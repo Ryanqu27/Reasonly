@@ -11,6 +11,7 @@ import { checkStreak } from './Questions/QuestionService.js';
 import ProfilePage from './components/ProfilePage.jsx';
 import Sidebar from './components/Sidebar.jsx';
 import UserQuestions from './UserAuth/UserQuestions.jsx';
+import Settings from './components/Settings.jsx';
 
 // Layout component that includes the sidebar
 function AppLayout({ children }) {
@@ -111,6 +112,13 @@ function App() {
             <ProtectedRoute>
               <AppLayout>
                 <ProfilePage />
+              </AppLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/settings" element={
+            <ProtectedRoute>
+              <AppLayout>
+                <Settings />
               </AppLayout>
             </ProtectedRoute>
           } />

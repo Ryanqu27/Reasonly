@@ -12,8 +12,8 @@ import com.reasonly.backend.Question.QuestionType;
 import com.reasonly.backend.Question.CodeWriting.CodeExecutionResult;
 import com.reasonly.backend.Question.CodeWriting.CodeExecutionService;
 import com.reasonly.backend.User.User;
-import com.reasonly.backend.User.UserLanguage;
 import com.reasonly.backend.User.UserRepository;
+import com.reasonly.backend.User.UserSettings.UserLanguage;
 
 @Service
 public class QuestionAttemptService {

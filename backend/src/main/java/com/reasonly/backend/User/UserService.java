@@ -4,6 +4,9 @@ import java.time.LocalDate;
 
 import org.springframework.stereotype.Service;
 
+import com.reasonly.backend.User.UserSettings.UserExperience;
+import com.reasonly.backend.User.UserSettings.UserSettings;
+
 import jakarta.transaction.Transactional;
 
 @Service
@@ -84,13 +87,19 @@ public class UserService {
     public void onboardUser(Long id, OnboardRequest request) {
         User currentUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
-        if (currentUser.getExperience() != null) {
+        if (currentUser.getUserSettings() != null) {
             return;
         }
-        currentUser.setExperience(request.experience());
-        currentUser.setMotivation(request.motivation());
-        currentUser.setPreferredLanguage(request.preferredLanguage());
-        currentUser.setInterests(request.interests());
+        UserSettings settings = new UserSettings();
+        settings.setExperience(request.experience());
+        settings.setMotivation(request.motivation());
+        settings.setPreferredLanguage(request.preferredLanguage());
+        settings.setInterests(request.interests());
+        settings.setDarkMode(true);
+        settings.setEditorFontSize(14);
+        settings.setUser(currentUser);
+        
+        currentUser.setUserSettings(settings);
 
         if (request.experience() == UserExperience.BEGINNER) {
             currentUser.setRating(0);
@@ -102,5 +111,11 @@ public class UserService {
             currentUser.setRating(1500);
         }
         userRepository.save(currentUser);
+    }
+
+    public UserSettings getUserSettings(String email) {
+        User user = getUserByEmail(email);
+        UserSettings settings = user.getUserSettings();
+        return settings;
     }
 }

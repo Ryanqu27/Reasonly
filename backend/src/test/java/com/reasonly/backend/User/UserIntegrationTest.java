@@ -19,6 +19,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reasonly.backend.Question.QuestionTopic;
+import com.reasonly.backend.User.UserSettings.UserExperience;
+import com.reasonly.backend.User.UserSettings.UserLanguage;
+import com.reasonly.backend.User.UserSettings.UserMotivation;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -80,12 +83,12 @@ public class UserIntegrationTest {
         mockMvc.perform(get("/api/user/me"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.email").value("test@gmail.com"))
-            .andExpect(jsonPath("$.experience").value("BEGINNER"))
-            .andExpect(jsonPath("$.motivation").value("INTERVIEW_PREP"))
-            .andExpect(jsonPath("$.preferredLanguage").value("JAVA"))
-            .andExpect(jsonPath("$.interests").isArray())
-            .andExpect(jsonPath("$.interests.length()").value(2))
-            .andExpect(jsonPath("$.interests[0]").value("DATA_STRUCTURES_AND_ALGORITHMS"))
-            .andExpect(jsonPath("$.interests[1]").value("DATABASES"));
+            .andExpect(jsonPath("$.userSettings.experience").value("BEGINNER"))
+            .andExpect(jsonPath("$.userSettings.motivation").value("INTERVIEW_PREP"))
+            .andExpect(jsonPath("$.userSettings.preferredLanguage").value("JAVA"))
+            .andExpect(jsonPath("$.userSettings.interests").isArray())
+            .andExpect(jsonPath("$.userSettings.interests.length()").value(2))
+            .andExpect(jsonPath("$.userSettings.interests[0]").value("DATA_STRUCTURES_AND_ALGORITHMS"))
+            .andExpect(jsonPath("$.userSettings.interests[1]").value("DATABASES"));
     }
 }
