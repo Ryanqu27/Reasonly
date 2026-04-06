@@ -65,6 +65,30 @@
     color: var(--text-muted, #9ca3af);
 }
 
+.preferences-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.setting-edit-button {
+    background-color: var(--primary, #6366f1);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.setting-edit-button:hover {
+    background-color: #4f46e5;
+    transform: translateY(-1px);
+}
+
 @media (max-width: 600px) {
     .setting-row {
         flex-direction: column;
