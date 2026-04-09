@@ -31,7 +31,12 @@ export default function Settings() {
         HOBBY: "Hobby"
     }
 
-
+    const FONT_SIZE = []
+    const start = 10
+    const end = 24
+    for (let i = start; i <= end; i++) {
+        FONT_SIZE.push(i);
+    }
 
     const fetchSettings = async () => {
         setLoading(true);
@@ -104,22 +109,27 @@ export default function Settings() {
                 <div className="settings-list">
                     <div className="setting-row">
                         <span className="setting-name">Programming Language</span>
-                        <span className="setting-value">{LANGUAGE_DISPLAY[userSettingValues.preferredLanguage] || "Not selected"}</span>
+                        <span className="setting-value">{LANGUAGE_DISPLAY[userSettingValues.preferredLanguage]}</span>
                     </div>
 
                     <div className="setting-row">
                         <span className="setting-name">Experience Level</span>
-                        <span className="setting-value">{EXPERIENCE_DISPLAY[userSettingValues.experience] || "Not selected"}</span>
+                        <span className="setting-value">{EXPERIENCE_DISPLAY[userSettingValues.experience]}</span>
                     </div>
 
                     <div className="setting-row">
                         <span className="setting-name">Primary Motivation</span>
-                        <span className="setting-value">{MOTIVATION_DISPLAY[userSettingValues.motivation] || "Not selected"}</span>
+                        <span className="setting-value">{MOTIVATION_DISPLAY[userSettingValues.motivation]}</span>
                     </div>
 
                     <div className="setting-row">
                         <span className="setting-name">Visual Theme</span>
                         <span className="setting-value">{userSettingValues.darkMode ? "Dark Mode" : "Light Mode"}</span>
+                    </div>
+
+                    <div className="setting-row">
+                        <span className="setting-name">Editor Font Size</span>
+                        <span className="setting-value">{userSettingValues.editorFontSize}</span>
                     </div>
                 </div>
             </div>
@@ -174,6 +184,16 @@ export default function Settings() {
                             onChange={e => handleSelectionChange("darkMode", e.target.value === "true")}>
                             <option value="true">Dark Mode</option>
                             <option value="false">Light Mode</option>
+                        </select>
+                    </div>
+
+                    <div className="setting-row">
+                        <span className="setting-name">Editor Font Size</span>
+                        <select className="setting-select" value={userSettingValues.editorFontSize} 
+                            onChange={e => handleSelectionChange("editorFontSize", Number(e.target.value))}>
+                            {FONT_SIZE.map((element, index) => {
+                                return <option key={index} value={element}>{element}</option>
+                            })}
                         </select>
                     </div>
                 </div>
