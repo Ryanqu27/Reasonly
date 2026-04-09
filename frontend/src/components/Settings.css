@@ -61,8 +61,8 @@
 
 .setting-value {
     font-size: 1rem;
-    font-weight: 400;
-    color: var(--text-muted, #9ca3af);
+    font-weight: 500;
+    color: var(--primary, #6366f1);
 }
 
 .preferences-actions {
@@ -87,6 +87,25 @@
 .setting-edit-button:hover {
     background-color: #4f46e5;
     transform: translateY(-1px);
+}
+
+.setting-select {
+    background-color: transparent;
+    color: var(--primary, #6366f1);
+    border: 1px solid var(--border, #374151);
+    padding: 0.35rem 0.6rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    min-width: 160px;
+}
+
+.setting-select:focus {
+    border-color: var(--primary, #6366f1);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
 }
 
 @media (max-width: 600px) {

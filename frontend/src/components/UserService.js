@@ -20,3 +20,12 @@ export const getUserSettings = async () => {
         throw error.response?.data || error.message;
     }
 }
+
+export const updateUserSettings = async (newUserSettings) => {
+    try {
+        return api.put("/user/settings", newUserSettings);
+    }
+    catch (error) {
+        throw error.response?.data || error.message;
+    }
+}

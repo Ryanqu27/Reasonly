@@ -24,7 +24,7 @@ function Questions({ onUserUpdate }) {
         const userPreferredLanguage = async () => {
             try {
                 const user = await AuthService.fetchCurrentUser();
-                setPreferredLanguage(user.preferredLanguage);
+                setPreferredLanguage(user.userSettings.preferredLanguage);
             } catch (err) {
                 console.error("Failed to fetch user preferred language", err);
             }
