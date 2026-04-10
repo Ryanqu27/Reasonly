@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from './AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
+import AuthService from './AuthService';
 import './Auth.css';
 
 export default function LoginForm() {
@@ -21,7 +22,13 @@ export default function LoginForm() {
         setLoading(true);
         try {
             await login(email, password);
-            navigate("/onboarding");
+            const userData = await AuthService.fetchCurrentUser();
+            if (!userData.userSettings || !userData.userSettings.preferredLanguage) {
+                navigate("/onboarding");
+            } 
+            else {
+                navigate("/");
+            }
         }
         catch (err) {
             setError(err?.message || err?.error || "Login failed");

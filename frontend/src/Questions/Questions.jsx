@@ -19,17 +19,18 @@ function Questions({ onUserUpdate }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [sessionStarted, setSessionStarted] = useState(false);
   const [preferredLanguage, setPreferredLanguage] = useState(null);
-
+  const [editorFontSize, setEditorFontSize] = useState(null);
   useEffect(() => {
-        const userPreferredLanguage = async () => {
+        const userSettings = async () => {
             try {
                 const user = await AuthService.fetchCurrentUser();
                 setPreferredLanguage(user.userSettings.preferredLanguage);
+                setEditorFontSize(user.userSettings.editorFontSize)
             } catch (err) {
                 console.error("Failed to fetch user preferred language", err);
             }
         }
-        userPreferredLanguage();
+        userSettings();
     }, []);
 
   const fetchNextQuestion = async () => {
@@ -283,6 +284,7 @@ function Questions({ onUserUpdate }) {
           isSubmitting={isSubmitting}
           runCode={handleRunCode}
           preferredLanguage={preferredLanguage}
+          editorFontSize={editorFontSize}
         />
       ) : (
         <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
