@@ -2,6 +2,8 @@ package com.reasonly.backend.Question;
 
 import java.util.List;
 
+import com.reasonly.backend.User.UserSettings.UserLanguage;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -35,6 +37,13 @@ public class Question {
     @Enumerated(EnumType.STRING)
     private QuestionDifficulty difficulty;
 
+    /**
+     * If set, this question is only served to users whose preferred language matches.
+     * If null, the question is language-agnostic and served to all users.
+     */
+    @Enumerated(EnumType.STRING)
+    private UserLanguage language;
+
     private String question;
 
     @ElementCollection
@@ -58,21 +67,26 @@ public class Question {
 
     public Question(Long id, QuestionTopic topic, QuestionType type, QuestionDifficulty difficulty, String question,
             List<String> answers, List<String> correctAnswer) {
+        this(id, topic, type, difficulty, null, question, answers, correctAnswer);
+    }
+
+    public Question(Long id, QuestionTopic topic, QuestionType type, QuestionDifficulty difficulty, UserLanguage language,
+            String question, List<String> answers, List<String> correctAnswer) {
         this.id = id;
         this.topic = topic;
         this.type = type;
         this.difficulty = difficulty;
+        this.language = language;
         this.question = question;
         this.answers = answers;
         this.correctAnswer = correctAnswer;
     }
 
     // Overloaded constructor for CODE_WRITING questions that require method name and sample test cases
-    public Question(Long id, QuestionTopic topic, QuestionType type, QuestionDifficulty difficulty, 
-            String question,
-            List<String> answers, List<String> correctAnswer, String methodName, 
+    public Question(Long id, QuestionTopic topic, QuestionType type, QuestionDifficulty difficulty,
+            String question, List<String> answers, List<String> correctAnswer, String methodName,
             List<String> sampleTestCases, List<String> sampleExpectedOutputs) {
-        this(id, topic, type, difficulty, question, answers, correctAnswer);
+        this(id, topic, type, difficulty, null, question, answers, correctAnswer);
         this.methodName = methodName;
         this.sampleTestCases = sampleTestCases;
         this.sampleExpectedOutputs = sampleExpectedOutputs;

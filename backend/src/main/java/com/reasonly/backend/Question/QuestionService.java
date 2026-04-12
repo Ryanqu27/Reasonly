@@ -72,9 +72,11 @@ public class QuestionService {
             }
         }
 
+        com.reasonly.backend.User.UserSettings.UserLanguage userLanguage = user.getUserSettings() != null ? user.getUserSettings().getPreferredLanguage() : null;
+
         QuestionTopic questionTopic = getQuestionTopic(user);
-        List<Question> potentialQuestions = questionRepository.findUnansweredByDifficultyAndUserIdAndQuestionTopic(selectedDifficulty,
-                user.getId(), questionTopic);
+        List<Question> potentialQuestions = questionRepository.findUnansweredByDifficultyAndUserIdAndQuestionTopicAndLanguage(selectedDifficulty,
+                user.getId(), questionTopic, userLanguage);
 
         if (!potentialQuestions.isEmpty()) {
             java.util.Collections.shuffle(potentialQuestions);
@@ -82,7 +84,7 @@ public class QuestionService {
         }
 
         // Fallback 1: Get any question topic in selectedDifficulty
-        potentialQuestions = questionRepository.findUnansweredByDifficultyAndUserId(selectedDifficulty, user.getId());
+        potentialQuestions = questionRepository.findUnansweredByDifficultyAndUserIdAndLanguage(selectedDifficulty, user.getId(), userLanguage);
 
         if (!potentialQuestions.isEmpty()) {
             java.util.Collections.shuffle(potentialQuestions);
@@ -91,7 +93,7 @@ public class QuestionService {
 
         // Fallback 2: Try exact target difficulty if we diverted
         if (selectedDifficulty != targetDifficulty) {
-            potentialQuestions = questionRepository.findUnansweredByDifficultyAndUserId(targetDifficulty, user.getId());
+            potentialQuestions = questionRepository.findUnansweredByDifficultyAndUserIdAndLanguage(targetDifficulty, user.getId(), userLanguage);
             if (!potentialQuestions.isEmpty()) {
                 java.util.Collections.shuffle(potentialQuestions);
                 return List.of(potentialQuestions.get(0));
@@ -102,7 +104,7 @@ public class QuestionService {
         for (QuestionDifficulty d : QuestionDifficulty.values()) {
             if (d == selectedDifficulty || d == targetDifficulty)
                 continue;
-            potentialQuestions = questionRepository.findUnansweredByDifficultyAndUserId(d, user.getId());
+            potentialQuestions = questionRepository.findUnansweredByDifficultyAndUserIdAndLanguage(d, user.getId(), userLanguage);
             if (!potentialQuestions.isEmpty()) {
                 java.util.Collections.shuffle(potentialQuestions);
                 return List.of(potentialQuestions.get(0));

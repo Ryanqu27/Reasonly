@@ -10,14 +10,14 @@ import org.springframework.data.repository.query.Param;
 public interface QuestionRepository extends JpaRepository<Question, Long> {
         List<Question> findByTopic(QuestionTopic topic);
 
-        @Query("SELECT q FROM Question q WHERE q.difficulty = :difficulty AND q.id NOT IN (SELECT qa.question.id FROM QuestionAttempt qa WHERE qa.userId = :userId)")
-        List<Question> findUnansweredByDifficultyAndUserId(@Param("difficulty") QuestionDifficulty difficulty,
-                        @Param("userId") Long userId);
+        @Query("SELECT q FROM Question q WHERE q.difficulty = :difficulty AND (q.language IS NULL OR q.language = :language) AND q.id NOT IN (SELECT qa.question.id FROM QuestionAttempt qa WHERE qa.userId = :userId)")
+        List<Question> findUnansweredByDifficultyAndUserIdAndLanguage(@Param("difficulty") QuestionDifficulty difficulty,
+                        @Param("userId") Long userId, @Param("language") com.reasonly.backend.User.UserSettings.UserLanguage language);
 
-        @Query("SELECT q FROM Question q WHERE q.difficulty = :difficulty AND q.topic = :questionTopic " +
+        @Query("SELECT q FROM Question q WHERE q.difficulty = :difficulty AND q.topic = :questionTopic AND (q.language IS NULL OR q.language = :language) " +
         "AND q.id NOT IN (SELECT qa.question.id FROM QuestionAttempt qa WHERE qa.userId = :userId)")
-        List<Question> findUnansweredByDifficultyAndUserIdAndQuestionTopic(@Param("difficulty") QuestionDifficulty difficulty,
-                        @Param("userId") Long userId, @Param("questionTopic") QuestionTopic questionTopic);
+        List<Question> findUnansweredByDifficultyAndUserIdAndQuestionTopicAndLanguage(@Param("difficulty") QuestionDifficulty difficulty,
+                        @Param("userId") Long userId, @Param("questionTopic") QuestionTopic questionTopic, @Param("language") com.reasonly.backend.User.UserSettings.UserLanguage language);
 
         
         @Query(value = "SELECT q.* FROM questions q " +

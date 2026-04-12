@@ -7,9 +7,9 @@ public enum QuestionTopic {
     SYSTEMS, // OS, memory, processes, threads, scheduling
     NETWORKING, // HTTP, TCP/IP, latency, reliability
     DATABASES, // SQL, indexing, normalization, transactions
-    CONCURRENCY, // Locks, deadlocks, race conditions
-    SOFTWARE_DESIGN, // OOP, design patterns, abstractions
-    CODE_REASONING; // Read code, predict output, edge cases
+    CONCURRENCY, // Multi-threading, race conditions, async
+    SOFTWARE_DESIGN, // Design patterns, SOLID, UML, Architecture
+    LANGUAGE_KNOWLEDGE; // Language specific trivia (e.g. Java, JS, Python)
 
     @JsonCreator
     public static QuestionTopic fromString(String value) {

@@ -12,11 +12,13 @@ import com.reasonly.backend.Question.QuestionDifficulty;
 import com.reasonly.backend.Question.QuestionRepository;
 import com.reasonly.backend.Question.QuestionTopic;
 import com.reasonly.backend.Question.QuestionType;
+import com.reasonly.backend.User.UserSettings.UserLanguage;
 
 @Configuration
 public class DataInitializer {
 
-        // Method for testing purposes
+        /*
+// Method for testing purposes
     @Bean
     CommandLineRunner init(QuestionRepository repository) {
         return args -> {
@@ -31,33 +33,33 @@ public class DataInitializer {
                 QuestionDifficulty.EASY,
                 "Which traversal of a binary search tree outputs sorted values?",
                 List.of("Preorder", "Postorder", "Level-order", "Inorder"), List.of("Inorder")));
-            questions.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.FIND_THE_BUG,
-                QuestionDifficulty.EASY,
+            questions.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.FIND_THE_BUG,
+                QuestionDifficulty.EASY, UserLanguage.JAVA,
                 "Identify the line number containing the bug in the following Java code:\n\n```java\n1: public class Test {\n2:     public static void main(String[] args) {\n3:         int x = 5;\n4:         if (x = 5) { System.out.println(x); }\n5:     }\n6: }\n```",
                 List.of(),
                 List.of("4")));
-            questions.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.FILL_IN_THE_BLANK,
+            questions.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.FILL_IN_THE_BLANK,
                 QuestionDifficulty.EASY,
-                "Fill in the blank to complete the loop that prints numbers 1 through 5:\n\n```java\nfor (int i = 1; i <= ___ ; i++) {\n    System.out.println(i);\n}\n```",
+                "Fill in the blank to complete the logic that iterates from 1 to 5 (inclusive):\n\n```text\niteration_variable = 1\nWHILE iteration_variable <= ___\n    print(iteration_variable)\n    iteration_variable = iteration_variable + 1\n```",
                 List.of(),
                 List.of("5")));
-            questions.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.ORDER_CODE,
+            questions.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.ORDER_CODE,
                 QuestionDifficulty.MEDIUM,
                 "Order the following operations correctly to perform a standard Binary Search:",
                 List.of(
-                    "if (arr[mid] < target) left = mid + 1;", 
-                    "int mid = left + (right - left) / 2;", 
-                    "else right = mid - 1;",
-                    "if (arr[mid] == target) return mid;"
+                    "IF array[mid] < target THEN left = mid + 1", 
+                    "mid = left + (right - left) / 2", 
+                    "ELSE right = mid - 1",
+                    "IF array[mid] == target THEN return mid"
                 ), 
                 List.of(
-                    "int mid = left + (right - left) / 2;", 
-                    "if (arr[mid] == target) return mid;", 
-                    "if (arr[mid] < target) left = mid + 1;", 
-                    "else right = mid - 1;"
+                    "mid = left + (right - left) / 2", 
+                    "IF array[mid] == target THEN return mid", 
+                    "IF array[mid] < target THEN left = mid + 1", 
+                    "ELSE right = mid - 1"
                 ) 
             ));
-            questions.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.CODE_WRITING,
+            questions.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.CODE_WRITING,
                 QuestionDifficulty.EASY,
                 "Write a function named 'add' that takes in two integers and returns their sum.",
                 List.of("[2, 3]", "[10, -5]", "[0, 0]", "[-1, -1]", "[100, 200]", "[-10, -20]", "[5, 5]", "[1, 1]", "[0, 1]", "[1, 0]"), // Test Case Inputs (JSON parameters array)
@@ -70,8 +72,9 @@ public class DataInitializer {
         };
     }
 
-        // Method for production
-        /*
+        */
+// Method for production
+        
     @Bean
     CommandLineRunner init(QuestionRepository repository) {
         return args -> {
@@ -85,8 +88,8 @@ public class DataInitializer {
             questions.addAll(getDatabaseQuestions());
             questions.addAll(getConcurrencyQuestions());
             questions.addAll(getSoftwareDesignQuestions());
-            questions.addAll(getDebuggingQuestions());
-            questions.addAll(getCodeReasoningQuestions());
+            // questions.addAll(getDebuggingQuestions());
+            questions.addAll(getLanguageKnowledgeQuestions());
 
             repository.saveAll(questions);
         };
@@ -98,15 +101,27 @@ public class DataInitializer {
             QuestionDifficulty.BASIC,
             "Which data structure provides average O(1) lookup time?",
             List.of("Array", "Linked List", "Hash Table", "Binary Tree"), List.of("Hash Table")));
-        q.add(new Question(null, QuestionTopic.DATA_STRUCTURES_AND_ALGORITHMS, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.EASY,
-            "Which traversal of a binary search tree outputs sorted values?",
-            List.of("Preorder", "Postorder", "Level-order", "Inorder"), List.of("Inorder")));
-        q.add(new Question(null, QuestionTopic.DATA_STRUCTURES_AND_ALGORITHMS, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.MEDIUM,
-            "What happens to time complexity when a recursive algorithm recomputes overlapping subproblems?",
-            List.of("Becomes linear", "Becomes exponential", "Remains constant",
-            "Becomes logarithmic"), List.of("Becomes exponential")));
+        q.add(new Question(null, QuestionTopic.DATA_STRUCTURES_AND_ALGORITHMS, QuestionType.FILL_IN_THE_BLANK,
+            QuestionDifficulty.EASY, null,
+            "Fill in the blank: A(n) _____ traversal of a binary search tree outputs its values in sorted order.",
+            List.of(), List.of("Inorder", "inorder", "in-order")));
+        q.add(new Question(null, QuestionTopic.DATA_STRUCTURES_AND_ALGORITHMS, QuestionType.ORDER_CODE,
+            QuestionDifficulty.MEDIUM, null,
+            "Order the steps of the Merge Sort algorithm:",
+            List.of(
+                "Recursively sort the left half",
+                "Merge the two sorted halves back together",
+                "Find the middle index to divide the array into two halves",
+                "Recursively sort the right half",
+                "If the array has 1 or fewer elements, return it"
+            ), 
+            List.of(
+                "If the array has 1 or fewer elements, return it",
+                "Find the middle index to divide the array into two halves",
+                "Recursively sort the left half",
+                "Recursively sort the right half",
+                "Merge the two sorted halves back together"
+            )));
         q.add(new Question(null, QuestionTopic.DATA_STRUCTURES_AND_ALGORITHMS, QuestionType.MULTIPLE_CHOICE,
             QuestionDifficulty.HARD,
             "Why does merge sort require additional memory?", List.of("It uses recursion",
@@ -257,11 +272,20 @@ public class DataInitializer {
 
     private List<Question> getSystemsQuestions() {
         List<Question> q = new ArrayList<>();
-        q.add(new Question(null, QuestionTopic.SYSTEMS, QuestionType.MULTIPLE_CHOICE, QuestionDifficulty.BASIC,
-            "What is the primary purpose of virtual memory?",
-            List.of("Increase CPU speed",
-            "Allow programs to use more memory than physically available",
-            "Prevent deadlocks", "Store cache data"), List.of("Allow programs to use more memory than physically available")));
+        q.add(new Question(null, QuestionTopic.SYSTEMS, QuestionType.ORDER_CODE, QuestionDifficulty.MEDIUM, null,
+            "Order the steps a CPU takes to handle a typical hardware interrupt:",
+            List.of(
+                "Execute the Interrupt Service Routine (ISR)",
+                "Device sends an interrupt signal to the CPU",
+                "Save the current process state (registers, program counter)",
+                "Restore the saved process state and resume normal execution"
+            ),
+            List.of(
+                "Device sends an interrupt signal to the CPU",
+                "Save the current process state (registers, program counter)",
+                "Execute the Interrupt Service Routine (ISR)",
+                "Restore the saved process state and resume normal execution"
+            )));
         q.add(new Question(null, QuestionTopic.SYSTEMS, QuestionType.MULTIPLE_CHOICE, QuestionDifficulty.MEDIUM,
             "What happens during a context switch?",
             List.of("CPU executes a new instruction", "Memory is cleared",
@@ -416,10 +440,10 @@ public class DataInitializer {
 
     private List<Question> getNetworkingQuestions() {
         List<Question> q = new ArrayList<>();
-        q.add(new Question(null, QuestionTopic.NETWORKING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.BASIC,
-            "Which protocol guarantees reliable data delivery?",
-            List.of("UDP", "IP", "TCP", "HTTP"), List.of("TCP")));
+        q.add(new Question(null, QuestionTopic.NETWORKING, QuestionType.ORDER_CODE, QuestionDifficulty.BASIC, null,
+            "Order the steps of the TCP 3-way handshake:",
+            List.of("Server sends SYN-ACK", "Client sends ACK", "Client sends SYN"), 
+            List.of("Client sends SYN", "Server sends SYN-ACK", "Client sends ACK")));
         q.add(new Question(null, QuestionTopic.NETWORKING, QuestionType.MULTIPLE_CHOICE,
             QuestionDifficulty.MEDIUM,
             "Why does HTTP/2 improve performance over HTTP/1.1?",
@@ -591,10 +615,10 @@ public class DataInitializer {
 
     private List<Question> getDatabaseQuestions() {
         List<Question> q = new ArrayList<>();
-        q.add(new Question(null, QuestionTopic.DATABASES, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.BASIC,
-            "What does an index primarily improve?",
-            List.of("Insert speed", "Delete speed", "Query lookup speed", "Transaction safety"), List.of("Query lookup speed")));
+        q.add(new Question(null, QuestionTopic.DATABASES, QuestionType.SELECT_ALL, QuestionDifficulty.MEDIUM, null,
+            "Select ALL the properties that refer to ACID in database transactions:",
+            List.of("Atomicity", "Asynchronous", "Consistency", "Concurrency", "Isolation", "Immutability", "Durability"), 
+            List.of("Atomicity", "Consistency", "Isolation", "Durability")));
         q.add(new Question(null, QuestionTopic.DATABASES, QuestionType.MULTIPLE_CHOICE,
             QuestionDifficulty.MEDIUM,
             "When can an index negatively impact performance?", List.of("During SELECT queries",
@@ -1164,184 +1188,76 @@ public class DataInitializer {
         return q;
     }
 
-    private List<Question> getCodeReasoningQuestions() {
+    private List<Question> getLanguageKnowledgeQuestions() {
         List<Question> q = new ArrayList<>();
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.BASIC,
-            "What does this code print?\nint x = 1;\nfor(int i = 0; i < 3; i++) x += i;\nSystem.out.println(x);",
-            List.of("3", "4", "5", "6"), List.of("4")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.MEDIUM,
-            "What is the final value of x?\nint x = 10;\nif(x > 5) x += 2;\nelse x -= 2;",
-            List.of("8", "10", "12", "14"), List.of("12")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.HARD,
-            "Why does this code cause a StackOverflowError?\n\nint factorial(int n) {\n    if (n == 0) return n;\n    return n * factorial(n - 1);\n}",
-            List.of("Incorrect base case", "Heap exhaustion", "Null pointer access",
-            "Integer overflow"), List.of("Incorrect base case")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.BASIC,
-            "In Java, which operator has higher precedence: && or ||?",
-            List.of("&&", "||", "They have the same precedence", "It depends on the parentheses"), List.of("&&")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.MEDIUM,
-            "What happens when you modify a String in Java (e.g., str = str + 'a')?",
-            List.of("The original object is modified", "A new String object is created",
-            "An error is thrown",
-            "The memory location remains identical"), List.of("A new String object is created")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.EASY,
-            "What is the output of '5' + 2 in JavaScript?",
-            List.of("7", "52", "Error", "Undefined"), List.of("52")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.MEDIUM,
-            "What does the 'continue' keyword do in a loop?",
-            List.of("Terminates the loop",
-            "Skips the current iteration and proceeds to the next one",
-            "Restarts the loop from the beginning", "Pauses execution"), List.of("Skips the current iteration and proceeds to the next one")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.BASIC,
-            "What is the result of 10 / 3 in integer division (e.g., Java)?",
-            List.of("3.33", "3", "4", "Error"), List.of("3")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.HARD,
-            "What is the result of (true || false) && !true?",
-            List.of("true", "false", "Error", "Undefined"), List.of("false")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.MEDIUM,
-            "What does 'short-circuit evaluation' mean for the && operator?",
-            List.of("Both sides are always evaluated",
-            "The right side is not evaluated if the left side is false",
-            "The left side is not evaluated if the right side is false",
-            "The code runs faster"), List.of("The right side is not evaluated if the left side is false")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.EASY,
-            "What is the value of 'x' after: int x = 5; x++;?", List.of("5", "6", "4", "Error"), List.of("6")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.MEDIUM,
-            "What does it mean if a function is 'pure'?",
-            List.of("It has no parameters",
-            "It always returns the same output for the same input and has no side effects",
-            "It only uses integers", "It is written in C"), List.of("It always returns the same output for the same input and has no side effects")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.HARD,
-            "In C, what does '*p' represent if 'p' is a pointer?", List.of("The address of p",
-            "The value stored at the address p points to", "The size of p",
-            "A multiplication operation"), List.of("The value stored at the address p points to")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.BASIC,
-            "What is a 'NullPointerException'?",
-            List.of("A math error",
-            "An error that occurs when an application attempts to use null in a case where an object is required",
-            "A network error", "A type of string"), List.of("An error that occurs when an application attempts to use null in a case where an object is required")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.MEDIUM,
-            "What is the purpose of a 'try-catch' block?",
-            List.of("To speed up code",
-            "To handle exceptions and prevent the program from crashing",
-            "To loop through data", "To define a class"), List.of("To handle exceptions and prevent the program from crashing")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.HARD, "What is 'Recursion'?",
-            List.of("A fast loop", "A method that calls itself", "A type of sorting",
-            "A way to join strings"), List.of("A method that calls itself")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.EASY,
-            "What is the result of 1 << 3 (bit shift left)?", List.of("3", "8", "1", "4"), List.of("8")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.MEDIUM,
-            "What is 'Type Casting'?",
-            List.of("Converting a variable from one data type to another", "Deleting a variable",
-            "Creating a new class", "Printing a variable"), List.of("Converting a variable from one data type to another")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.HARD,
-            "What is a 'Closure' in programming?",
-            List.of("A way to end a program",
-            "A function that remembers and can access its lexical scope even when it is executed outside its original scope",
-            "Closing a database connection", "A type of class"), List.of("A function that remembers and can access its lexical scope even when it is executed outside its original scope")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.BASIC, "What is a 'Boolean'?",
-            List.of("A large number", "A data type with two possible values: true or false",
-            "A special string",
-            "A type of loop"), List.of("A data type with two possible values: true or false")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.MEDIUM,
-            "What is 'Hoisting' in JavaScript?",
-            List.of("Lifting heavy data",
-            "Declarations are moved to the top of their scope during compilation",
-            "Deleting unused variables", "A type of loop"), List.of("Declarations are moved to the top of their scope during compilation")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.HARD,
-            "What is 'Memorization' (Memoization)?",
-            List.of("Learning by rote",
-            "An optimization technique used primarily to speed up computer programs by storing the results of expensive function calls",
-            "Managing memory", "A type of sorting"), List.of("An optimization technique used primarily to speed up computer programs by storing the results of expensive function calls")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.BASIC,
-            "What is an 'Array Index'?",
-            List.of("A search engine", "A numerical value used to access an element in an array",
-            "The size of an array", "A type of data"), List.of("A numerical value used to access an element in an array")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.MEDIUM,
-            "What is 'Tail Call Optimization'?",
-            List.of("Optimizing the end of a file",
-            "A subroutine call performed as the final action of a procedure, which can be optimized to avoid adding a new stack frame",
-            "Cleaning up memory", "A fast return"), List.of("A subroutine call performed as the final action of a procedure, which can be optimized to avoid adding a new stack frame")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.HARD,
-            "What is 'Currying' in functional programming?",
-            List.of("Using spices in code",
-            "The technique of translating the evaluation of a function that takes multiple arguments into evaluating a sequence of functions, each with a single argument",
-            "A way to join arrays", "A type of sorting"), List.of("The technique of translating the evaluation of a function that takes multiple arguments into evaluating a sequence of functions, each with a single argument")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.EXTREME,
-            "What does this code output?\nint x = 5;\nSystem.out.println(x++ + ++x);",
-            List.of("10", "11", "12", "13"), List.of("12")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.EXTREME,
-            "What is referential transparency?",
-            List.of("See-through references",
-            "An expression that can be replaced with its value without changing the program's behavior",
-            "Variable visibility", "Pointer dereferencing"), List.of("An expression that can be replaced with its value without changing the program's behavior")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.HARD,
-            "What is a higher-order function?",
-            List.of("A function in a class",
-            "A function that takes other functions as arguments or returns a function",
-            "A recursive function", "A main function"), List.of("A function that takes other functions as arguments or returns a function")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.MEDIUM,
-            "What is the output of: System.out.println(1 + 2 + \"3\");",
-            List.of("123", "33", "6", "Error"), List.of("33")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.EXTREME,
-            "What is lazy evaluation?",
-            List.of("Slow code",
-            "An evaluation strategy that delays expression evaluation until its value is needed",
-            "Skipping tests", "Inefficient algorithms"), List.of("An evaluation strategy that delays expression evaluation until its value is needed")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.HARD, "What is immutability?",
-            List.of("Cannot be changed",
-            "The property of an object whose state cannot be modified after creation",
-            "Permanent storage", "Constant speed"), List.of("The property of an object whose state cannot be modified after creation")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.MEDIUM,
-            "What is the ternary operator in Java?",
-            List.of("A three-argument function",
-            "A shorthand if-else: condition ? valueIfTrue : valueIfFalse",
-            "A loop construct", "A bit operator"), List.of("A shorthand if-else: condition ? valueIfTrue : valueIfFalse")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.EXTREME,
-            "What is the difference between == and .equals() in Java?",
-            List.of("No difference",
-            "== compares references; .equals() compares content (if properly overridden)",
-            "== is faster", ".equals() only works for Strings"), List.of("== compares references; .equals() compares content (if properly overridden)")));
-        q.add(new Question(null, QuestionTopic.CODE_REASONING, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.HARD,
-            "What is autoboxing in Java?",
-            List.of("Creating boxes",
-            "Automatic conversion between primitive types and their wrapper classes",
-            "Memory allocation", "Package importing"), List.of("Automatic conversion between primitive types and their wrapper classes")));
+        
+        // JAVA
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.MULTIPLE_CHOICE,
+            QuestionDifficulty.EASY, UserLanguage.JAVA,
+            "Which keyword is used to prevent a class from being subclassed in Java?",
+            List.of("static", "const", "final", "sealed"), List.of("final")));
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.FILL_IN_THE_BLANK,
+            QuestionDifficulty.MEDIUM, UserLanguage.JAVA,
+            "Fill in the blank: The transient keyword in Java is used to indicate that a field should not be ____.",
+            List.of(), List.of("serialized", "Serialized")));
+
+        // PYTHON
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.MULTIPLE_CHOICE,
+            QuestionDifficulty.BASIC, UserLanguage.PYTHON,
+            "What replaces the concept of a 'null' typical in other languages in Python?",
+            List.of("undefined", "None", "Null", "NaN"), List.of("None")));
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.FILL_IN_THE_BLANK,
+            QuestionDifficulty.EASY, UserLanguage.PYTHON,
+            "Fill in the blank: In Python, you define a function using the ____ keyword.",
+            List.of(), List.of("def", "DEF")));
+
+        // JAVASCRIPT
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.MULTIPLE_CHOICE,
+            QuestionDifficulty.MEDIUM, UserLanguage.JAVASCRIPT,
+            "Which of the following is NOT a valid way to declare a variable in modern JavaScript?",
+            List.of("let", "const", "var", "def"), List.of("def")));
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.FIND_THE_BUG,
+            QuestionDifficulty.MEDIUM, UserLanguage.JAVASCRIPT,
+            "Identify the line number with the bug in this JavaScript code:\n" +
+            "```javascript\n" +
+            "1: function greet() {\n" +
+            "2:   const message;\n" +
+            "3:   message = 'hello';\n" +
+            "4:   return message;\n" +
+            "5: }\n" +
+            "```",
+            List.of(), List.of("2")));
+
+        // C++
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.MULTIPLE_CHOICE,
+            QuestionDifficulty.HARD, UserLanguage.C_PLUS_PLUS,
+            "In C++, what does the 'virtual' keyword inside a base class method declaration do?",
+            List.of("Makes the method private", "Allows the method to be overridden in derived classes via late binding", "Prevents the method from being inherited", "Forces the method to be inline"), List.of("Allows the method to be overridden in derived classes via late binding")));
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.FILL_IN_THE_BLANK,
+            QuestionDifficulty.MEDIUM, UserLanguage.C_PLUS_PLUS,
+            "Fill in the blank: The standard input stream object in C++ is called ____.",
+            List.of(), List.of("cin", "std::cin")));
+
+        // C#
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.MULTIPLE_CHOICE,
+            QuestionDifficulty.MEDIUM, UserLanguage.C_SHARP,
+            "In C#, which keyword is used to handle exceptions?",
+            List.of("try...catch", "except", "throws", "rescue"), List.of("try...catch")));
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.FILL_IN_THE_BLANK,
+            QuestionDifficulty.HARD, UserLanguage.C_SHARP,
+            "Fill in the blank: In C#, Language Integrated Query is commonly abbreviated as ____.",
+            List.of(), List.of("LINQ", "linq", "Linq")));
+
+        // GO
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.MULTIPLE_CHOICE,
+            QuestionDifficulty.HARD, UserLanguage.GO,
+            "How do you declare a public function stored in a Go package?",
+            List.of("Use the 'public' keyword", "Start the function name with a capital letter", "Use the '@export' decorator", "Functions are always public in Go"), List.of("Start the function name with a capital letter")));
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.FILL_IN_THE_BLANK,
+            QuestionDifficulty.MEDIUM, UserLanguage.GO,
+            "Fill in the blank: In Go, lightweight threads managed by the Go runtime are called ____.",
+            List.of(), List.of("goroutines", "Goroutines", "goroutine")));
+
         return q;
     }
-    */
 }

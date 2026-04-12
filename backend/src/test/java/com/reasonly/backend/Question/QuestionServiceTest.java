@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -39,7 +40,7 @@ class QuestionServiceTest {
     // available
     private void mockAllDifficultiesAvailable() {
         for (QuestionDifficulty d : QuestionDifficulty.values()) {
-            when(questionRepository.findUnansweredByDifficultyAndUserId(eq(d), anyLong()))
+            when(questionRepository.findUnansweredByDifficultyAndUserIdAndLanguage(eq(d), anyLong(), any()))
                             .thenReturn(List.of(questionOf(d)));
         }
     }
@@ -61,9 +62,9 @@ class QuestionServiceTest {
         com.reasonly.backend.User.UserSettings.UserSettings settingsTest = new com.reasonly.backend.User.UserSettings.UserSettings();
         settingsTest.setInterests(List.of(QuestionTopic.DATABASES));
         user.setUserSettings(settingsTest);
-        when(questionRepository.findUnansweredByDifficultyAndUserId(eq(QuestionDifficulty.EASY), anyLong()))
+        when(questionRepository.findUnansweredByDifficultyAndUserIdAndLanguage(eq(QuestionDifficulty.EASY), anyLong(), any()))
                         .thenReturn(Collections.emptyList());
-        when(questionRepository.findUnansweredByDifficultyAndUserId(eq(QuestionDifficulty.BASIC), anyLong()))
+        when(questionRepository.findUnansweredByDifficultyAndUserIdAndLanguage(eq(QuestionDifficulty.BASIC), anyLong(), any()))
                         .thenReturn(List.of(questionOf(QuestionDifficulty.BASIC)));
 
         List<Question> result = questionService.getPlayQuestions(user);
@@ -91,7 +92,7 @@ class QuestionServiceTest {
         user.setUserSettings(settingsTest);
 
         for (QuestionDifficulty d : QuestionDifficulty.values()) {
-            when(questionRepository.findUnansweredByDifficultyAndUserId(eq(d), anyLong()))
+            when(questionRepository.findUnansweredByDifficultyAndUserIdAndLanguage(eq(d), anyLong(), any()))
                             .thenReturn(Collections.emptyList());
         }
         when(questionRepository.findRandomDueReview(anyLong()))
@@ -183,9 +184,9 @@ class QuestionServiceTest {
         settingsTest.setInterests(List.of(QuestionTopic.DATABASES));
         user.setUserSettings(settingsTest);
 
-        when(questionRepository.findUnansweredByDifficultyAndUserId(eq(QuestionDifficulty.EASY), anyLong()))
+        when(questionRepository.findUnansweredByDifficultyAndUserIdAndLanguage(eq(QuestionDifficulty.EASY), anyLong(), any()))
             .thenReturn(List.of(questionOf(QuestionDifficulty.EASY)));
-        when(questionRepository.findUnansweredByDifficultyAndUserId(eq(QuestionDifficulty.MEDIUM), anyLong()))
+        when(questionRepository.findUnansweredByDifficultyAndUserIdAndLanguage(eq(QuestionDifficulty.MEDIUM), anyLong(), any()))
             .thenReturn(Collections.emptyList());
 
         List<Question> result = questionService.getPlayQuestions(user);
@@ -212,9 +213,9 @@ class QuestionServiceTest {
         settingsTest.setInterests(List.of(QuestionTopic.DATABASES));
         user.setUserSettings(settingsTest);
 
-        when(questionRepository.findUnansweredByDifficultyAndUserId(eq(QuestionDifficulty.HARD), anyLong()))
+        when(questionRepository.findUnansweredByDifficultyAndUserIdAndLanguage(eq(QuestionDifficulty.HARD), anyLong(), any()))
             .thenReturn(List.of(questionOf(QuestionDifficulty.HARD)));
-        when(questionRepository.findUnansweredByDifficultyAndUserId(eq(QuestionDifficulty.MEDIUM), anyLong()))
+        when(questionRepository.findUnansweredByDifficultyAndUserIdAndLanguage(eq(QuestionDifficulty.MEDIUM), anyLong(), any()))
             .thenReturn(Collections.emptyList());
 
         List<Question> result = questionService.getPlayQuestions(user);
@@ -243,7 +244,7 @@ class QuestionServiceTest {
         settingsTest.setInterests(List.of(QuestionTopic.DATABASES));
         user.setUserSettings(settingsTest);
 
-        when(questionRepository.findUnansweredByDifficultyAndUserId(eq(QuestionDifficulty.BASIC), anyLong()))
+        when(questionRepository.findUnansweredByDifficultyAndUserIdAndLanguage(eq(QuestionDifficulty.BASIC), anyLong(), any()))
             .thenReturn(List.of(questionOf(QuestionDifficulty.BASIC)));
 
         List<Question> result = questionService.getPlayQuestions(user);
@@ -270,7 +271,7 @@ class QuestionServiceTest {
         settingsTest.setInterests(List.of(QuestionTopic.DATABASES));
         user.setUserSettings(settingsTest);
 
-        when(questionRepository.findUnansweredByDifficultyAndUserId(eq(QuestionDifficulty.EXTREME), anyLong()))
+        when(questionRepository.findUnansweredByDifficultyAndUserIdAndLanguage(eq(QuestionDifficulty.EXTREME), anyLong(), any()))
             .thenReturn(List.of(questionOf(QuestionDifficulty.EXTREME)));
 
         List<Question> result = questionService.getPlayQuestions(user);
