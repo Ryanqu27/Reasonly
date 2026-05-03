@@ -31,12 +31,7 @@ export default function Settings() {
         HOBBY: "Hobby"
     }
 
-    const FONT_SIZE = []
-    const start = 10
-    const end = 24
-    for (let i = start; i <= end; i++) {
-        FONT_SIZE.push(i);
-    }
+    const FONT_SIZE = Array.from({ length: 15 }, (_, i) => i + 10);
 
     const fetchSettings = async () => {
         setLoading(true);

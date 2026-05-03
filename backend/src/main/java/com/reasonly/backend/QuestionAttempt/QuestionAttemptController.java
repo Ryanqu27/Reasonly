@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import com.reasonly.backend.User.User;
 
 @RestController
 @RequestMapping("/api/question-attempts")
@@ -48,8 +50,8 @@ public class QuestionAttemptController {
         questionAttemptService.updateQuestionAttempt(id, updatedQuestionAttempt);
     }
 
-    @DeleteMapping("/reset/{userId}")
-    public void deleteQuestionAttemptsByUserId(@PathVariable Long userId) {
-        questionAttemptService.resetQuestionAttempts(userId);
+    @DeleteMapping("/reset")
+    public void deleteQuestionAttemptsByUserId(@AuthenticationPrincipal User user) {
+        questionAttemptService.resetQuestionAttempts(user.getId());
     }
 }

@@ -4,11 +4,9 @@ import Editor from '@monaco-editor/react';
 export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer, 
     showFeedback, isSubmitting, runCode, preferredLanguage, editorFontSize }) {
     const [language, setLanguage] = useState(preferredLanguage);
-    const [fontSize, setFontSize] = useState(editorFontSize);
+    const [fontSize] = useState(editorFontSize);
     const [localRunResult, setLocalRunResult] = useState(null);
     const [isRunning, setIsRunning] = useState(false);
-
-
 
     // Maps Backend Enum -> Monaco Editor language string
     const LANGUAGE_MAP = {
@@ -56,7 +54,7 @@ export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer
         try {
             const result = await runCode([currentCode.trim(), language]);
             setLocalRunResult(result.data);
-        } catch (err) {
+        } catch {
             setLocalRunResult({ success: false, errorMessage: "Failed to connect to execution server." });
         } finally {
             setIsRunning(false);

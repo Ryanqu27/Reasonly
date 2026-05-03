@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.reasonly.backend.User.UserSettings.UserSettings;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
-    private UserService userService;
+    private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -41,18 +40,18 @@ public class UserController {
         userService.updateUserSettings(user.getEmail(), userSettings);
     }
 
-    @PostMapping("{id}/check-streak")
-    public void checkStreak(@PathVariable Long id) {
-        userService.checkStreak(id);
+    @PostMapping("/check-streak")
+    public void checkStreak(@AuthenticationPrincipal User user) {
+        userService.checkStreak(user.getId());
     }
 
-    @PutMapping("/{id}/complete-today")
-    public void updateCompletedDate(@PathVariable Long id) {
-        userService.incrementStreak(id);
+    @PutMapping("/complete-today")
+    public void updateCompletedDate(@AuthenticationPrincipal User user) {
+        userService.incrementStreak(user.getId());
     }
 
-    @PutMapping("/{id}/onboard")
-    public void onboardUser(@PathVariable Long id, @RequestBody OnboardRequest request) {
-        userService.onboardUser(id, request);
+    @PutMapping("/onboard")
+    public void onboardUser(@AuthenticationPrincipal User user, @RequestBody OnboardRequest request) {
+        userService.onboardUser(user.getId(), request);
     }
 }

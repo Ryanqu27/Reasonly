@@ -820,11 +820,6 @@ public class DataInitializer {
             "Optimistic locking never fails",
             "Pessimistic locking is only for read-only data"), List.of("Optimistic locking assumes conflicts are rare and checks at commit; pessimistic locking locks data upfront")));
         q.add(new Question(null, QuestionTopic.CONCURRENCY, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.BASIC,
-            "What is the effect of the 'volatile' keyword in Java?",
-            List.of("Prevents race conditions", "Ensures visibility of changes to other threads",
-            "Locks the variable", "Makes the variable constant"), List.of("Ensures visibility of changes to other threads")));
-        q.add(new Question(null, QuestionTopic.CONCURRENCY, QuestionType.MULTIPLE_CHOICE,
             QuestionDifficulty.MEDIUM,
             "What is a 'Thread Pool'?",
             List.of("A collection of dormant threads",
@@ -1200,6 +1195,11 @@ public class DataInitializer {
             QuestionDifficulty.MEDIUM, UserLanguage.JAVA,
             "Fill in the blank: The transient keyword in Java is used to indicate that a field should not be ____.",
             List.of(), List.of("serialized", "Serialized")));
+        q.add(new Question(null, QuestionTopic.CONCURRENCY, QuestionType.MULTIPLE_CHOICE,
+            QuestionDifficulty.BASIC, UserLanguage.JAVA,
+            "What is the effect of the 'volatile' keyword in Java?",
+            List.of("Prevents race conditions", "Ensures visibility of changes to other threads",
+            "Locks the variable", "Makes the variable constant"), List.of("Ensures visibility of changes to other threads")));
 
         // PYTHON
         q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.MULTIPLE_CHOICE,

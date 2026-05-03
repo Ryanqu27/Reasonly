@@ -78,7 +78,7 @@ export default function UserQuestions() {
         setLoading(true);
         setError(null);
         try {
-            await AuthService.onboardUser(user.id, {
+            await AuthService.onboardUser({
                 experience: selectedExperience,
                 motivation: selectedMotivation,
                 preferredLanguage: selectedLanguage,
