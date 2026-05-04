@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getUserSettings, updateUserSettings } from "./UserService";
+import { useTheme } from "./ThemeContext";
 import "./Settings.css";
 
 export default function Settings() {
@@ -7,6 +8,7 @@ export default function Settings() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
+    const { setDarkMode } = useTheme();
 
     const LANGUAGE_DISPLAY = {
         JAVA: "Java",
@@ -59,6 +61,7 @@ export default function Settings() {
 
     const handleSaveChangesClick = () => {
         updateUserSettings(userSettingValues);
+        setDarkMode(userSettingValues.darkMode); // apply theme immediately
         setIsEditing(false);
     }
 

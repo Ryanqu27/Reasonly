@@ -12,6 +12,7 @@ import ProfilePage from './components/ProfilePage.jsx';
 import Sidebar from './components/Sidebar.jsx';
 import UserQuestions from './UserAuth/UserQuestions.jsx';
 import Settings from './components/Settings.jsx';
+import { ThemeProvider } from './components/ThemeContext.jsx';
 
 // Layout component that includes the sidebar
 function AppLayout({ children }) {
@@ -88,43 +89,45 @@ const ProtectedRoute = ({ children }) => {
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/login" element={<LoginForm />} />
-          <Route path="/register" element={<RegisterForm />} />
-          <Route path="/onboarding" element={
-            <ProtectedRoute>
-              <UserQuestions />
-            </ProtectedRoute>
-          } />
+    <ThemeProvider>
+      <AuthProvider>
+        <Router>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/login" element={<LoginForm />} />
+            <Route path="/register" element={<RegisterForm />} />
+            <Route path="/onboarding" element={
+              <ProtectedRoute>
+                <UserQuestions />
+              </ProtectedRoute>
+            } />
 
-          {/* Private Routes for logged in users - wrapped with sidebar layout */}
-          <Route path="/" element={
-            <ProtectedRoute>
-              <AppLayout>
-                <Dashboard />
-              </AppLayout>
-            </ProtectedRoute>
-          } />
-          <Route path="/profile" element={
-            <ProtectedRoute>
-              <AppLayout>
-                <ProfilePage />
-              </AppLayout>
-            </ProtectedRoute>
-          } />
-          <Route path="/settings" element={
-            <ProtectedRoute>
-              <AppLayout>
-                <Settings />
-              </AppLayout>
-            </ProtectedRoute>
-          } />
-        </Routes>
-      </Router>
-    </AuthProvider>
+            {/* Private Routes for logged in users - wrapped with sidebar layout */}
+            <Route path="/" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <Dashboard />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <ProfilePage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/settings" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <Settings />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+          </Routes>
+        </Router>
+      </AuthProvider>
+    </ThemeProvider>
   )
 }
 

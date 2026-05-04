@@ -1,4 +1,5 @@
 :root {
+  /* Dark theme (default) */
   --primary: #818cf8;
   --primary-hover: #a5b4fc;
   --bg-main: #0f172a;
@@ -13,6 +14,23 @@
   --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
   --sidebar-width: 260px;
+}
+
+/* Light theme overrides — applied when ThemeContext sets data-theme="light" on <html> */
+[data-theme="light"] {
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --bg-main: #f1f5f9;
+  --card-bg: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --success: #059669;
+  --success-bg: rgba(5, 150, 105, 0.1);
+  --error: #e11d48;
+  --error-bg: rgba(225, 29, 72, 0.1);
+  --border: #cbd5e1;
+  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
 body {
