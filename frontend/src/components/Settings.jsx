@@ -31,7 +31,17 @@ export default function Settings() {
         ACADEMIC: "Academic",
         CAREER_TRANSITION: "Career Transition",
         HOBBY: "Hobby"
-    }
+    };
+
+    const TOPIC_DISPLAY = {
+        DATA_STRUCTURES_AND_ALGORITHMS: "Data Structures & Algorithms",
+        SYSTEMS: "Systems",
+        NETWORKING: "Networking",
+        DATABASES: "Databases",
+        CONCURRENCY: "Concurrency",
+        SOFTWARE_DESIGN: "Software Design",
+        LANGUAGE_KNOWLEDGE: "Language Knowledge"
+    };
 
     const FONT_SIZE = Array.from({ length: 15 }, (_, i) => i + 10);
 
@@ -71,6 +81,17 @@ export default function Settings() {
             [field]: value
         }))
     }
+
+    const handleTopicToggle = (topicKey) => {
+        setUserSettingValues(prev => {
+            const currentInterests = prev.interests || [];
+            if (currentInterests.includes(topicKey)) {
+                return { ...prev, interests: currentInterests.filter(t => t !== topicKey) };
+            } else {
+                return { ...prev, interests: [...currentInterests, topicKey] };
+            }
+        });
+    };
 
     if (loading) {
         return (
@@ -118,6 +139,18 @@ export default function Settings() {
                     <div className="setting-row">
                         <span className="setting-name">Primary Motivation</span>
                         <span className="setting-value">{MOTIVATION_DISPLAY[userSettingValues.motivation]}</span>
+                    </div>
+
+                    <div className="setting-row">
+                        <span className="setting-name">Interests</span>
+                        <div className="setting-interests">
+                            {userSettingValues.interests?.length > 0 
+                                ? userSettingValues.interests.map(t => (
+                                    <span key={t} className="setting-value">{TOPIC_DISPLAY[t]}</span>
+                                  ))
+                                : <span className="setting-value">None selected</span>
+                            }
+                        </div>
                     </div>
 
                     <div className="setting-row">
@@ -174,6 +207,24 @@ export default function Settings() {
                                 return <option key={key} value={key}>{value}</option>
                             })}
                         </select>
+                    </div>
+
+                    <div className="setting-row" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '1rem' }}>
+                        <span className="setting-name">Interests</span>
+                        <div className="setting-interests-edit">
+                            {Object.entries(TOPIC_DISPLAY).map(([key, value]) => {
+                                const isSelected = userSettingValues.interests?.includes(key);
+                                return (
+                                    <button 
+                                        key={key} 
+                                        className={`interest-chip-edit ${isSelected ? 'selected' : ''}`}
+                                        onClick={() => handleTopicToggle(key)}
+                                    >
+                                        {value}
+                                    </button>
+                                );
+                            })}
+                        </div>
                     </div>
 
                     <div className="setting-row">

@@ -115,3 +115,39 @@
         gap: 0.5rem;
     }
 }
+
+.setting-interests {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.setting-interests-edit {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.interest-chip-edit {
+    background-color: transparent;
+    color: var(--text-muted, #9ca3af);
+    border: 1px solid var(--border, #374151);
+    padding: 0.35rem 0.85rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.interest-chip-edit:hover {
+    border-color: var(--primary, #6366f1);
+    color: var(--text-main, #ffffff);
+}
+
+.interest-chip-edit.selected {
+    background-color: var(--primary, #6366f1);
+    color: white;
+    border-color: var(--primary, #6366f1);
+}
