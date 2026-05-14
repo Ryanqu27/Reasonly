@@ -26,12 +26,7 @@ export default function Settings() {
         EXPERT: "Expert"
     };
 
-    const MOTIVATION_DISPLAY = {
-        INTERVIEW_PREP: "Interview Prep",
-        ACADEMIC: "Academic",
-        CAREER_TRANSITION: "Career Transition",
-        HOBBY: "Hobby"
-    };
+
 
     const TOPIC_DISPLAY = {
         DATA_STRUCTURES_AND_ALGORITHMS: "Data Structures & Algorithms",
@@ -136,10 +131,7 @@ export default function Settings() {
                         <span className="setting-value">{EXPERIENCE_DISPLAY[userSettingValues.experience]}</span>
                     </div>
 
-                    <div className="setting-row">
-                        <span className="setting-name">Primary Motivation</span>
-                        <span className="setting-value">{MOTIVATION_DISPLAY[userSettingValues.motivation]}</span>
-                    </div>
+
 
                     <div className="setting-row">
                         <span className="setting-name">Interests</span>
@@ -194,16 +186,6 @@ export default function Settings() {
                         <select className="setting-select" value={userSettingValues.experience} 
                             onChange={e => handleSelectionChange("experience", e.target.value)}>
                             {Object.entries(EXPERIENCE_DISPLAY).map(([key, value]) => {
-                                return <option key={key} value={key}>{value}</option>
-                            })}
-                        </select>
-                    </div>
-
-                    <div className="setting-row">
-                        <span className="setting-name">Primary Motivation</span>
-                        <select className="setting-select" value={userSettingValues.motivation} 
-                            onChange={e => handleSelectionChange("motivation", e.target.value)}>
-                            {Object.entries(MOTIVATION_DISPLAY).map(([key, value]) => {
                                 return <option key={key} value={key}>{value}</option>
                             })}
                         </select>

@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { getUserSettings } from './UserService';
+import AuthService from '../UserAuth/AuthService';
 
 const ThemeContext = createContext();
 
@@ -11,9 +12,18 @@ export function ThemeProvider({ children }) {
     }, [darkMode]);
 
     useEffect(() => {
-        getUserSettings()
-            .then(settings => setDarkMode(settings.darkMode))
-            .catch(() => {}); 
+        const token = AuthService.getToken();
+        if (token) {
+            getUserSettings()
+                .then(settings => {
+                    if (settings && settings.darkMode !== undefined) {
+                        setDarkMode(settings.darkMode);
+                    }
+                })
+                .catch(() => {
+                    // Fails silently and uses default dark mode
+                });
+        }
     }, []);
 
     return (

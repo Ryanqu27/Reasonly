@@ -10,12 +10,7 @@ const EXPERIENCE_LEVELS = [
     { id: 'EXPERT', label: 'Expert', description: 'Senior level or competitive coder' }
 ];
 
-const MOTIVATION_LEVELS = [
-    { id: 'INTERVIEW_PREP', label: 'Interview Prep', description: 'Preparing for coding interviews' },
-    { id: 'ACADEMIC', label: 'Academic', description: 'Help with school or coursework' },
-    { id: 'CAREER_TRANSITION', label: 'Career Transition', description: 'Switching to a software career' },
-    { id: 'HOBBY', label: 'Hobby', description: 'Learning for fun' }
-];
+
 
 const LANGUAGE_OPTIONS = [
     { id: 'JAVA', label: 'Java'},
@@ -39,7 +34,7 @@ const INTEREST_OPTIONS = [
 export default function UserQuestions() {
     const [step, setStep] = useState(1);
     const [selectedExperience, setSelectedExperience] = useState(null);
-    const [selectedMotivation, setSelectedMotivation] = useState(null);
+
     const [selectedLanguage, setSelectedLanguage] = useState(null);
     const [selectedInterests, setSelectedInterests] = useState([]);
 
@@ -53,7 +48,7 @@ export default function UserQuestions() {
             try {
                 const userData = await AuthService.fetchCurrentUser();
                 setUser(userData);
-                if (userData.experience) {
+                if (userData.userSettings) {
                     navigate('/');
                 }
             } catch (err) {
@@ -80,7 +75,6 @@ export default function UserQuestions() {
         try {
             await AuthService.onboardUser({
                 experience: selectedExperience,
-                motivation: selectedMotivation,
                 preferredLanguage: selectedLanguage,
                 interests: selectedInterests
             });
@@ -98,7 +92,7 @@ export default function UserQuestions() {
             <div className="user-onboarding-card">
 
                 <div className="user-wizard-progress">
-                    Question {step} of 4
+                    Question {step} of 3
                 </div>
 
                 {step === 1 && (
@@ -122,28 +116,9 @@ export default function UserQuestions() {
                     </>
                 )}
 
-                {step === 2 && (
-                    <>
-                        <div className="user-onboarding-header">
-                            <h1 className="user-onboarding-logo">Motivation</h1>
-                            <p className="user-onboarding-subtitle">What is your primary goal for using Reasonly?</p>
-                        </div>
-                        <div className="user-onboarding-options">
-                            {MOTIVATION_LEVELS.map((level) => (
-                                <div
-                                    key={level.id}
-                                    className={`user-onboarding-card ${selectedMotivation === level.id ? 'selected' : ''}`}
-                                    onClick={() => setSelectedMotivation(level.id)}
-                                >
-                                    <span className="user-onboarding-title">{level.label}</span>
-                                    <span className="user-onboarding-description">{level.description}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </>
-                )}
 
-                {step === 3 && (
+
+                {step === 2 && (
                     <>
                         <div className="user-onboarding-header">
                             <h1 className="user-onboarding-logo">Language</h1>
@@ -164,7 +139,7 @@ export default function UserQuestions() {
                     </>
                 )}
 
-                {step === 4 && (
+                {step === 3 && (
                     <>
                         <div className="user-onboarding-header">
                             <h1 className="user-onboarding-logo">Interests</h1>
@@ -192,14 +167,13 @@ export default function UserQuestions() {
                             Back
                         </button>
                     )}
-                    {step < 4 ? (
+                    {step < 3 ? (
                         <button
                             className="user-onboarding-button"
                             onClick={handleNext}
                             disabled={
                                 (step === 1 && !selectedExperience) ||
-                                (step === 2 && !selectedMotivation) ||
-                                (step === 3 && !selectedLanguage)
+                                (step === 2 && !selectedLanguage)
                             }
                         >
                             Next

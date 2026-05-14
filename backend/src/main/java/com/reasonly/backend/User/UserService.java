@@ -92,7 +92,7 @@ public class UserService {
         }
         UserSettings settings = new UserSettings();
         settings.setExperience(request.experience());
-        settings.setMotivation(request.motivation());
+
         settings.setPreferredLanguage(request.preferredLanguage());
         settings.setInterests(request.interests());
         settings.setDarkMode(true);
@@ -118,7 +118,7 @@ public class UserService {
         UserSettings existingSettings = user.getUserSettings();
         
         existingSettings.setExperience(updatedSettings.getExperience());
-        existingSettings.setMotivation(updatedSettings.getMotivation());
+
         existingSettings.setPreferredLanguage(updatedSettings.getPreferredLanguage());
         existingSettings.setInterests(updatedSettings.getInterests());
         existingSettings.setDarkMode(updatedSettings.isDarkMode());

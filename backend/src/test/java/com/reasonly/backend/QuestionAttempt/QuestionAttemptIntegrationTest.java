@@ -341,7 +341,7 @@ public class QuestionAttemptIntegrationTest {
             .andExpect(jsonPath("$.ratingChange").isNumber())
             .andExpect(jsonPath("$.newRating").isNumber());
 
-        mockMvc.perform(delete("/api/question-attempts/reset/" + testUser.getId())
+        mockMvc.perform(delete("/api/question-attempts/reset")
             .contentType("application/json")
             .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isOk());

@@ -31,9 +31,6 @@ public class UserSettings {
     private UserExperience experience;
 
     @Enumerated(EnumType.STRING)
-    private UserMotivation motivation;
-
-    @Enumerated(EnumType.STRING)
     private UserLanguage preferredLanguage;
 
     @ElementCollection(fetch = FetchType.EAGER)

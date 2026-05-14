@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reasonly.backend.Question.QuestionTopic;
 import com.reasonly.backend.User.UserSettings.UserExperience;
 import com.reasonly.backend.User.UserSettings.UserLanguage;
-import com.reasonly.backend.User.UserSettings.UserMotivation;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -70,12 +69,11 @@ public class UserIntegrationTest {
     void onBoardUser_UpdatesUser() throws Exception {
         OnboardRequest request = new OnboardRequest(
         UserExperience.BEGINNER,
-        UserMotivation.INTERVIEW_PREP,
         UserLanguage.JAVA,
         List.of(QuestionTopic.DATA_STRUCTURES_AND_ALGORITHMS, QuestionTopic.DATABASES)
         );
 
-        mockMvc.perform(put("/api/user/" + testUser.getId() + "/onboard")
+        mockMvc.perform(put("/api/user/onboard")
             .contentType("application/json")
             .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isOk());
@@ -84,7 +82,6 @@ public class UserIntegrationTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.email").value("test@gmail.com"))
             .andExpect(jsonPath("$.userSettings.experience").value("BEGINNER"))
-            .andExpect(jsonPath("$.userSettings.motivation").value("INTERVIEW_PREP"))
             .andExpect(jsonPath("$.userSettings.preferredLanguage").value("JAVA"))
             .andExpect(jsonPath("$.userSettings.interests").isArray())
             .andExpect(jsonPath("$.userSettings.interests.length()").value(2))
