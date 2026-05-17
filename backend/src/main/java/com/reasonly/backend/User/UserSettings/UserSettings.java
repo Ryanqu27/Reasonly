@@ -39,4 +39,6 @@ public class UserSettings {
 
     private boolean isDarkMode = true;
     private int editorFontSize = 14;
+    private String editorTheme = "vs-dark";
+    private int editorTabSize = 4;
 }

@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 
 export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer, 
-    showFeedback, isSubmitting, runCode, preferredLanguage, editorFontSize }) {
+    showFeedback, isSubmitting, runCode, preferredLanguage, editorFontSize,
+    editorTheme, editorTabSize }) {
     const [language, setLanguage] = useState(preferredLanguage);
     const [fontSize] = useState(editorFontSize);
     const [localRunResult, setLocalRunResult] = useState(null);
@@ -87,10 +88,13 @@ export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer
                     <Editor
                         height="400px"
                         language={LANGUAGE_MAP[language]}
-                        theme="vs-dark"
+                        theme={editorTheme || "vs-dark"}
                         value={currentCode}
                         onChange={handleCodeChange}
-                        options={{ fontSize: fontSize }}
+                        options={{ 
+                            fontSize: fontSize,
+                            tabSize: editorTabSize || 4
+                        }}
                     />
                 </code>
             </div>

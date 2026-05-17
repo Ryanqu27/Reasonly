@@ -20,12 +20,16 @@ function Questions({ onUserUpdate }) {
   const [sessionStarted, setSessionStarted] = useState(false);
   const [preferredLanguage, setPreferredLanguage] = useState(null);
   const [editorFontSize, setEditorFontSize] = useState(null);
+  const [editorTheme, setEditorTheme] = useState('vs-dark');
+  const [editorTabSize, setEditorTabSize] = useState(4);
   useEffect(() => {
         const userSettings = async () => {
             try {
                 const user = await AuthService.fetchCurrentUser();
                 setPreferredLanguage(user.userSettings.preferredLanguage);
-                setEditorFontSize(user.userSettings.editorFontSize)
+                setEditorFontSize(user.userSettings.editorFontSize);
+                setEditorTheme(user.userSettings.editorTheme || 'vs-dark');
+                setEditorTabSize(user.userSettings.editorTabSize || 4);
             } catch (err) {
                 console.error("Failed to fetch user preferred language", err);
             }
@@ -285,6 +289,8 @@ function Questions({ onUserUpdate }) {
           runCode={handleRunCode}
           preferredLanguage={preferredLanguage}
           editorFontSize={editorFontSize}
+          editorTheme={editorTheme}
+          editorTabSize={editorTabSize}
         />
       ) : (
         <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>

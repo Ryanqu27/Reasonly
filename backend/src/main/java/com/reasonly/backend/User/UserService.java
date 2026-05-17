@@ -97,6 +97,8 @@ public class UserService {
         settings.setInterests(request.interests());
         settings.setDarkMode(true);
         settings.setEditorFontSize(14);
+        settings.setEditorTheme("vs-dark");
+        settings.setEditorTabSize(4);
         settings.setUser(currentUser);
         
         currentUser.setUserSettings(settings);
@@ -123,6 +125,8 @@ public class UserService {
         existingSettings.setInterests(updatedSettings.getInterests());
         existingSettings.setDarkMode(updatedSettings.isDarkMode());
         existingSettings.setEditorFontSize(updatedSettings.getEditorFontSize());
+        existingSettings.setEditorTheme(updatedSettings.getEditorTheme());
+        existingSettings.setEditorTabSize(updatedSettings.getEditorTabSize());
         
         user.setUserSettings(existingSettings);
         userRepository.save(user);

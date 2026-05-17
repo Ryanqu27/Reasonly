@@ -38,6 +38,17 @@ export default function Settings() {
         LANGUAGE_KNOWLEDGE: "Language Knowledge"
     };
 
+    const EDITOR_THEME_DISPLAY = {
+        "vs-dark": "Dark Theme (vs-dark)",
+        "vs": "Light Theme (vs)",
+        "hc-black": "High Contrast (hc-black)"
+    };
+
+    const TAB_SIZE_DISPLAY = {
+        2: "2 spaces",
+        4: "4 spaces"
+    };
+
     const FONT_SIZE = Array.from({ length: 15 }, (_, i) => i + 10);
 
     const fetchSettings = async () => {
@@ -154,6 +165,16 @@ export default function Settings() {
                         <span className="setting-name">Editor Font Size</span>
                         <span className="setting-value">{userSettingValues.editorFontSize}</span>
                     </div>
+
+                    <div className="setting-row">
+                        <span className="setting-name">Editor Theme</span>
+                        <span className="setting-value">{EDITOR_THEME_DISPLAY[userSettingValues.editorTheme] || "Dark Theme (vs-dark)"}</span>
+                    </div>
+
+                    <div className="setting-row">
+                        <span className="setting-name">Tab Size</span>
+                        <span className="setting-value">{TAB_SIZE_DISPLAY[userSettingValues.editorTabSize] || "4 spaces"}</span>
+                    </div>
                 </div>
             </div>
         )
@@ -224,6 +245,26 @@ export default function Settings() {
                             onChange={e => handleSelectionChange("editorFontSize", Number(e.target.value))}>
                             {FONT_SIZE.map((element, index) => {
                                 return <option key={index} value={element}>{element}</option>
+                            })}
+                        </select>
+                    </div>
+
+                    <div className="setting-row">
+                        <span className="setting-name">Editor Theme</span>
+                        <select className="setting-select" value={userSettingValues.editorTheme || "vs-dark"} 
+                            onChange={e => handleSelectionChange("editorTheme", e.target.value)}>
+                            {Object.entries(EDITOR_THEME_DISPLAY).map(([key, value]) => {
+                                return <option key={key} value={key}>{value}</option>
+                            })}
+                        </select>
+                    </div>
+
+                    <div className="setting-row">
+                        <span className="setting-name">Tab Size</span>
+                        <select className="setting-select" value={userSettingValues.editorTabSize || 4} 
+                            onChange={e => handleSelectionChange("editorTabSize", Number(e.target.value))}>
+                            {Object.entries(TAB_SIZE_DISPLAY).map(([key, value]) => {
+                                return <option key={key} value={Number(key)}>{value}</option>
                             })}
                         </select>
                     </div>
