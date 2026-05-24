@@ -19,13 +19,6 @@ export default function Settings() {
         GO: "Go"
     };
 
-    const EXPERIENCE_DISPLAY = {
-        BEGINNER: "Beginner",
-        INTERMEDIATE: "Intermediate",
-        ADVANCED: "Advanced",
-        EXPERT: "Expert"
-    };
-
 
 
     const TOPIC_DISPLAY = {
@@ -138,13 +131,6 @@ export default function Settings() {
                     </div>
 
                     <div className="setting-row">
-                        <span className="setting-name">Experience Level</span>
-                        <span className="setting-value">{EXPERIENCE_DISPLAY[userSettingValues.experience]}</span>
-                    </div>
-
-
-
-                    <div className="setting-row">
                         <span className="setting-name">Interests</span>
                         <div className="setting-interests">
                             {userSettingValues.interests?.length > 0 
@@ -197,16 +183,6 @@ export default function Settings() {
                         <select className="setting-select" value={userSettingValues.preferredLanguage} 
                             onChange={e => handleSelectionChange("preferredLanguage", e.target.value)}>
                             {Object.entries(LANGUAGE_DISPLAY).map(([key, value]) => {
-                                return <option key={key} value={key}>{value}</option>
-                            })}
-                        </select>
-                    </div>
-
-                    <div className="setting-row">
-                        <span className="setting-name">Experience Level</span>
-                        <select className="setting-select" value={userSettingValues.experience} 
-                            onChange={e => handleSelectionChange("experience", e.target.value)}>
-                            {Object.entries(EXPERIENCE_DISPLAY).map(([key, value]) => {
                                 return <option key={key} value={key}>{value}</option>
                             })}
                         </select>
