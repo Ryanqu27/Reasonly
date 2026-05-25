@@ -8,6 +8,7 @@ import com.reasonly.backend.User.UserSettings.UserExperience;
 import com.reasonly.backend.User.UserSettings.UserSettings;
 
 import jakarta.transaction.Transactional;
+import org.springframework.lang.NonNull;
 
 @Service
 public class UserService {
@@ -17,17 +18,17 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User getUserById(Long id) {
+    public User getUserById(@NonNull Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
     }
 
-    public void addUser(User user) {
+    public void addUser(@NonNull User user) {
         userRepository.save(user);
     }
 
     @Transactional
-    public void incrementStreak(Long id) {
+    public void incrementStreak(@NonNull Long id) {
         User currentUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
@@ -54,7 +55,7 @@ public class UserService {
     }
 
     @Transactional
-    public void checkStreak(Long id) {
+    public void checkStreak(@NonNull Long id) {
         User currentUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
         LocalDate today = LocalDate.now();
@@ -66,16 +67,16 @@ public class UserService {
         userRepository.save(currentUser);
     }
 
-    public void deleteUser(Long id) {
+    public void deleteUser(@NonNull Long id) {
         userRepository.deleteById(id);
     }
 
-    public User getUserByEmail(String email) {
+    public User getUserByEmail(@NonNull String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
     }
 
-    public UserProfile getUserProfile(String email) {
+    public UserProfile getUserProfile(@NonNull String email) {
         User user = getUserByEmail(email);
         return new UserProfile(user.getEmail(), user.getCurrentStreak(),
                 user.getLongestStreak(), user.getRating(), user.getCreatedAt(),
@@ -84,7 +85,7 @@ public class UserService {
     }
 
     @Transactional
-    public void onboardUser(Long id, OnboardRequest request) {
+    public void onboardUser(@NonNull Long id, OnboardRequest request) {
         User currentUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
         if (currentUser.getUserSettings() != null) {
@@ -115,7 +116,7 @@ public class UserService {
         userRepository.save(currentUser);
     }
 
-    public void updateUserSettings(String email, UserSettings updatedSettings) {
+    public void updateUserSettings(@NonNull String email, UserSettings updatedSettings) {
         User user = getUserByEmail(email);
         UserSettings existingSettings = user.getUserSettings();
         
@@ -132,7 +133,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public UserSettings getUserSettings(String email) {
+    public UserSettings getUserSettings(@NonNull String email) {
         User user = getUserByEmail(email);
         UserSettings settings = user.getUserSettings();
         return settings;

@@ -44,8 +44,18 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @org.springframework.lang.NonNull
+    public Long getId() {
+        return id;
+    }
+
     @Column(nullable = false, unique = true)
     private String email;
+
+    @org.springframework.lang.NonNull
+    public String getEmail() {
+        return email;
+    }
 
     @Column(nullable = false)
     @JsonIgnore
