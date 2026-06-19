@@ -10,11 +10,21 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const storedToken = AuthService.getToken();
-    if (storedToken) {
-      setToken(storedToken);
-    }
-    setLoading(false);
+    const restoreSession = async () => {
+      const storedToken = AuthService.getToken();
+      if (storedToken) {
+        setToken(storedToken);
+        try {
+          const userData = await AuthService.fetchCurrentUser();
+          setUser(userData);
+        } catch {
+          AuthService.logout();
+          setToken(null);
+        }
+      }
+      setLoading(false);
+    };
+    restoreSession();
   }, []);
 
   const login = useCallback(async (email, password) => {

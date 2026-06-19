@@ -6,9 +6,11 @@ import OrderCodeQuestion from "./Formats/OrderCodeQuestion";
 import CodeWritingQuestion from "./Formats/CodeWritingQuestion";
 import { useState, useEffect } from 'react';
 import { getQuestions, updateCompletedDate, submitQuestionAttempt, resetQuestionAttempts, runCode } from './QuestionService'
-import AuthService from '../UserAuth/AuthService'
+import { useAuth } from '../UserAuth/AuthContext.jsx';
 
 function Questions({ onUserUpdate }) {
+  const { user } = useAuth();
+
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -22,20 +24,15 @@ function Questions({ onUserUpdate }) {
   const [editorFontSize, setEditorFontSize] = useState(null);
   const [editorTheme, setEditorTheme] = useState('vs-dark');
   const [editorTabSize, setEditorTabSize] = useState(4);
+
   useEffect(() => {
-        const userSettings = async () => {
-            try {
-                const user = await AuthService.fetchCurrentUser();
-                setPreferredLanguage(user.userSettings.preferredLanguage);
-                setEditorFontSize(user.userSettings.editorFontSize);
-                setEditorTheme(user.userSettings.editorTheme || 'vs-dark');
-                setEditorTabSize(user.userSettings.editorTabSize || 4);
-            } catch (err) {
-                console.error("Failed to fetch user preferred language", err);
-            }
+        if (user?.userSettings) {
+            setPreferredLanguage(user.userSettings.preferredLanguage);
+            setEditorFontSize(user.userSettings.editorFontSize);
+            setEditorTheme(user.userSettings.editorTheme || 'vs-dark');
+            setEditorTabSize(user.userSettings.editorTabSize || 4);
         }
-        userSettings();
-    }, []);
+    }, [user]);  
 
   const fetchNextQuestion = async () => {
     try {
@@ -68,10 +65,9 @@ function Questions({ onUserUpdate }) {
 
     setSelectedAnswer(answerArray);
     setIsSubmitting(true);
-    
-    const user = await AuthService.fetchCurrentUser();
+
     const questionAttempt = {
-      userId: user.id,
+      userId: user?.id,
       questionId: currentQuestion.id,
       answer: answerArray
     };
@@ -80,11 +76,7 @@ function Questions({ onUserUpdate }) {
       const response = await submitQuestionAttempt(questionAttempt);
       setAttemptResult(response.data);
 
-      const isCorrect =
-        answerArray.length === currentQuestion.correctAnswer.length &&
-        answerArray.every(val => currentQuestion.correctAnswer.includes(val));
-
-      if (isCorrect) {
+      if (response.data.correct) {
         await updateCompletedDate();
       }
     } catch (err) {
