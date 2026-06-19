@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useAuth } from './UserAuth/AuthContext.jsx'
 import LoginForm from './UserAuth/LoginForm.jsx';
 import './App.css';
@@ -6,7 +6,6 @@ import RegisterForm from './UserAuth/RegisterForm.jsx'
 import { AuthProvider } from './UserAuth/AuthContext.jsx';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Questions from './Questions/Questions.jsx';
-import AuthService from './UserAuth/AuthService.js';
 import { checkStreak } from './Questions/QuestionService.js';
 import ProfilePage from './components/ProfilePage.jsx';
 import Sidebar from './components/Sidebar.jsx';
@@ -27,25 +26,14 @@ function AppLayout({ children }) {
 }
 
 function Dashboard() {
-  const { loading } = useAuth();
-  const [user, setUser] = useState(null);
+  const { user, loading } = useAuth();
 
   const checkUserStreak = async () => {
     await checkStreak();
   }
 
-  const loadUser = async () => {
-    try {
-      const userData = await AuthService.fetchCurrentUser();
-      setUser(userData);
-    } catch (err) {
-      console.error("Failed to load user", err);
-    }
-  };
-
   useEffect(() => {
     checkUserStreak();
-    loadUser();
   }, []);
 
   if (loading) return <div className="loading-screen">Loading...</div>;
@@ -74,8 +62,7 @@ function Dashboard() {
         </div>
       </div>
 
-      <Questions onUserUpdate={loadUser} />
-    </div>
+      <Questions />    </div>
   );
 }
 
