@@ -68,10 +68,15 @@ export default function Settings() {
         setIsEditing(!isEditing);
     }
 
-    const handleSaveChangesClick = () => {
-        updateUserSettings(userSettingValues);
-        setDarkMode(userSettingValues.darkMode); // apply theme immediately
-        setIsEditing(false);
+    const handleSaveChangesClick = async () => {
+        try {
+            await updateUserSettings(userSettingValues);
+            setDarkMode(userSettingValues.darkMode);
+            setIsEditing(false);
+        }
+        catch (err) {
+            setError("Failed to save settings. Please try again.");
+        }
     }
 
     const handleSelectionChange = (field, value) => {
