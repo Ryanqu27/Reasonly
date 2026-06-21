@@ -21,9 +21,11 @@ import com.reasonly.backend.Question.CodeWriting.CodeRunningRequest;
 public class QuestionController {
 
     private final QuestionService questionService;
+    private final com.reasonly.backend.User.UserService userService;
 
-    public QuestionController(QuestionService questionService) {
+    public QuestionController(QuestionService questionService, com.reasonly.backend.User.UserService userService) {
         this.questionService = questionService;
+        this.userService = userService;
     }
 
     @GetMapping()
@@ -46,10 +48,15 @@ public class QuestionController {
     private com.reasonly.backend.User.User getCurrentUser() {
         org.springframework.security.core.Authentication authentication = org.springframework.security.core.context.SecurityContextHolder
                 .getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof com.reasonly.backend.User.User) {
-            return (com.reasonly.backend.User.User) authentication.getPrincipal();
+        if (authentication == null || authentication.getPrincipal() == null) {
+            throw new RuntimeException("User not authenticated");
         }
-        throw new RuntimeException("User not authenticated");
+        // Extract the email/username from the principal and fetch a FRESH copy from
+        // the database so that any recently-saved settings (e.g. preferredLanguage)
+        // are always reflected — the Spring Security principal is loaded once at
+        // login time and would otherwise be stale.
+        String email = authentication.getName();
+        return userService.getUserByEmail(email);
     }
 
     @GetMapping("{id}")
