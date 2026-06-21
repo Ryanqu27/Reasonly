@@ -26,10 +26,15 @@ function AppLayout({ children }) {
 }
 
 function Dashboard() {
-  const { user, loading } = useAuth();
+  const { user, loading, setUser } = useAuth();
 
   const checkUserStreak = async () => {
-    await checkStreak();
+    try {
+      const response = await checkStreak();
+      setUser(response.data);
+    } catch (err) {
+      console.error("Failed to check streak", err);
+    }
   }
 
   useEffect(() => {

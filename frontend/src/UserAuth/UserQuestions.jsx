@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthService from './AuthService';
+import { useAuth } from './AuthContext';
 import './Auth.css';
 
 const EXPERIENCE_LEVELS = [
@@ -40,7 +41,7 @@ export default function UserQuestions() {
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [user, setUser] = useState(null);
+    const { user, setUser } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -56,8 +57,10 @@ export default function UserQuestions() {
                 navigate('/login');
             }
         };
-        loadUser();
-    }, [navigate]);
+        if (!user || !user.userSettings) {
+            loadUser();
+        }
+    }, [navigate, setUser, user]);
 
     const handleNext = () => setStep(prev => prev + 1);
     const handleBack = () => setStep(prev => prev - 1);
@@ -73,11 +76,12 @@ export default function UserQuestions() {
         setLoading(true);
         setError(null);
         try {
-            await AuthService.onboardUser({
+            const updatedUser = await AuthService.onboardUser({
                 experience: selectedExperience,
                 preferredLanguage: selectedLanguage,
                 interests: selectedInterests
             });
+            setUser(updatedUser);
             navigate('/');
         } catch (err) {
             const errorMessage = err?.message || (typeof err === 'string' ? err : "Failed to save onboarding data");

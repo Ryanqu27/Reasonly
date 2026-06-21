@@ -41,17 +41,17 @@ public class UserController {
     }
 
     @PostMapping("/check-streak")
-    public void checkStreak(@AuthenticationPrincipal User user) {
-        userService.checkStreak(user.getId());
+    public User checkStreak(@AuthenticationPrincipal User user) {
+        return userService.checkStreak(user.getId());
     }
 
     @PutMapping("/complete-today")
-    public void updateCompletedDate(@AuthenticationPrincipal User user) {
-        userService.incrementStreak(user.getId());
+    public User updateCompletedDate(@AuthenticationPrincipal User user) {
+        return userService.incrementStreak(user.getId());
     }
 
     @PutMapping("/onboard")
-    public void onboardUser(@AuthenticationPrincipal User user, @RequestBody OnboardRequest request) {
-        userService.onboardUser(user.getId(), request);
+    public User onboardUser(@AuthenticationPrincipal User user, @RequestBody OnboardRequest request) {
+        return userService.onboardUser(user.getId(), request);
     }
 }

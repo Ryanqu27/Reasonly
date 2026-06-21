@@ -73,7 +73,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private UserSettings userSettings;
 
     private int rating;

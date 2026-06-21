@@ -891,41 +891,14 @@ public class DataInitializer {
             "Fill in the blank: When multiple threads access shared data simultaneously and the outcome depends on the timing of execution, this is called a _____ condition.",
             List.of(), List.of("race", "Race")));
         q.add(new Question(null, QuestionTopic.CONCURRENCY, QuestionType.FILL_IN_THE_BLANK,
-            QuestionDifficulty.EASY, null,
-            "Fill in the blank: In Java, the _____ keyword ensures that only one thread can execute a given method or block at a time.",
-            List.of(), List.of("synchronized", "Synchronized")));
-        q.add(new Question(null, QuestionTopic.CONCURRENCY, QuestionType.FILL_IN_THE_BLANK,
             QuestionDifficulty.MEDIUM, null,
             "Fill in the blank: A variable or abstract data type used to control access to a shared resource by multiple threads is called a _____.",
             List.of(), List.of("semaphore", "Semaphore")));
         q.add(new Question(null, QuestionTopic.CONCURRENCY, QuestionType.FILL_IN_THE_BLANK,
-            QuestionDifficulty.MEDIUM, null,
-            "Fill in the blank: In Java, the class used for atomic integer operations without needing synchronization is called _____.",
-            List.of(), List.of("AtomicInteger")));
-        q.add(new Question(null, QuestionTopic.CONCURRENCY, QuestionType.FILL_IN_THE_BLANK,
             QuestionDifficulty.HARD, null,
             "Fill in the blank: A state where threads constantly change state in response to each other without making actual progress is called _____.",
             List.of(), List.of("livelock", "Livelock")));
-        q.add(new Question(null, QuestionTopic.CONCURRENCY, QuestionType.FILL_IN_THE_BLANK,
-            QuestionDifficulty.EXTREME, null,
-            "Fill in the blank: In the Java Memory Model, a _____ relationship guarantees that memory writes by one specific operation are visible to another specific operation.",
-            List.of(), List.of("happens-before", "happens before")));
 
-        q.add(new Question(null, QuestionTopic.CONCURRENCY, QuestionType.SELECT_ALL,
-            QuestionDifficulty.MEDIUM, null,
-            "Select ALL true statements about a ReentrantLock compared to synchronized in Java:",
-            List.of(
-                "ReentrantLock allows the same thread to acquire the lock multiple times",
-                "synchronized is always faster",
-                "ReentrantLock supports try-lock with a timeout",
-                "ReentrantLock can be fair (FIFO ordering)",
-                "synchronized can be used across multiple methods more easily"
-            ),
-            List.of(
-                "ReentrantLock allows the same thread to acquire the lock multiple times",
-                "ReentrantLock supports try-lock with a timeout",
-                "ReentrantLock can be fair (FIFO ordering)"
-            )));
         q.add(new Question(null, QuestionTopic.CONCURRENCY, QuestionType.SELECT_ALL,
             QuestionDifficulty.HARD, null,
             "Select ALL true statements about lock-free programming:",
@@ -941,23 +914,7 @@ public class DataInitializer {
                 "It guarantees that at least one thread always makes progress",
                 "It can suffer from the ABA problem"
             )));
-        q.add(new Question(null, QuestionTopic.CONCURRENCY, QuestionType.SELECT_ALL,
-            QuestionDifficulty.EXTREME, null,
-            "Select ALL true statements about the Java Memory Model's happens-before guarantees:",
-            List.of(
-                "A write to a volatile variable happens-before every subsequent read of that variable",
-                "Thread start() happens-before any action in the started thread",
-                "Acquiring a lock happens-before any subsequent action in the thread holding the lock",
-                "Object construction completion happens-before the finalizer runs",
-                "All Java statements execute in program order"
-            ),
-            List.of(
-                "A write to a volatile variable happens-before every subsequent read of that variable",
-                "Thread start() happens-before any action in the started thread",
-                "Acquiring a lock happens-before any subsequent action in the thread holding the lock",
-                "Object construction completion happens-before the finalizer runs"
-            )));
-
+        
         q.add(new Question(null, QuestionTopic.CONCURRENCY, QuestionType.ORDER_CODE,
             QuestionDifficulty.MEDIUM, null,
             "Order the steps a thread goes through when using a standard mutex lock to access a shared resource:",
@@ -1029,12 +986,6 @@ public class DataInitializer {
             "A thread losing its priority", "Sorting threads by priority"), List.of("A low-priority task holds a resource needed by a high-priority task")));
         q.add(new Question(null, QuestionTopic.CONCURRENCY, QuestionType.MULTIPLE_CHOICE,
             QuestionDifficulty.MEDIUM,
-            "What is the purpose of 'CountDownLatch' in Java?",
-            List.of("A counter for loops",
-            "A synchronization aid that allows one or more threads to wait until a set of operations completes",
-            "A type of array", "A lock for variables"), List.of("A synchronization aid that allows one or more threads to wait until a set of operations completes")));
-        q.add(new Question(null, QuestionTopic.CONCURRENCY, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.MEDIUM,
             "What is 'False Sharing'?",
             List.of("Sharing wrong data",
             "Multiple processors updating variables that reside on the same cache line",
@@ -1052,11 +1003,6 @@ public class DataInitializer {
             List.of("A security wall",
             "A synchronization point where multiple threads must wait until all threads reach it",
             "A crashed thread", "A network gateway"), List.of("A synchronization point where multiple threads must wait until all threads reach it")));
-        q.add(new Question(null, QuestionTopic.CONCURRENCY, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.HARD,
-            "What is a 'Future' in Java concurrency?",
-            List.of("A prediction of bugs", "The result of an asynchronous computation",
-            "A variable that will be created later", "A high-priority thread"), List.of("The result of an asynchronous computation")));
         q.add(new Question(null, QuestionTopic.CONCURRENCY, QuestionType.MULTIPLE_CHOICE,
             QuestionDifficulty.MEDIUM,
             "What is 'Starvation' in concurrency?",
@@ -1092,13 +1038,6 @@ public class DataInitializer {
             "What is thread local storage?",
             List.of("Shared memory", "Memory that is unique to each thread", "Global variables",
             "Cache memory"), List.of("Memory that is unique to each thread")));
-        q.add(new Question(null, QuestionTopic.CONCURRENCY, QuestionType.MULTIPLE_CHOICE,
-            QuestionDifficulty.HARD,
-            "What is a CyclicBarrier in Java?",
-            List.of("A loop construct",
-            "A synchronization aid that allows threads to wait at a barrier point and optionally run a barrier action",
-            "A type of lock", "A thread pool"), List.of("A synchronization aid that allows threads to wait at a barrier point and optionally run a barrier action")));
-
         return q;
     }
 
@@ -1367,6 +1306,10 @@ public class DataInitializer {
             QuestionDifficulty.EASY, UserLanguage.JAVA,
             "Identify the line number containing the bug in the following Java code:\n\n```java\n1: public class Test {\n2:     public static void main(String[] args) {\n3:         int x = 5;\n4:         if (x = 5) { System.out.println(x); }\n5:     }\n6: }\n```",
             List.of(), List.of("4")));
+        q.add(new Question(null, QuestionTopic.CONCURRENCY, QuestionType.FILL_IN_THE_BLANK,
+            QuestionDifficulty.EASY, UserLanguage.JAVA,
+            "Fill in the blank: In Java, the _____ keyword ensures that only one thread can execute a given method or block at a time.",
+            List.of(), List.of("synchronized", "Synchronized")));
 
         q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.MULTIPLE_CHOICE,
             QuestionDifficulty.BASIC, UserLanguage.PYTHON,

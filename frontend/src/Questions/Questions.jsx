@@ -9,7 +9,7 @@ import { getQuestions, updateCompletedDate, submitQuestionAttempt, resetQuestion
 import { useAuth } from '../UserAuth/AuthContext.jsx';
 
 function Questions() {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
 
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -77,7 +77,10 @@ function Questions() {
       setAttemptResult(response.data);
 
       if (response.data.correct) {
-        await updateCompletedDate();
+        const updateResponse = await updateCompletedDate();
+        setUser(updateResponse.data);
+      } else {
+        setUser(prev => ({ ...prev, rating: response.data.newRating }));
       }
     } catch (err) {
       console.error("Failed to submit attempt", err);

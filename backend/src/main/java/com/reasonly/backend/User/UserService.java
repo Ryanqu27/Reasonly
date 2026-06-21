@@ -28,7 +28,7 @@ public class UserService {
     }
 
     @Transactional
-    public void incrementStreak(@NonNull Long id) {
+    public User incrementStreak(@NonNull Long id) {
         User currentUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
@@ -36,7 +36,7 @@ public class UserService {
         LocalDate lastCompleted = currentUser.getLastCompletedDate();
 
         if (lastCompleted != null && today.equals(lastCompleted)) {
-            return;
+            return currentUser;
         }
 
         int newStreak;
@@ -51,20 +51,20 @@ public class UserService {
         if (newStreak > currentUser.getLongestStreak()) {
             currentUser.setLongestStreak(newStreak);
         }
-        userRepository.save(currentUser);
+        return userRepository.save(currentUser);
     }
 
     @Transactional
-    public void checkStreak(@NonNull Long id) {
+    public User checkStreak(@NonNull Long id) {
         User currentUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
         LocalDate today = LocalDate.now();
         LocalDate lastCompleted = currentUser.getLastCompletedDate();
         if (lastCompleted != null && (lastCompleted.equals(today.minusDays(1)) || lastCompleted.equals(today))) {
-            return;
+            return currentUser;
         }
         currentUser.setCurrentStreak(0);
-        userRepository.save(currentUser);
+        return userRepository.save(currentUser);
     }
 
     public void deleteUser(@NonNull Long id) {
@@ -85,11 +85,11 @@ public class UserService {
     }
 
     @Transactional
-    public void onboardUser(@NonNull Long id, OnboardRequest request) {
+    public User onboardUser(@NonNull Long id, OnboardRequest request) {
         User currentUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
         if (currentUser.getUserSettings() != null) {
-            return;
+            return currentUser;
         }
         UserSettings settings = new UserSettings();
         settings.setExperience(request.experience());
@@ -113,7 +113,7 @@ public class UserService {
         } else if (request.experience() == UserExperience.EXPERT) {
             currentUser.setRating(1500);
         }
-        userRepository.save(currentUser);
+        return userRepository.save(currentUser);
     }
 
     public void updateUserSettings(@NonNull String email, UserSettings updatedSettings) {
