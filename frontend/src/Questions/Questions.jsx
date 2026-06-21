@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react';
 import { getQuestions, updateCompletedDate, submitQuestionAttempt, resetQuestionAttempts, runCode } from './QuestionService'
 import { useAuth } from '../UserAuth/AuthContext.jsx';
 
-function Questions({ onUserUpdate }) {
+function Questions() {
   const { user } = useAuth();
 
   const [currentQuestion, setCurrentQuestion] = useState(null);
@@ -84,7 +84,6 @@ function Questions({ onUserUpdate }) {
     } finally {
       setIsSubmitting(false);
       setShowFeedback(true);
-      onUserUpdate();
     }
   };
 
