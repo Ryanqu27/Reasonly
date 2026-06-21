@@ -22,7 +22,7 @@ public class UserController {
 
     @GetMapping("/me")
     public User getCurrentUser(@AuthenticationPrincipal User user) {
-        return userService.getUserByEmail(user.getEmail());
+        return userService.checkStreak(user.getId());
     }
 
     @GetMapping("/settings")
@@ -35,10 +35,6 @@ public class UserController {
         userService.updateUserSettings(user.getEmail(), userSettings);
     }
 
-    @PostMapping("/check-streak")
-    public User checkStreak(@AuthenticationPrincipal User user) {
-        return userService.checkStreak(user.getId());
-    }
 
     @PutMapping("/complete-today")
     public User updateCompletedDate(@AuthenticationPrincipal User user) {

@@ -15,9 +15,6 @@ export const submitQuestionAttempt = async (questionAttempt) => {
     return api.post('/question-attempts', questionAttempt);
 };
 
-export const checkStreak = async () => {
-    return api.post('/user/check-streak');
-};
 
 export const resetQuestionAttempts = async () => {
     return api.delete('/question-attempts/reset');

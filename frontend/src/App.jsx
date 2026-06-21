@@ -6,7 +6,6 @@ import RegisterForm from './UserAuth/RegisterForm.jsx'
 import { AuthProvider } from './UserAuth/AuthContext.jsx';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Questions from './Questions/Questions.jsx';
-import { checkStreak } from './Questions/QuestionService.js';
 import ProfilePage from './components/ProfilePage.jsx';
 import Sidebar from './components/Sidebar.jsx';
 import UserQuestions from './UserAuth/UserQuestions.jsx';
@@ -27,19 +26,6 @@ function AppLayout({ children }) {
 
 function Dashboard() {
   const { user, loading, setUser } = useAuth();
-
-  const checkUserStreak = async () => {
-    try {
-      const response = await checkStreak();
-      setUser(response.data);
-    } catch (err) {
-      console.error("Failed to check streak", err);
-    }
-  }
-
-  useEffect(() => {
-    checkUserStreak();
-  }, []);
 
   if (loading) return <div className="loading-screen">Loading...</div>;
 
