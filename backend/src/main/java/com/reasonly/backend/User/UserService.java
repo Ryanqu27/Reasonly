@@ -76,14 +76,6 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
     }
 
-    public UserProfile getUserProfile(@NonNull String email) {
-        User user = getUserByEmail(email);
-        return new UserProfile(user.getEmail(), user.getCurrentStreak(),
-                user.getLongestStreak(), user.getRating(), user.getCreatedAt(),
-                user.getQuestionsAnsweredCorrectly(), user.getQuestionsAnsweredIncorrectly(),
-                user.getAccuracy());
-    }
-
     @Transactional
     public User onboardUser(@NonNull Long id, OnboardRequest request) {
         User currentUser = userRepository.findById(id)

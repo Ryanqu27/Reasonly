@@ -166,7 +166,7 @@ public class QuestionAttemptService {
         int newRating = Math.max(0, currentRating + ratingChange); // Prevent negative rating
         user.setRating(newRating);
         userRepository.save(user);
-        return new QuestionAttemptResult(isCorrect, ratingChange, newRating);
+        return new QuestionAttemptResult(isCorrect, ratingChange, newRating, user);
     }
 
     private QuestionDifficulty getDifficultyFromRating(int rating) {

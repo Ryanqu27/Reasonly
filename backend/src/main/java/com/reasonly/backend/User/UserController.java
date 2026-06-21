@@ -25,11 +25,6 @@ public class UserController {
         return userService.getUserByEmail(user.getEmail());
     }
 
-    @GetMapping("/profile")
-    public UserProfile getUserProfile(@AuthenticationPrincipal User user) {
-        return userService.getUserProfile(user.getEmail());
-    }
-
     @GetMapping("/settings")
     public UserSettings getUserSettings(@AuthenticationPrincipal User user) {
         return userService.getUserSettings(user.getEmail());

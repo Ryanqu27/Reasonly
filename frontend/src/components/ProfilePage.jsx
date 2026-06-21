@@ -1,27 +1,10 @@
-import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getUserProfile } from "./UserService";
+import { useAuth } from "../UserAuth/AuthContext";
 import "./ProfilePage.css";
 
 export default function ProfilePage() {
-    const [profile, setProfile] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const { user: profile, loading } = useAuth();
     const navigate = useNavigate();
-
-    useEffect(() => {
-        const fetchProfile = async () => {
-            try {
-                const response = await getUserProfile();
-                setProfile(response);
-            } catch (err) {
-                setError(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchProfile();
-    }, []);
 
     const formatDate = (dateString) => {
         if (!dateString) return "N/A";
@@ -44,7 +27,7 @@ export default function ProfilePage() {
         );
     }
 
-    if (error) {
+    if (!profile) {
         return (
             <div className="profile-container">
                 <div className="profile-error">

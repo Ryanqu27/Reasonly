@@ -80,7 +80,7 @@ function Questions() {
         const updateResponse = await updateCompletedDate();
         setUser(updateResponse.data);
       } else {
-        setUser(prev => ({ ...prev, rating: response.data.newRating }));
+        setUser(response.data.user);
       }
     } catch (err) {
       console.error("Failed to submit attempt", err);
