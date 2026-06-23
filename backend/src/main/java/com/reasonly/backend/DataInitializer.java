@@ -1424,6 +1424,287 @@ public class DataInitializer {
                 "The 'go' keyword starts a new goroutine"
             )));
 
+        // ── CODE_WRITING questions ─────────────────────────────────────────────
+
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.CODE_WRITING,
+            QuestionDifficulty.EASY,
+            "Write a function named `add` that takes two integers and returns their sum.",
+            List.of("[2, 3]", "[10, -5]", "[0, 0]", "[-1, -1]", "[100, 200]"),
+            List.of("5", "5", "0", "-2", "300"),
+            "add",
+            List.of("[2, 3]", "[10, -5]"),
+            List.of("5", "5")));
+
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.CODE_WRITING,
+            QuestionDifficulty.EASY,
+            "Write a function named `isEven` that takes an integer and returns `true` if it is even, `false` otherwise.",
+            List.of("[4]", "[7]", "[0]", "[-2]", "[3]"),
+            List.of("true", "false", "true", "true", "false"),
+            "isEven",
+            List.of("[4]", "[7]"),
+            List.of("true", "false")));
+
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.CODE_WRITING,
+            QuestionDifficulty.BASIC,
+            "Write a function named `max` that takes two integers and returns the larger one.",
+            List.of("[3, 7]", "[10, 2]", "[5, 5]", "[-1, -5]", "[0, 1]"),
+            List.of("7", "10", "5", "-1", "1"),
+            "max",
+            List.of("[3, 7]", "[10, 2]"),
+            List.of("7", "10")));
+
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.CODE_WRITING,
+            QuestionDifficulty.BASIC,
+            "Write a function named `multiply` that takes two numbers and returns their product.",
+            List.of("[3, 4]", "[0, 100]", "[-2, 5]", "[7, 7]", "[1, -1]"),
+            List.of("12", "0", "-10", "49", "-1"),
+            "multiply",
+            List.of("[3, 4]", "[0, 100]"),
+            List.of("12", "0")));
+
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.CODE_WRITING,
+            QuestionDifficulty.EASY,
+            "Write a function named `square` that takes a number and returns its square.",
+            List.of("[3]", "[0]", "[-4]", "[5]", "[10]"),
+            List.of("9", "0", "16", "25", "100"),
+            "square",
+            List.of("[3]", "[-4]"),
+            List.of("9", "16")));
+
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.CODE_WRITING,
+            QuestionDifficulty.EASY,
+            "Write a function named `absolute` that takes an integer and returns its absolute value.",
+            List.of("[-5]", "[3]", "[0]", "[-100]", "[7]"),
+            List.of("5", "3", "0", "100", "7"),
+            "absolute",
+            List.of("[-5]", "[3]"),
+            List.of("5", "3")));
+
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.CODE_WRITING,
+            QuestionDifficulty.EASY,
+            "Write a function named `greet` that takes a name (string) and returns the string `Hello, <name>!`.",
+            List.of("[\"Alice\"]", "[\"Bob\"]", "[\"World\"]"),
+            List.of("Hello, Alice!", "Hello, Bob!", "Hello, World!"),
+            "greet",
+            List.of("[\"Alice\"]"),
+            List.of("Hello, Alice!")));
+
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.CODE_WRITING,
+            QuestionDifficulty.EASY,
+            "Write a function named `clamp` that takes three integers — `value`, `min`, and `max` — and returns `value` constrained to the range [min, max].",
+            List.of("[5, 1, 10]", "[0, 1, 10]", "[15, 1, 10]", "[-5, -10, -1]", "[3, 3, 3]"),
+            List.of("5", "1", "10", "-5", "3"),
+            "clamp",
+            List.of("[5, 1, 10]", "[0, 1, 10]"),
+            List.of("5", "1")));
+
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.CODE_WRITING,
+            QuestionDifficulty.EASY,
+            "Write a function named `sumList` that takes a list (or array) of integers and returns their sum.",
+            List.of("[[1,2,3]]", "[[]]", "[[10,-10,5]]", "[[-1,-2,-3]]", "[[100]]"),
+            List.of("6", "0", "5", "-6", "100"),
+            "sumList",
+            List.of("[[1,2,3]]", "[[]]"),
+            List.of("6", "0")));
+
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.CODE_WRITING,
+            QuestionDifficulty.MEDIUM,
+            "Write a function named `reverseString` that takes a string and returns it reversed.",
+            List.of("[\"hello\"]", "[\"code\"]", "[\"abcd\"]", "[\"\"]", "[\"a\"]"),
+            List.of("olleh", "edoc", "dcba", "", "a"),
+            "reverseString",
+            List.of("[\"hello\"]", "[\"code\"]"),
+            List.of("olleh", "edoc")));
+
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.CODE_WRITING,
+            QuestionDifficulty.MEDIUM,
+            "Write a function named `capitalize` that takes a string and returns it with the first letter upper-cased and the rest lower-cased.",
+            List.of("[\"hello\"]", "[\"WORLD\"]", "[\"javaScript\"]", "[\"a\"]"),
+            List.of("Hello", "World", "Javascript", "A"),
+            "capitalize",
+            List.of("[\"hello\"]", "[\"WORLD\"]"),
+            List.of("Hello", "World")));
+
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.CODE_WRITING,
+            QuestionDifficulty.MEDIUM,
+            "Write a function named `factorial` that takes a non-negative integer `n` and returns `n!`. Assume `0! = 1`.",
+            List.of("[0]", "[1]", "[5]", "[6]", "[10]"),
+            List.of("1", "1", "120", "720", "3628800"),
+            "factorial",
+            List.of("[0]", "[5]"),
+            List.of("1", "120")));
+
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.CODE_WRITING,
+            QuestionDifficulty.MEDIUM,
+            "Write a function named `isPalindrome` that takes a string and returns `true` if it reads the same forwards and backwards (case-insensitive), `false` otherwise.",
+            List.of("[\"racecar\"]", "[\"hello\"]", "[\"Madam\"]", "[\"a\"]", "[\"ab\"]"),
+            List.of("true", "false", "true", "true", "false"),
+            "isPalindrome",
+            List.of("[\"racecar\"]", "[\"hello\"]"),
+            List.of("true", "false")));
+
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.CODE_WRITING,
+            QuestionDifficulty.MEDIUM,
+            "Write a function named `wordCount` that takes a sentence string and returns the number of words in it. Words are separated by single spaces.",
+            List.of("[\"Hello World\"]", "[\"one two three four\"]", "[\"single\"]", "[\"\"]"),
+            List.of("2", "4", "1", "0"),
+            "wordCount",
+            List.of("[\"Hello World\"]", "[\"one two three four\"]"),
+            List.of("2", "4")));
+
+        q.add(new Question(null, QuestionTopic.DATA_STRUCTURES_AND_ALGORITHMS, QuestionType.CODE_WRITING,
+            QuestionDifficulty.MEDIUM,
+            "Write a function named `countVowels` that takes a string and returns the count of vowels (a, e, i, o, u — case-insensitive).",
+            List.of("[\"hello\"]", "[\"Coding\"]", "[\"rhythm\"]", "[\"AEIOU\"]", "[\"\"]"),
+            List.of("2", "2", "0", "5", "0"),
+            "countVowels",
+            List.of("[\"hello\"]", "[\"rhythm\"]"),
+            List.of("2", "0")));
+
+        q.add(new Question(null, QuestionTopic.DATA_STRUCTURES_AND_ALGORITHMS, QuestionType.CODE_WRITING,
+            QuestionDifficulty.MEDIUM,
+            "Write a function named `countOccurrences` that takes a string and a character, and returns how many times the character appears in the string.",
+            List.of("[\"hello\", \"l\"]", "[\"banana\", \"a\"]", "[\"test\", \"z\"]", "[\"aaa\", \"a\"]"),
+            List.of("2", "3", "0", "3"),
+            "countOccurrences",
+            List.of("[\"hello\", \"l\"]", "[\"banana\", \"a\"]"),
+            List.of("2", "3")));
+
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.CODE_WRITING,
+            QuestionDifficulty.MEDIUM,
+            "Write a function named `removeDuplicates` that takes a list (or array) and returns a new list with all duplicate values removed, preserving the original order.",
+            List.of("[[1,2,2,3,4,4,5]]", "[[1,1,1]]", "[[3,1,2,1,3]]", "[[]]"),
+            List.of("[1,2,3,4,5]", "[1]", "[3,1,2]", "[]"),
+            "removeDuplicates",
+            List.of("[[1,2,2,3,4,4,5]]", "[[1,1,1]]"),
+            List.of("[1,2,3,4,5]", "[1]")));
+
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.CODE_WRITING,
+            QuestionDifficulty.MEDIUM,
+            "Write a function named `flatten` that takes a list of lists (2D array) and returns a single flat list containing all elements.",
+            List.of("[[[1,2],[3,4]]]", "[[[1],[2],[3]]]", "[[[]]]", "[[[1,2,3]]]"),
+            List.of("[1,2,3,4]", "[1,2,3]", "[]", "[1,2,3]"),
+            "flatten",
+            List.of("[[[1,2],[3,4]]]"),
+            List.of("[1,2,3,4]")));
+
+        q.add(new Question(null, QuestionTopic.DATA_STRUCTURES_AND_ALGORITHMS, QuestionType.CODE_WRITING,
+            QuestionDifficulty.MEDIUM,
+            "Write a function named `chunkArray` that takes an array and a chunk size `n`, and returns the array split into sub-arrays of size `n` (the last chunk may be smaller).",
+            List.of("[[1,2,3,4,5], 2]", "[[1,2,3], 1]", "[[1,2,3,4], 4]", "[[1,2,3,4,5,6], 3]"),
+            List.of("[[1,2],[3,4],[5]]", "[[1],[2],[3]]", "[[1,2,3,4]]", "[[1,2,3],[4,5,6]]"),
+            "chunkArray",
+            List.of("[[1,2,3,4,5], 2]", "[[1,2,3,4], 4]"),
+            List.of("[[1,2],[3,4],[5]]", "[[1,2,3,4]]")));
+
+        q.add(new Question(null, QuestionTopic.DATA_STRUCTURES_AND_ALGORITHMS, QuestionType.CODE_WRITING,
+            QuestionDifficulty.MEDIUM,
+            "Write a function named `bubbleSort` that takes an array of integers, sorts it in ascending order using bubble sort, and returns the sorted array.",
+            List.of("[[5,3,8,1,2]]", "[[1,2,3]]", "[[3,2,1]]", "[[1]]", "[[4,4,4]]"),
+            List.of("[1,2,3,5,8]", "[1,2,3]", "[1,2,3]", "[1]", "[4,4,4]"),
+            "bubbleSort",
+            List.of("[[5,3,8,1,2]]", "[[3,2,1]]"),
+            List.of("[1,2,3,5,8]", "[1,2,3]")));
+
+        q.add(new Question(null, QuestionTopic.LANGUAGE_KNOWLEDGE, QuestionType.CODE_WRITING,
+            QuestionDifficulty.HARD,
+            "Write a function named `fibonacci` that takes a non-negative integer `n` and returns the nth Fibonacci number (0-indexed: fib(0)=0, fib(1)=1).",
+            List.of("[0]", "[1]", "[5]", "[7]", "[10]"),
+            List.of("0", "1", "5", "13", "55"),
+            "fibonacci",
+            List.of("[0]", "[5]"),
+            List.of("0", "5")));
+
+        q.add(new Question(null, QuestionTopic.DATA_STRUCTURES_AND_ALGORITHMS, QuestionType.CODE_WRITING,
+            QuestionDifficulty.HARD,
+            "Write a function named `binarySearch` that takes a sorted integer array and a target integer, and returns the index of the target, or -1 if not found.",
+            List.of("[[1,3,5,7,9], 5]", "[[1,3,5,7,9], 1]", "[[1,3,5,7,9], 9]", "[[1,3,5,7,9], 4]", "[[2,4,6], 6]"),
+            List.of("2", "0", "4", "-1", "2"),
+            "binarySearch",
+            List.of("[[1,3,5,7,9], 5]", "[[1,3,5,7,9], 4]"),
+            List.of("2", "-1")));
+
+        q.add(new Question(null, QuestionTopic.DATA_STRUCTURES_AND_ALGORITHMS, QuestionType.CODE_WRITING,
+            QuestionDifficulty.HARD,
+            "Write a function named `twoSum` that takes an integer array and a target integer, and returns the indices of the two numbers that add up to the target. Assume exactly one solution exists.",
+            List.of("[[2,7,11,15], 9]", "[[3,2,4], 6]", "[[0,4,3,0], 0]"),
+            List.of("[0,1]", "[1,2]", "[0,3]"),
+            "twoSum",
+            List.of("[[2,7,11,15], 9]", "[[3,2,4], 6]"),
+            List.of("[0,1]", "[1,2]")));
+
+        q.add(new Question(null, QuestionTopic.DATA_STRUCTURES_AND_ALGORITHMS, QuestionType.CODE_WRITING,
+            QuestionDifficulty.HARD,
+            "Write a function named `hasDuplicate` that takes an array of integers and returns `true` if any value appears more than once, `false` otherwise.",
+            List.of("[[1,2,3,4,5]]", "[[1,2,3,1]]", "[[]]", "[[5,5]]"),
+            List.of("false", "true", "false", "true"),
+            "hasDuplicate",
+            List.of("[[1,2,3,4,5]]", "[[1,2,3,1]]"),
+            List.of("false", "true")));
+
+        q.add(new Question(null, QuestionTopic.DATA_STRUCTURES_AND_ALGORITHMS, QuestionType.CODE_WRITING,
+            QuestionDifficulty.HARD,
+            "Write a function named `findMissing` that takes an integer array containing numbers from 1 to n with exactly one number missing, and returns the missing number.",
+            List.of("[[1,2,4,5]]", "[[2,3,4,5]]", "[[1,3]]", "[[1,2,3,5,6]]"),
+            List.of("3", "1", "2", "4"),
+            "findMissing",
+            List.of("[[1,2,4,5]]", "[[2,3,4,5]]"),
+            List.of("3", "1")));
+
+        q.add(new Question(null, QuestionTopic.DATA_STRUCTURES_AND_ALGORITHMS, QuestionType.CODE_WRITING,
+            QuestionDifficulty.HARD,
+            "Write a function named `uniqueChars` that takes a string and returns `true` if all characters are unique (no character appears more than once), `false` otherwise.",
+            List.of("[\"abcdef\"]", "[\"hello\"]", "[\"\"]", "[\"aA\"]", "[\"abc abc\"]"),
+            List.of("true", "false", "true", "true", "false"),
+            "uniqueChars",
+            List.of("[\"abcdef\"]", "[\"hello\"]"),
+            List.of("true", "false")));
+
+        q.add(new Question(null, QuestionTopic.DATA_STRUCTURES_AND_ALGORITHMS, QuestionType.CODE_WRITING,
+            QuestionDifficulty.HARD,
+            "Write a function named `longestCommonPrefix` that takes a list (or array) of strings and returns the longest common prefix shared by all strings. Return an empty string if there is none.",
+            List.of("[[\"flower\",\"flow\",\"flight\"]]", "[[\"dog\",\"racecar\",\"car\"]]", "[[\"interview\",\"inter\",\"internal\"]]", "[[\"\"]]"),
+            List.of("fl", "", "inter", ""),
+            "longestCommonPrefix",
+            List.of("[[\"flower\",\"flow\",\"flight\"]]", "[[\"dog\",\"racecar\",\"car\"]]"),
+            List.of("fl", "")));
+
+        q.add(new Question(null, QuestionTopic.DATA_STRUCTURES_AND_ALGORITHMS, QuestionType.CODE_WRITING,
+            QuestionDifficulty.HARD,
+            "Write a function named `maxSubarraySum` that takes a non-empty array of integers and returns the sum of the contiguous subarray with the largest sum (Kadane's algorithm).",
+            List.of("[[-2,1,-3,4,-1,2,1,-5,4]]", "[[1]]", "[[-1,-2,-3]]", "[[5,4,-1,7,8]]"),
+            List.of("6", "1", "-1", "23"),
+            "maxSubarraySum",
+            List.of("[[-2,1,-3,4,-1,2,1,-5,4]]", "[[5,4,-1,7,8]]"),
+            List.of("6", "23")));
+
+        q.add(new Question(null, QuestionTopic.DATA_STRUCTURES_AND_ALGORITHMS, QuestionType.CODE_WRITING,
+            QuestionDifficulty.HARD,
+            "Write a function named `mergeIntervals` that takes a list of intervals represented as [start, end] pairs and returns the merged list of non-overlapping intervals sorted by start time.",
+            List.of("[[[1,3],[2,6],[8,10],[15,18]]]", "[[[1,4],[4,5]]]", "[[[1,2],[3,4]]]"),
+            List.of("[[1,6],[8,10],[15,18]]", "[[1,5]]", "[[1,2],[3,4]]"),
+            "mergeIntervals",
+            List.of("[[[1,3],[2,6],[8,10],[15,18]]]", "[[[1,4],[4,5]]]"),
+            List.of("[[1,6],[8,10],[15,18]]", "[[1,5]]")));
+
+        q.add(new Question(null, QuestionTopic.DATA_STRUCTURES_AND_ALGORITHMS, QuestionType.CODE_WRITING,
+            QuestionDifficulty.EXTREME,
+            "Write a function named `isValidParentheses` that takes a string containing only `(`, `)`, `{`, `}`, `[`, `]` and returns `true` if the brackets are balanced and correctly nested, `false` otherwise.",
+            List.of("[\"()\"]", "[\"()[]{}\"]", "[\"(]\"]", "[\"{[]}\"]", "[\"\"]", "[\"(((\"]"),
+            List.of("true", "true", "false", "true", "true", "false"),
+            "isValidParentheses",
+            List.of("[\"()[]{}\"]", "[\"(]\"]"),
+            List.of("true", "false")));
+
+        q.add(new Question(null, QuestionTopic.DATA_STRUCTURES_AND_ALGORITHMS, QuestionType.CODE_WRITING,
+            QuestionDifficulty.EXTREME,
+            "Write a function named `groupBy` that takes a list of objects and a key name, and returns a map/dictionary grouping the objects by the value at that key.",
+            List.of("[[{\"type\":\"fruit\",\"name\":\"apple\"},{\"type\":\"veggie\",\"name\":\"carrot\"},{\"type\":\"fruit\",\"name\":\"banana\"}], \"type\"]"),
+            List.of("{\"fruit\":[{\"type\":\"fruit\",\"name\":\"apple\"},{\"type\":\"fruit\",\"name\":\"banana\"}],\"veggie\":[{\"type\":\"veggie\",\"name\":\"carrot\"}]}"),
+            "groupBy",
+            List.of("[[{\"type\":\"fruit\",\"name\":\"apple\"},{\"type\":\"veggie\",\"name\":\"carrot\"},{\"type\":\"fruit\",\"name\":\"banana\"}], \"type\"]"),
+            List.of("{\"fruit\":[{\"type\":\"fruit\",\"name\":\"apple\"},{\"type\":\"fruit\",\"name\":\"banana\"}],\"veggie\":[{\"type\":\"veggie\",\"name\":\"carrot\"}]}")));
+
         return q;
     }
 }
