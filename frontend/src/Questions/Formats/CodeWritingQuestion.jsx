@@ -13,7 +13,19 @@ export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer
     const LANGUAGE_MAP = {
         "JAVA": "java",
         "PYTHON": "python",
-        "JAVASCRIPT": "javascript"
+        "JAVASCRIPT": "javascript",
+        "C_PLUS_PLUS": "cpp",
+        "C_SHARP": "csharp",
+        "GO": "go"
+    };
+
+    const LANGUAGE_LABELS = {
+        "JAVA": "Java",
+        "PYTHON": "Python",
+        "JAVASCRIPT": "JavaScript",
+        "C_PLUS_PLUS": "C++",
+        "C_SHARP": "C#",
+        "GO": "Go"
     };
 
     const getBoilerplate = (lang, method) => {
@@ -24,6 +36,12 @@ export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer
             return `def ${m}(...):\n    # Write your code here\n    pass`;
         } else if (lang === "JAVASCRIPT") {
             return `function ${m}(...) {\n    // Write your code here\n    \n}\n\n// Required for execution\nmodule.exports = { ${m} };`;
+        } else if (lang === "C_PLUS_PLUS") {
+            return `#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\n// Write your ${m} function here\n`;
+        } else if (lang === "C_SHARP") {
+            return `using System;\nusing System.Collections.Generic;\n\npublic class Solution {\n    // Write your ${m} method here\n    \n}`;
+        } else if (lang === "GO") {
+            return `package main\n\nimport "fmt"\n\n// Write your ${m} function here\n`;
         }
         return "";
     };
@@ -33,6 +51,9 @@ export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer
         JAVA: getBoilerplate("JAVA", question.methodName),
         PYTHON: getBoilerplate("PYTHON", question.methodName),
         JAVASCRIPT: getBoilerplate("JAVASCRIPT", question.methodName),
+        C_PLUS_PLUS: getBoilerplate("C_PLUS_PLUS", question.methodName),
+        C_SHARP: getBoilerplate("C_SHARP", question.methodName),
+        GO: getBoilerplate("GO", question.methodName),
     }));
 
     useEffect(() => {
@@ -72,13 +93,13 @@ export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer
             </h3>
 
             <div className="code-language-bar">
-                {['JAVA', 'PYTHON', 'JAVASCRIPT'].map((lang) => (
+                {['JAVA', 'PYTHON', 'JAVASCRIPT', 'C_PLUS_PLUS', 'C_SHARP', 'GO'].map((lang) => (
                     <button
                         key={lang}
                         onClick={() => setLanguage(lang)}
                         className={`code-language-btn ${language === lang ? 'active' : ''}`}
                     >
-                        {lang}
+                        {LANGUAGE_LABELS[lang]}
                     </button>
                 ))}
             </div>

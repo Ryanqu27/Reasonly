@@ -42,6 +42,12 @@ public class CodeExecutionService {
                 runnerCode = generatePythonRunner(methodName);
             } else if (language == UserLanguage.JAVASCRIPT) {
                 runnerCode = generateJavaScriptRunner(methodName);
+            } else if (language == UserLanguage.C_PLUS_PLUS) {
+                runnerCode = generateCppRunner(methodName);
+            } else if (language == UserLanguage.C_SHARP) {
+                runnerCode = generateCSharpRunner(methodName);
+            } else if (language == UserLanguage.GO) {
+                runnerCode = generateGoRunner(methodName);
             } else {
                 throw new UnsupportedOperationException("Language " + language + " is not supported yet.");
             }
@@ -133,6 +139,52 @@ public class CodeExecutionService {
                 "-e", "INPUT_JSON=" + inputJson,
                 "-w", "/app", "node:20-alpine",
                 "sh", "-c", "printf '%s' \"$SOLUTION_CODE\" > solution.js && printf '%s' \"$RUNNER_CODE\" > runner.js && printf '%s' \"$INPUT_JSON\" > input.txt && node runner.js < input.txt"
+            };
+        } else if (language == UserLanguage.C_PLUS_PLUS) {
+            command = new String[]{
+                "docker", "run", "--rm", "--memory", "256m", "--network", "none",
+                "-e", "SOLUTION_CODE=" + userCode,
+                "-e", "RUNNER_CODE=" + runnerCode,
+                "-e", "INPUT_JSON=" + inputJson,
+                "-w", "/app", "gcc:latest",
+                "sh", "-c",
+                "printf '%s' \"$SOLUTION_CODE\" > solution.cpp && " +
+                "printf '%s' \"$RUNNER_CODE\" > runner.cpp && " +
+                "printf '%s' \"$INPUT_JSON\" > input.txt && " +
+                "g++ -std=c++17 -O2 -o runner runner.cpp && " +
+                "./runner < input.txt"
+            };
+        } else if (language == UserLanguage.C_SHARP) {
+            command = new String[]{
+                "docker", "run", "--rm", "--memory", "256m", "--network", "none",
+                "-e", "SOLUTION_CODE=" + userCode,
+                "-e", "RUNNER_CODE=" + runnerCode,
+                "-e", "INPUT_JSON=" + inputJson,
+                "-w", "/app", "mcr.microsoft.com/dotnet/sdk:8.0",
+                "sh", "-c",
+                "mkdir -p /app/proj && " +
+                "printf '%s' \"$SOLUTION_CODE\" > /app/proj/Solution.cs && " +
+                "printf '%s' \"$RUNNER_CODE\" > /app/proj/Runner.cs && " +
+                "printf '%s' \"$INPUT_JSON\" > /app/proj/input.txt && " +
+                "dotnet new console -o /app/proj --force --no-restore -f net8.0 > /dev/null 2>&1 && " +
+                "cp /app/proj/Solution.cs /app/proj/Solution.cs.bak && cp /app/proj/Runner.cs /app/proj/Runner.cs.bak && " +
+                "rm -f /app/proj/Program.cs && " +
+                "cp /app/proj/Solution.cs.bak /app/proj/Solution.cs && cp /app/proj/Runner.cs.bak /app/proj/Runner.cs && " +
+                "dotnet run --project /app/proj --no-build 2>&1 || " +
+                "(dotnet build /app/proj -o /app/proj/out > /dev/null 2>&1 && dotnet /app/proj/out/proj.dll < /app/proj/input.txt)"
+            };
+        } else if (language == UserLanguage.GO) {
+            command = new String[]{
+                "docker", "run", "--rm", "--memory", "256m", "--network", "none",
+                "-e", "SOLUTION_CODE=" + userCode,
+                "-e", "RUNNER_CODE=" + runnerCode,
+                "-e", "INPUT_JSON=" + inputJson,
+                "-w", "/app", "golang:1.22-alpine",
+                "sh", "-c",
+                "printf '%s' \"$SOLUTION_CODE\" > solution.go && " +
+                "printf '%s' \"$RUNNER_CODE\" > main.go && " +
+                "printf '%s' \"$INPUT_JSON\" > input.txt && " +
+                "go run solution.go main.go < input.txt"
             };
         } else {
             throw new RuntimeException("Unsupported language");
@@ -260,6 +312,205 @@ public class CodeExecutionService {
                "    }\n" +
                "}\n" +
                "process.stdout.write(JSON.stringify(results));\n";
+    }
+
+    private String generateCppRunner(String methodName) {
+        return "#include <iostream>\n" +
+               "#include <string>\n" +
+               "#include <vector>\n" +
+               "#include <sstream>\n" +
+               "#include <tuple>\n" +
+               "#include <type_traits>\n" +
+               "\n" +
+               "// User code included directly\n" +
+               "#include \"solution.cpp\"\n" +
+               "\n" +
+               "// --- Minimal JSON Parser ---\n" +
+               "static std::string trim(const std::string& s) {\n" +
+               "    auto b = s.find_first_not_of(\" \\t\\r\\n\");\n" +
+               "    auto e = s.find_last_not_of(\" \\t\\r\\n\");\n" +
+               "    return b == std::string::npos ? \"\" : s.substr(b, e-b+1);\n" +
+               "}\n" +
+               "\n" +
+               "static std::vector<std::string> splitTopLevel(const std::string& s) {\n" +
+               "    std::vector<std::string> res;\n" +
+               "    int depth=0; bool inStr=false; int start=0;\n" +
+               "    for (int i=0; i<(int)s.size(); i++) {\n" +
+               "        char c=s[i];\n" +
+               "        if (c=='\"' && (i==0||s[i-1]!='\\\\')) inStr=!inStr;\n" +
+               "        if (!inStr) { if (c=='['||c=='{'||c=='(') depth++; else if (c==']'||c=='}'||c==')') depth--; }\n" +
+               "        if (!inStr && depth==0 && c==',' ) { res.push_back(trim(s.substr(start,i-start))); start=i+1; }\n" +
+               "    }\n" +
+               "    if (start<(int)s.size()) res.push_back(trim(s.substr(start)));\n" +
+               "    return res;\n" +
+               "}\n" +
+               "\n" +
+               "template <typename T> struct ArgParser;\n" +
+               "template <> struct ArgParser<int> { static int parse(const std::string& s) { return std::stoi(s); } };\n" +
+               "template <> struct ArgParser<bool> { static bool parse(const std::string& s) { return s == \"true\"; } };\n" +
+               "template <> struct ArgParser<std::string> { static std::string parse(const std::string& s) { \n" +
+               "    if (s.size()>=2 && s.front()=='\"' && s.back()=='\"') return s.substr(1, s.size()-2);\n" +
+               "    return s;\n" +
+               "} };\n" +
+               "template <typename T> struct ArgParser<std::vector<T>> {\n" +
+               "    static std::vector<T> parse(const std::string& s) {\n" +
+               "        std::vector<T> res;\n" +
+               "        std::string inner = trim(s);\n" +
+               "        if (inner.size()>=2 && inner.front()=='[') inner = inner.substr(1, inner.size()-2);\n" +
+               "        auto parts = splitTopLevel(inner);\n" +
+               "        for (auto& p : parts) { if(!p.empty()) res.push_back(ArgParser<T>::parse(p)); }\n" +
+               "        return res;\n" +
+               "    }\n" +
+               "};\n" +
+               "\n" +
+               "// Format output\n" +
+               "template <typename T> std::string toJson(const std::vector<T>& val);\n" +
+               "static std::string toJson(int val) { return std::to_string(val); }\n" +
+               "static std::string toJson(bool val) { return val ? \"true\" : \"false\"; }\n" +
+               "static std::string toJson(const std::string& val) { return \"\\\"\" + val + \"\\\"\"; }\n" +
+               "template <typename T> std::string toJson(const std::vector<T>& val) {\n" +
+               "    std::string res = \"[\";\n" +
+               "    for(size_t i=0; i<val.size(); i++) {\n" +
+               "        if(i>0) res+=\",\";\n" +
+               "        res += toJson(val[i]);\n" +
+               "    }\n" +
+               "    return res + \"]\";\n" +
+               "}\n" +
+               "\n" +
+               "// Dispatch magic\n" +
+               "template<typename R, typename... Args, std::size_t... Is>\n" +
+               "std::string callFunc(R (*f)(Args...), const std::vector<std::string>& argStrs, std::index_sequence<Is...>) {\n" +
+               "    if constexpr (std::is_void_v<R>) {\n" +
+               "        f(ArgParser<std::decay_t<Args>>::parse(argStrs[Is])...);\n" +
+               "        return \"null\";\n" +
+               "    } else {\n" +
+               "        auto res = f(ArgParser<std::decay_t<Args>>::parse(argStrs[Is])...);\n" +
+               "        return toJson(res);\n" +
+               "    }\n" +
+               "}\n" +
+               "\n" +
+               "template<typename R, typename... Args>\n" +
+               "std::string dispatchWrapper(R (*f)(Args...), const std::string& argsJson) {\n" +
+               "    std::string inner = trim(argsJson);\n" +
+               "    if(inner.size()>=2 && inner.front()=='[') inner = inner.substr(1,inner.size()-2);\n" +
+               "    auto argStrs = splitTopLevel(inner);\n" +
+               "    return callFunc(f, argStrs, std::index_sequence_for<Args...>{});\n" +
+               "}\n" +
+               "\n" +
+               "int main() {\n" +
+               "    std::string line, all;\n" +
+               "    while (std::getline(std::cin, line)) all += line;\n" +
+               "    std::string inner = trim(all);\n" +
+               "    if(inner.size()>=2 && inner.front()=='[') inner = inner.substr(1,inner.size()-2);\n" +
+               "    auto cases = splitTopLevel(inner);\n" +
+               "    \n" +
+               "    std::cout << '[';\n" +
+               "    for (size_t i=0; i<cases.size(); i++) {\n" +
+               "        if (i>0) std::cout<<',';\n" +
+               "        try {\n" +
+               "            std::cout << dispatchWrapper(" + methodName + ", cases[i]);\n" +
+               "        } catch(const std::exception& e) {\n" +
+               "            std::cout << \"{\\\"error\\\":\\\"\" << e.what() << \"\\\"}\";\n" +
+               "        }\n" +
+               "    }\n" +
+               "    std::cout << ']' << std::endl;\n" +
+               "}\n";
+    }
+
+    private String generateCSharpRunner(String methodName) {
+        return "using System;\n" +
+               "using System.Reflection;\n" +
+               "using System.Text.Json;\n" +
+               "using System.Text.Json.Nodes;\n" +
+               "\n" +
+               "class Runner {\n" +
+               "    static void Main() {\n" +
+               "        string json = Console.In.ReadToEnd().Trim();\n" +
+               "        var allCases = JsonNode.Parse(json)!.AsArray();\n" +
+               "        var results = new JsonArray();\n" +
+               "        \n" +
+               "        MethodInfo method = typeof(Solution).GetMethod(\"" + methodName + "\", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.IgnoreCase);\n" +
+               "        if (method == null) method = typeof(Solution).GetMethod(\"" + methodName + "\", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);\n" +
+               "        if (method == null) {\n" +
+               "            Console.Write(\"[{\\\"error\\\":\\\"Method not found\\\"}]\");\n" +
+               "            return;\n" +
+               "        }\n" +
+               "        \n" +
+               "        var parameters = method.GetParameters();\n" +
+               "        object instance = method.IsStatic ? null : Activator.CreateInstance(typeof(Solution));\n" +
+               "        \n" +
+               "        foreach (var testCase in allCases) {\n" +
+               "            try {\n" +
+               "                var argsArr = testCase!.AsArray();\n" +
+               "                object[] args = new object[parameters.Length];\n" +
+               "                for (int j = 0; j < parameters.Length; j++) {\n" +
+               "                    args[j] = argsArr[j].Deserialize(parameters[j].ParameterType);\n" +
+               "                }\n" +
+               "                object res = method.Invoke(instance, args);\n" +
+               "                results.Add(JsonSerializer.SerializeToNode(res));\n" +
+               "            } catch (Exception e) {\n" +
+               "                results.Add(JsonNode.Parse($\"{{{\\\"error\\\":\\\"{e.InnerException?.Message ?? e.Message}\\\"}}}\"));\n" +
+               "            }\n" +
+               "        }\n" +
+               "        Console.Write(results.ToJsonString());\n" +
+               "    }\n" +
+               "}\n";
+    }
+
+    private String generateGoRunner(String methodName) {
+        return "package main\n" +
+               "\n" +
+               "import (\n" +
+               "    \"encoding/json\"\n" +
+               "    \"fmt\"\n" +
+               "    \"os\"\n" +
+               "    \"reflect\"\n" +
+               ")\n" +
+               "\n" +
+               "func main() {\n" +
+               "    buf := make([]byte, 1<<20)\n" +
+               "    n, _ := os.Stdin.Read(buf)\n" +
+               "    var allCases []json.RawMessage\n" +
+               "    if err := json.Unmarshal(buf[:n], &allCases); err != nil {\n" +
+               "        fmt.Fprintln(os.Stderr, \"parse error:\", err)\n" +
+               "        os.Exit(1)\n" +
+               "    }\n" +
+               "    \n" +
+               "    fn := reflect.ValueOf(" + methodName + ")\n" +
+               "    fnType := fn.Type()\n" +
+               "    \n" +
+               "    results := make([]interface{}, 0, len(allCases))\n" +
+               "    for _, raw := range allCases {\n" +
+               "        func() {\n" +
+               "            defer func() {\n" +
+               "                if r := recover(); r != nil {\n" +
+               "                    results = append(results, map[string]string{\"error\": fmt.Sprintf(\"%v\", r)})\n" +
+               "                }\n" +
+               "            }()\n" +
+               "            \n" +
+               "            var argsRaw []json.RawMessage\n" +
+               "            json.Unmarshal(raw, &argsRaw)\n" +
+               "            \n" +
+               "            in := make([]reflect.Value, fnType.NumIn())\n" +
+               "            for j := 0; j < fnType.NumIn(); j++ {\n" +
+               "                argType := fnType.In(j)\n" +
+               "                argPtr := reflect.New(argType)\n" +
+               "                json.Unmarshal(argsRaw[j], argPtr.Interface())\n" +
+               "                in[j] = argPtr.Elem()\n" +
+               "            }\n" +
+               "            \n" +
+               "            out := fn.Call(in)\n" +
+               "            if len(out) > 0 {\n" +
+               "                results = append(results, out[0].Interface())\n" +
+               "            } else {\n" +
+               "                results = append(results, nil)\n" +
+               "            }\n" +
+               "        }()\n" +
+               "    }\n" +
+               "    \n" +
+               "    out, _ := json.Marshal(results)\n" +
+               "    fmt.Print(string(out))\n" +
+               "}\n";
     }
 
     private static class ExecutionOutcome {
