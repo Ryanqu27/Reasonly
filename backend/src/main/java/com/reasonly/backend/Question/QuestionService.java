@@ -40,26 +40,6 @@ public class QuestionService {
                 .orElseThrow(() -> new IllegalStateException("Question not found with id: " + id));
     }
 
-    public void insertQuestion(Question newQuestion) {
-        questionRepository.save(newQuestion);
-    }
-
-    public void deleteQuestion(Long id) {
-        questionRepository.deleteById(id);
-    }
-
-    public void updateQuestion(Long id, Question updatedQuestion) {
-        Question existingQuestion = questionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Question not found with id: " + id));
-        existingQuestion.setTopic(updatedQuestion.getTopic());
-        existingQuestion.setType(updatedQuestion.getType());
-        existingQuestion.setDifficulty(updatedQuestion.getDifficulty());
-        existingQuestion.setQuestion(updatedQuestion.getQuestion());
-        existingQuestion.setAnswers(updatedQuestion.getAnswers());
-        existingQuestion.setCorrectAnswer(updatedQuestion.getCorrectAnswer());
-        questionRepository.save(existingQuestion);
-    }
-
     public List<Question> getPlayQuestions(User user) {
         int rating = user.getRating();
         QuestionDifficulty targetDifficulty = getDifficultyFromRating(rating);

@@ -51,10 +51,6 @@ public class QuestionController {
         if (authentication == null || authentication.getPrincipal() == null) {
             throw new RuntimeException("User not authenticated");
         }
-        // Extract the email/username from the principal and fetch a FRESH copy from
-        // the database so that any recently-saved settings (e.g. preferredLanguage)
-        // are always reflected — the Spring Security principal is loaded once at
-        // login time and would otherwise be stale.
         String email = authentication.getName();
         return userService.getUserByEmail(email);
     }
@@ -62,20 +58,5 @@ public class QuestionController {
     @GetMapping("{id}")
     public Question getQuestionById(@PathVariable Long id) {
         return questionService.getQuestionById(id);
-    }
-
-    @PostMapping()
-    public void addQuestion(@RequestBody Question newQuestion) {
-        questionService.insertQuestion(newQuestion);
-    }
-
-    @DeleteMapping("{id}")
-    public void deleteQuestion(@PathVariable Long id) {
-        questionService.deleteQuestion(id);
-    }
-
-    @PutMapping("{id}")
-    public void updateQuestion(@PathVariable Long id, @RequestBody Question updatedQuestion) {
-        questionService.updateQuestion(id, updatedQuestion);
     }
 }
