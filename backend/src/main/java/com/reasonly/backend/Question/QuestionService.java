@@ -28,13 +28,6 @@ public class QuestionService {
         this.codeExecutionService = codeExecutionService;
     }
 
-    public List<Question> getQuestions(QuestionTopic topic) {
-        if (topic == null) {
-            return questionRepository.findAll();
-        }
-        return questionRepository.findByTopic(topic);
-    }
-
     public Question getQuestionById(Long id) {
         return questionRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException("Question not found with id: " + id));
