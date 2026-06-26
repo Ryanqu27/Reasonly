@@ -181,10 +181,6 @@ public class QuestionAttemptService {
         return QuestionDifficulty.EXTREME;
     }
 
-    public void deleteQuestionAttempt(Long id) {
-        questionAttemptRepository.deleteById(id);
-    }
-
     public void updateQuestionAttempt(Long id, QuestionAttempt updatedQuestionAttempt) {
         QuestionAttempt existingQuestionAttempt = questionAttemptRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Question attempt not found with id: " + id));

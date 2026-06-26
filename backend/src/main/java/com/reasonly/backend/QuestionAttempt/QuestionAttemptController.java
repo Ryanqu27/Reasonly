@@ -40,10 +40,6 @@ public class QuestionAttemptController {
         return org.springframework.http.ResponseEntity.ok(result);
     }
 
-    @DeleteMapping("{id}")
-    public void deleteQuestionAttempt(@PathVariable Long id) {
-        questionAttemptService.deleteQuestionAttempt(id);
-    }
 
     @PutMapping("{id}")
     public void updateQuestionAttempt(@PathVariable Long id, @RequestBody QuestionAttempt updatedQuestionAttempt) {
