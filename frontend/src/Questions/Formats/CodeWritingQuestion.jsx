@@ -41,7 +41,7 @@ export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer
         } else if (lang === "C_SHARP") {
             return `using System;\nusing System.Collections.Generic;\n\npublic class Solution {\n    // Write your ${m} method here\n    \n}`;
         } else if (lang === "GO") {
-            return `package main\n\nimport "fmt"\n\n// Write your ${m} function here\n`;
+            return `package main\n\n\n// Write your ${m} function here\n`;
         }
         return "";
     };
