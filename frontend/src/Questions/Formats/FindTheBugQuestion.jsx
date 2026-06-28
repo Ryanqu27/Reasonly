@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import './QuestionFormats.css';
 
-export default function FindTheBugQuestion({ question, onAnswer, selectedAnswer, showFeedback, isSubmitting }) {
+export default function FindTheBugQuestion({ question, onAnswer, selectedAnswer, showFeedback, isSubmitting, attemptResult }) {
     const [input, setInput] = useState('');
 
     useEffect(() => {
@@ -28,9 +28,8 @@ export default function FindTheBugQuestion({ question, onAnswer, selectedAnswer,
 
     const getInputClass = () => {
         let cls = 'format-number-input';
-        if (showFeedback) {
-            const isCorrect = question.correctAnswer.includes(input.trim());
-            cls += isCorrect ? ' correct' : ' incorrect';
+        if (showFeedback && attemptResult) {
+            cls += attemptResult.correct ? ' correct' : ' incorrect';
         }
         return cls;
     };

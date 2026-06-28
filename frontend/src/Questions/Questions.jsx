@@ -256,6 +256,7 @@ function Questions() {
           selectedAnswer={selectedAnswer}
           showFeedback={showFeedback}
           isSubmitting={isSubmitting}
+          attemptResult={attemptResult}
         />
       ) : currentQuestion.type === 'FILL_IN_THE_BLANK' ? (
         <FillInTheBlankQuestion
@@ -264,6 +265,7 @@ function Questions() {
           selectedAnswer={selectedAnswer}
           showFeedback={showFeedback}
           isSubmitting={isSubmitting}
+          attemptResult={attemptResult}
         />
       ) : currentQuestion.type === 'ORDER_CODE' ? (
         <OrderCodeQuestion
