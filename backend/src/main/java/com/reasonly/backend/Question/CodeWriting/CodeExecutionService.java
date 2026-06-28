@@ -162,16 +162,15 @@ public class CodeExecutionService {
                 "-e", "INPUT_JSON=" + inputJson,
                 "-w", "/app", "mcr.microsoft.com/dotnet/sdk:8.0",
                 "sh", "-c",
-                "mkdir -p /app/proj && " +
+                "dotnet new console -o /app/proj --no-restore -f net8.0 > /dev/null 2>&1 && " +
+                "rm -f /app/proj/Program.cs && " +
                 "printf '%s' \"$SOLUTION_CODE\" > /app/proj/Solution.cs && " +
                 "printf '%s' \"$RUNNER_CODE\" > /app/proj/Runner.cs && " +
                 "printf '%s' \"$INPUT_JSON\" > /app/proj/input.txt && " +
-                "dotnet new console -o /app/proj --force --no-restore -f net8.0 > /dev/null 2>&1 && " +
-                "cp /app/proj/Solution.cs /app/proj/Solution.cs.bak && cp /app/proj/Runner.cs /app/proj/Runner.cs.bak && " +
-                "rm -f /app/proj/Program.cs && " +
-                "cp /app/proj/Solution.cs.bak /app/proj/Solution.cs && cp /app/proj/Runner.cs.bak /app/proj/Runner.cs && " +
-                "dotnet run --project /app/proj --no-build 2>&1 || " +
-                "(dotnet build /app/proj -o /app/proj/out > /dev/null 2>&1 && dotnet /app/proj/out/proj.dll < /app/proj/input.txt)"
+                "echo '<configuration><packageSources><clear/></packageSources></configuration>' > /app/proj/nuget.config && " +
+                "dotnet build /app/proj -o /app/proj/out > /app/proj/build.log 2>&1; " +
+                "if [ $? -eq 0 ]; then dotnet /app/proj/out/proj.dll < /app/proj/input.txt; " +
+                "else cat /app/proj/build.log >&2; exit 1; fi"
             };
         } else if (language == UserLanguage.GO) {
             command = new String[]{
@@ -449,7 +448,9 @@ public class CodeExecutionService {
                "                object res = method.Invoke(instance, args);\n" +
                "                results.Add(JsonSerializer.SerializeToNode(res));\n" +
                "            } catch (Exception e) {\n" +
-               "                results.Add(JsonNode.Parse($\"{{{\\\"error\\\":\\\"{e.InnerException?.Message ?? e.Message}\\\"}}}\"));\n" +
+               "                var errObj = new JsonObject();\n" +
+               "                errObj.Add(\"error\", e.InnerException?.Message ?? e.Message);\n" +
+               "                results.Add(errObj);\n" +
                "            }\n" +
                "        }\n" +
                "        Console.Write(results.ToJsonString());\n" +
