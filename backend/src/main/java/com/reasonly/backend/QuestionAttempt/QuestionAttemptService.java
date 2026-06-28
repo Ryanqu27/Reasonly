@@ -62,12 +62,11 @@ public class QuestionAttemptService {
         } 
         else if (question.getType() == QuestionType.MULTIPLE_CHOICE || 
             question.getType() == QuestionType.SELECT_ALL || 
-            question.getType() == QuestionType.FIND_THE_BUG ||
-            question.getType() == QuestionType.FILL_IN_THE_BLANK) {
+            question.getType() == QuestionType.FIND_THE_BUG) {
             return question.getCorrectAnswer().size() == userAnswer.size() && question.getCorrectAnswer().containsAll(userAnswer);
         } 
         else {
-            return question.getCorrectAnswer().equals(userAnswer);
+            return question.getCorrectAnswer().get(0).equalsIgnoreCase(userAnswer.get(0));
         }
     }
 
