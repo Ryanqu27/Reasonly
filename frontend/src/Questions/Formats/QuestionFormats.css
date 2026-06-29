@@ -266,6 +266,32 @@
     color: var(--danger, #ef4444);
 }
 
+.format-correct-answer {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: -0.75rem;
+    margin-bottom: 1rem;
+    padding: 0.6rem 1rem;
+    background-color: rgba(16, 185, 129, 0.07);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    border-radius: 8px;
+    font-size: 0.875rem;
+}
+
+.format-correct-answer-label {
+    color: var(--text-muted, #a0aec0);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.format-correct-answer-value {
+    color: var(--success, #10b981);
+    font-family: 'Fira Code', 'Cascadia Code', 'Courier New', Courier, monospace;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
 .format-number-input-container {
     display: flex;
     flex-direction: column;

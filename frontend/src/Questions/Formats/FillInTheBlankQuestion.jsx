@@ -63,6 +63,13 @@ export default function FillInTheBlankQuestion({ question, onAnswer, selectedAns
                 </code>
             </div>
 
+            {showFeedback && attemptResult && !attemptResult.correct && (
+                <div className="format-correct-answer">
+                    <span className="format-correct-answer-label">Correct answer:</span>
+                    <code className="format-correct-answer-value">{question.correctAnswer[0]}</code>
+                </div>
+            )}
+
             {!showFeedback && (
                 <div className="format-submit-block">
                     <button
