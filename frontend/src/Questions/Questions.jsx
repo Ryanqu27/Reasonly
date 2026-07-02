@@ -30,7 +30,7 @@ function Questions() {
             setPreferredLanguage(user.userSettings.preferredLanguage);
             setEditorFontSize(user.userSettings.editorFontSize);
             setEditorTheme(user.userSettings.editorTheme || 'vs-dark');
-            setEditorTabSize(user.userSettings.editorTabSize || 4);
+            setEditorTabSize(user.userSettings.editorTabSize);
         }
     }, [user]);  
 

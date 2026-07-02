@@ -28,18 +28,19 @@ export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer
         "GO": "Go"
     };
 
-    const getBoilerplate = (lang, method) => {
+    const getBoilerplate = (lang, method, tabSize = 4) => {
         const m = method || "methodName";
+        const indent = " ".repeat(tabSize);
         if (lang === "JAVA") {
-            return `class Solution {\n    // Write your ${m} method here\n    \n}`;
+            return `class Solution {\n${indent}// Write your ${m} method here\n${indent}\n}`;
         } else if (lang === "PYTHON") {
-            return `def ${m}(...):\n    # Write your code here\n    pass`;
+            return `def ${m}(...):\n${indent}# Write your code here\n${indent}pass`;
         } else if (lang === "JAVASCRIPT") {
-            return `function ${m}(...) {\n    // Write your code here\n    \n}\n\n// Required for execution\nmodule.exports = { ${m} };`;
+            return `function ${m}(...) {\n${indent}// Write your code here\n${indent}\n}\n\n// Required for execution\nmodule.exports = { ${m} };`;
         } else if (lang === "C_PLUS_PLUS") {
             return `#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\n// Write your ${m} function here\n`;
         } else if (lang === "C_SHARP") {
-            return `using System;\nusing System.Collections.Generic;\n\npublic class Solution {\n    // Write your ${m} method here\n    \n}`;
+            return `using System;\nusing System.Collections.Generic;\n\npublic class Solution {\n${indent}// Write your ${m} method here\n${indent}\n}`;
         } else if (lang === "GO") {
             return `package main\n\n\n// Write your ${m} function here\n`;
         }
@@ -48,12 +49,12 @@ export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer
 
     // Separate editor state per language
     const [codeByLang, setCodeByLang] = useState(() => ({
-        JAVA: getBoilerplate("JAVA", question.methodName),
-        PYTHON: getBoilerplate("PYTHON", question.methodName),
-        JAVASCRIPT: getBoilerplate("JAVASCRIPT", question.methodName),
-        C_PLUS_PLUS: getBoilerplate("C_PLUS_PLUS", question.methodName),
-        C_SHARP: getBoilerplate("C_SHARP", question.methodName),
-        GO: getBoilerplate("GO", question.methodName),
+        JAVA: getBoilerplate("JAVA", question.methodName, editorTabSize),
+        PYTHON: getBoilerplate("PYTHON", question.methodName, editorTabSize),
+        JAVASCRIPT: getBoilerplate("JAVASCRIPT", question.methodName, editorTabSize),
+        C_PLUS_PLUS: getBoilerplate("C_PLUS_PLUS", question.methodName, editorTabSize),
+        C_SHARP: getBoilerplate("C_SHARP", question.methodName, editorTabSize),
+        GO: getBoilerplate("GO", question.methodName, editorTabSize),
     }));
 
     useEffect(() => {
@@ -114,7 +115,8 @@ export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer
                         onChange={handleCodeChange}
                         options={{ 
                             fontSize: fontSize,
-                            tabSize: editorTabSize || 4
+                            tabSize: editorTabSize,
+                            detectIndentation: false
                         }}
                     />
                 </code>
