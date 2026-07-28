@@ -48,14 +48,28 @@ export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer
     };
 
     // Separate editor state per language
-    const [codeByLang, setCodeByLang] = useState(() => ({
-        JAVA: getBoilerplate("JAVA", question.methodName, editorTabSize),
-        PYTHON: getBoilerplate("PYTHON", question.methodName, editorTabSize),
-        JAVASCRIPT: getBoilerplate("JAVASCRIPT", question.methodName, editorTabSize),
-        C_PLUS_PLUS: getBoilerplate("C_PLUS_PLUS", question.methodName, editorTabSize),
-        C_SHARP: getBoilerplate("C_SHARP", question.methodName, editorTabSize),
-        GO: getBoilerplate("GO", question.methodName, editorTabSize),
-    }));
+    const [codeByLang, setCodeByLang] = useState(() => {
+        const stored = localStorage.getItem(`code-draft-${question.id}`);
+        if (stored) {
+            try {
+                return JSON.parse(stored);
+            } catch (e) {
+                console.error("Failed to parse stored code", e);
+            }
+        }
+        return {
+            JAVA: getBoilerplate("JAVA", question.methodName, editorTabSize),
+            PYTHON: getBoilerplate("PYTHON", question.methodName, editorTabSize),
+            JAVASCRIPT: getBoilerplate("JAVASCRIPT", question.methodName, editorTabSize),
+            C_PLUS_PLUS: getBoilerplate("C_PLUS_PLUS", question.methodName, editorTabSize),
+            C_SHARP: getBoilerplate("C_SHARP", question.methodName, editorTabSize),
+            GO: getBoilerplate("GO", question.methodName, editorTabSize),
+        };
+    });
+
+    useEffect(() => {
+        localStorage.setItem(`code-draft-${question.id}`, JSON.stringify(codeByLang));
+    }, [codeByLang, question.id]);
 
     useEffect(() => {
         if (selectedAnswer) {
