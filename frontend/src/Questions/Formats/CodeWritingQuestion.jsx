@@ -83,6 +83,11 @@ export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer
         setCodeByLang(prev => ({ ...prev, [language]: value }));
     };
 
+    const handleResetCode = () => {
+        const boilerplate = getBoilerplate(language, question.methodName, editorTabSize);
+        setCodeByLang(prev => ({ ...prev, [language]: boilerplate }));
+    };
+
     const currentCode = codeByLang[language] || "";
 
     const onRunClick = async () => {
@@ -136,7 +141,14 @@ export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer
                 </code>
             </div>
 
-            <div className="code-action-row">
+            <div className="code-action-row" style={{ display: 'flex', gap: '10px' }}>
+                <button
+                    onClick={handleResetCode}
+                    className="code-reset-btn"
+                    disabled={isSubmitting || isRunning}
+                >
+                    Reset Code
+                </button>
                 <button
                     onClick={onRunClick}
                     className="code-run-btn"
