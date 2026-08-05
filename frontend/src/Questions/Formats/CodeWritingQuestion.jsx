@@ -8,6 +8,7 @@ export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer
     const [fontSize] = useState(editorFontSize);
     const [localRunResult, setLocalRunResult] = useState(null);
     const [isRunning, setIsRunning] = useState(false);
+    const [showResetConfirm, setShowResetConfirm] = useState(false);
 
     // Maps Backend Enum -> Monaco Editor language string
     const LANGUAGE_MAP = {
@@ -84,8 +85,17 @@ export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer
     };
 
     const handleResetCode = () => {
+        setShowResetConfirm(true);
+    };
+
+    const confirmReset = () => {
         const boilerplate = getBoilerplate(language, question.methodName, editorTabSize);
         setCodeByLang(prev => ({ ...prev, [language]: boilerplate }));
+        setShowResetConfirm(false);
+    };
+
+    const cancelReset = () => {
+        setShowResetConfirm(false);
     };
 
     const currentCode = codeByLang[language] || "";
@@ -204,6 +214,77 @@ export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer
                 <span>{question.topic}</span>
                 <span className="format-difficulty">{question.difficulty}</span>
             </div>
+
+            {showResetConfirm && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0, left: 0, right: 0, bottom: 0,
+                    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                    backdropFilter: 'blur(4px)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 1000,
+                    animation: 'fadeIn 0.2s ease-out'
+                }}>
+                    <div style={{
+                        backgroundColor: editorTheme === 'vs-dark' ? '#1e1e1e' : '#ffffff',
+                        color: editorTheme === 'vs-dark' ? '#ececec' : '#333333',
+                        padding: '24px 32px',
+                        borderRadius: '12px',
+                        boxShadow: '0 10px 40px rgba(0, 0, 0, 0.25)',
+                        maxWidth: '400px',
+                        width: '90%',
+                        textAlign: 'center',
+                        border: editorTheme === 'vs-dark' ? '1px solid #333' : '1px solid #eaeaea',
+                        transform: 'translateY(0)',
+                        animation: 'slideUp 0.3s ease-out'
+                    }}>
+                        <h3 style={{ margin: '0 0 16px 0', fontSize: '1.25rem', fontWeight: '600' }}>Reset Code?</h3>
+                        <p style={{ margin: '0 0 24px 0', fontSize: '0.95rem', lineHeight: '1.5', opacity: 0.9 }}>
+                            Are you sure you want to reset your code to the default boilerplate? This will erase your current work for <strong>{LANGUAGE_LABELS[language]}</strong>.
+                        </p>
+                        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+                            <button
+                                onClick={cancelReset}
+                                style={{
+                                    padding: '10px 20px',
+                                    borderRadius: '6px',
+                                    border: 'none',
+                                    backgroundColor: editorTheme === 'vs-dark' ? '#333' : '#f0f0f0',
+                                    color: editorTheme === 'vs-dark' ? '#fff' : '#333',
+                                    cursor: 'pointer',
+                                    fontWeight: '500',
+                                    transition: 'background-color 0.2s'
+                                }}
+                                onMouseOver={(e) => e.target.style.backgroundColor = editorTheme === 'vs-dark' ? '#444' : '#e0e0e0'}
+                                onMouseOut={(e) => e.target.style.backgroundColor = editorTheme === 'vs-dark' ? '#333' : '#f0f0f0'}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={confirmReset}
+                                style={{
+                                    padding: '10px 20px',
+                                    borderRadius: '6px',
+                                    border: 'none',
+                                    backgroundColor: '#ef4444',
+                                    color: 'white',
+                                    cursor: 'pointer',
+                                    fontWeight: '500',
+                                    transition: 'background-color 0.2s, transform 0.1s'
+                                }}
+                                onMouseOver={(e) => e.target.style.backgroundColor = '#dc2626'}
+                                onMouseOut={(e) => e.target.style.backgroundColor = '#ef4444'}
+                                onMouseDown={(e) => e.target.style.transform = 'scale(0.96)'}
+                                onMouseUp={(e) => e.target.style.transform = 'scale(1)'}
+                            >
+                                Yes, Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
