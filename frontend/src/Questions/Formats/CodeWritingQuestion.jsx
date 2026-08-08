@@ -1,5 +1,40 @@
 import { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
+import './QuestionFormats.css';
+
+const SyntaxHighlightedOutput = ({ text, theme }) => {
+    if (!text) return null;
+    const isDark = theme === 'vs-dark';
+    const themeClass = isDark ? 'theme-dark' : 'theme-light';
+    
+    return (
+        <pre className={`code-syntax-output ${themeClass}`}>
+            {text.split('\n').map((line, i) => {
+                let lineClass = `output-line-default ${themeClass}`;
+                
+                if (line.startsWith('Expected:')) {
+                    lineClass = `output-line-expected ${themeClass}`;
+                } else if (line.startsWith('Got:')) {
+                    lineClass = `output-line-got ${themeClass}`;
+                } else if (line.includes('Error') || line.includes('Exception') || line.startsWith('Test case')) {
+                    lineClass = `output-line-error ${themeClass}`;
+                } else if (line.trim().startsWith('at ') || line.includes('.java:') || line.includes('line ') || line.includes('File "')) {
+                    lineClass = `output-line-path ${themeClass}`;
+                } else if (line.includes('✓')) {
+                    lineClass = `output-line-success ${themeClass}`;
+                } else if (line.includes('✗')) {
+                    lineClass = `output-line-error ${themeClass}`;
+                }
+
+                return (
+                    <div key={i} className={lineClass}>
+                        {line}
+                    </div>
+                );
+            })}
+        </pre>
+    );
+};
 
 export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer, 
     showFeedback, isSubmitting, runCode, preferredLanguage, editorFontSize,
@@ -9,6 +44,7 @@ export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer
     const [localRunResult, setLocalRunResult] = useState(null);
     const [isRunning, setIsRunning] = useState(false);
     const [showResetConfirm, setShowResetConfirm] = useState(false);
+    const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
 
     // Maps Backend Enum -> Monaco Editor language string
     const LANGUAGE_MAP = {
@@ -96,6 +132,15 @@ export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer
 
     const cancelReset = () => {
         setShowResetConfirm(false);
+    };
+
+    const confirmSubmit = () => {
+        setShowSubmitConfirm(false);
+        onAnswer([currentCode.trim(), language]);
+    };
+
+    const cancelSubmit = () => {
+        setShowSubmitConfirm(false);
     };
 
     const currentCode = codeByLang[language] || "";
@@ -188,7 +233,7 @@ export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer
             {!showFeedback && (
                 <div className="format-submit-block">
                     <button
-                        onClick={() => onAnswer([currentCode.trim(), language])}
+                        onClick={() => setShowSubmitConfirm(true)}
                         className="format-submit-btn"
                         disabled={!currentCode.trim() || isSubmitting}
                     >
@@ -216,70 +261,51 @@ export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer
             </div>
 
             {showResetConfirm && (
-                <div style={{
-                    position: 'fixed',
-                    top: 0, left: 0, right: 0, bottom: 0,
-                    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-                    backdropFilter: 'blur(4px)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    zIndex: 1000,
-                    animation: 'fadeIn 0.2s ease-out'
-                }}>
-                    <div style={{
-                        backgroundColor: editorTheme === 'vs-dark' ? '#1e1e1e' : '#ffffff',
-                        color: editorTheme === 'vs-dark' ? '#ececec' : '#333333',
-                        padding: '24px 32px',
-                        borderRadius: '12px',
-                        boxShadow: '0 10px 40px rgba(0, 0, 0, 0.25)',
-                        maxWidth: '400px',
-                        width: '90%',
-                        textAlign: 'center',
-                        border: editorTheme === 'vs-dark' ? '1px solid #333' : '1px solid #eaeaea',
-                        transform: 'translateY(0)',
-                        animation: 'slideUp 0.3s ease-out'
-                    }}>
-                        <h3 style={{ margin: '0 0 16px 0', fontSize: '1.25rem', fontWeight: '600' }}>Reset Code?</h3>
-                        <p style={{ margin: '0 0 24px 0', fontSize: '0.95rem', lineHeight: '1.5', opacity: 0.9 }}>
+                <div className="code-modal-overlay">
+                    <div className={`code-modal-content ${editorTheme === 'vs-dark' ? 'theme-dark' : 'theme-light'}`}>
+                        <h3 className="code-modal-title">Reset Code?</h3>
+                        <p className="code-modal-desc">
                             Are you sure you want to reset your code to the default boilerplate? This will erase your current work for <strong>{LANGUAGE_LABELS[language]}</strong>.
                         </p>
-                        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+                        <div className="code-modal-actions">
                             <button
                                 onClick={cancelReset}
-                                style={{
-                                    padding: '10px 20px',
-                                    borderRadius: '6px',
-                                    border: 'none',
-                                    backgroundColor: editorTheme === 'vs-dark' ? '#333' : '#f0f0f0',
-                                    color: editorTheme === 'vs-dark' ? '#fff' : '#333',
-                                    cursor: 'pointer',
-                                    fontWeight: '500',
-                                    transition: 'background-color 0.2s'
-                                }}
-                                onMouseOver={(e) => e.target.style.backgroundColor = editorTheme === 'vs-dark' ? '#444' : '#e0e0e0'}
-                                onMouseOut={(e) => e.target.style.backgroundColor = editorTheme === 'vs-dark' ? '#333' : '#f0f0f0'}
+                                className={`code-modal-btn code-modal-btn-cancel ${editorTheme === 'vs-dark' ? 'theme-dark' : 'theme-light'}`}
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={confirmReset}
-                                style={{
-                                    padding: '10px 20px',
-                                    borderRadius: '6px',
-                                    border: 'none',
-                                    backgroundColor: '#ef4444',
-                                    color: 'white',
-                                    cursor: 'pointer',
-                                    fontWeight: '500',
-                                    transition: 'background-color 0.2s, transform 0.1s'
-                                }}
-                                onMouseOver={(e) => e.target.style.backgroundColor = '#dc2626'}
-                                onMouseOut={(e) => e.target.style.backgroundColor = '#ef4444'}
-                                onMouseDown={(e) => e.target.style.transform = 'scale(0.96)'}
-                                onMouseUp={(e) => e.target.style.transform = 'scale(1)'}
+                                className="code-modal-btn code-modal-btn-danger"
                             >
                                 Yes, Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showSubmitConfirm && (
+                <div className="code-modal-overlay">
+                    <div className={`code-modal-content ${editorTheme === 'vs-dark' ? 'theme-dark' : 'theme-light'}`}>
+                        <h3 className="code-modal-title">Submit Code?</h3>
+                        <p className="code-modal-desc">
+                            {(!localRunResult || !localRunResult.success) 
+                                ? "You haven't successfully passed the local test cases yet. Are you sure you want to submit?" 
+                                : "Are you ready to submit your solution? Your rating will be updated based on the result."}
+                        </p>
+                        <div className="code-modal-actions">
+                            <button
+                                onClick={cancelSubmit}
+                                className={`code-modal-btn code-modal-btn-cancel ${editorTheme === 'vs-dark' ? 'theme-dark' : 'theme-light'}`}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={confirmSubmit}
+                                className="code-modal-btn code-modal-btn-primary"
+                            >
+                                Yes, Submit
                             </button>
                         </div>
                     </div>
