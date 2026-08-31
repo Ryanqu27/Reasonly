@@ -12,6 +12,18 @@ export default function FillInTheBlankQuestion({ question, onAnswer, selectedAns
         }
     }, [selectedAnswer, question.id]);
 
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'Enter' && !showFeedback && !isSubmitting && input.trim()) {
+                e.preventDefault();
+                onAnswer([input.trim()]);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [showFeedback, isSubmitting, input, onAnswer]);
+
     // Separate the prompt text from the code block
     const backtickParts = question.question.split('```');
     const promptText = backtickParts[0]?.trim();

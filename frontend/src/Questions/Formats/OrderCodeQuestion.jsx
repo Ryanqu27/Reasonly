@@ -12,6 +12,18 @@ export default function OrderCodeQuestion({ question, onAnswer, selectedAnswer, 
         }
     }, [question, selectedAnswer]);
 
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'Enter' && !showFeedback && !isSubmitting && blocks.length > 0) {
+                e.preventDefault();
+                onAnswer(blocks);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [showFeedback, isSubmitting, blocks, onAnswer]);
+
     const dragItem = useRef();
     const dragOverItem = useRef();
 

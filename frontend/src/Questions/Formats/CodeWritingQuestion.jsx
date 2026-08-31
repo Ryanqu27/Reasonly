@@ -145,6 +145,24 @@ export default function CodeWritingQuestion({ question, onAnswer, selectedAnswer
 
     const currentCode = codeByLang[language] || "";
 
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (showSubmitConfirm && e.key === 'Enter') {
+                e.preventDefault();
+                confirmSubmit();
+            } else if (showResetConfirm && e.key === 'Enter') {
+                e.preventDefault();
+                confirmReset();
+            } else if (!showFeedback && !isSubmitting && currentCode.trim() && (e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                setShowSubmitConfirm(true);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [showSubmitConfirm, showResetConfirm, showFeedback, isSubmitting, currentCode]);
+
     const onRunClick = async () => {
         setIsRunning(true);
         setLocalRunResult(null);

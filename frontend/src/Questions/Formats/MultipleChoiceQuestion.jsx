@@ -12,6 +12,18 @@ export default function MultipleChoiceQuestion({ question, onAnswer, selectedAns
     }
   }, [selectedAnswer, question.id]);
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Enter' && !showFeedback && !isSubmitting && localSelection) {
+        e.preventDefault();
+        onAnswer([localSelection]);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showFeedback, isSubmitting, localSelection, onAnswer]);
+
   if (!question || !question.answers) {
     return <div>Loading question...</div>;
   }

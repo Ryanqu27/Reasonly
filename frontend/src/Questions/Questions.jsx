@@ -110,6 +110,18 @@ function Questions() {
     fetchNextQuestion();
   };
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (showFeedback && (e.key === ' ' || e.key === 'Enter')) {
+        e.preventDefault();
+        fetchNextQuestion();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showFeedback]);
+
   const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const handleResetQuestions = async () => {

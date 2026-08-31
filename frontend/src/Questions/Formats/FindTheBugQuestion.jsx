@@ -12,6 +12,18 @@ export default function FindTheBugQuestion({ question, onAnswer, selectedAnswer,
         }
     }, [selectedAnswer, question.id]);
 
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'Enter' && !showFeedback && !isSubmitting && input.trim() !== '') {
+                e.preventDefault();
+                onAnswer([input.trim()]);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [showFeedback, isSubmitting, input, onAnswer]);
+
     // Split the question string to separate the prompt text from the code block.
     // The DataInitializer stores it as: "Identify the line...\n\n```java\n1: code...\n```"
     const parts = question.question.split('```');
