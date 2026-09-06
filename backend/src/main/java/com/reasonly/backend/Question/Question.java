@@ -65,6 +65,9 @@ public class Question {
     @Column(name = "sample_expected_output")
     private List<String> sampleExpectedOutputs;
 
+    @Column(name = "explanation", nullable = true)
+    private String explanation;
+
     public Question(Long id, QuestionTopic topic, QuestionType type, QuestionDifficulty difficulty, String question,
             List<String> answers, List<String> correctAnswer) {
         this(id, topic, type, difficulty, null, question, answers, correctAnswer);
