@@ -63,7 +63,6 @@ class QuestionAttemptServiceTest {
         question.setCorrectAnswer(List.of("correct"));
 
         request = new QuestionAttemptRequest();
-        request.setUserId(1L);
         request.setQuestionId(10L);
         request.setAnswer(List.of("correct"));
 
@@ -80,7 +79,7 @@ class QuestionAttemptServiceTest {
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
             .thenReturn(Collections.emptyList());
 
-        QuestionAttemptResult result = questionAttemptService.insertQuestionAttempt(request);
+        QuestionAttemptResult result = questionAttemptService.insertQuestionAttempt(1L, request);
 
         assertEquals(true, result.isCorrect());
         assertEquals(40, result.getRatingChange());
@@ -95,7 +94,7 @@ class QuestionAttemptServiceTest {
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
             .thenReturn(Collections.emptyList());
 
-        QuestionAttemptResult result = questionAttemptService.insertQuestionAttempt(request);
+        QuestionAttemptResult result = questionAttemptService.insertQuestionAttempt(1L, request);
 
         assertEquals(false, result.isCorrect());
         assertEquals(-40, result.getRatingChange());
@@ -110,7 +109,7 @@ class QuestionAttemptServiceTest {
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
             .thenReturn(Collections.emptyList());
 
-        QuestionAttemptResult result = questionAttemptService.insertQuestionAttempt(request);
+        QuestionAttemptResult result = questionAttemptService.insertQuestionAttempt(1L, request);
 
         assertEquals(60, result.getRatingChange());
         assertEquals(1560, result.getNewRating());
@@ -125,7 +124,7 @@ class QuestionAttemptServiceTest {
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
             .thenReturn(Collections.emptyList());
 
-        QuestionAttemptResult result = questionAttemptService.insertQuestionAttempt(request);
+        QuestionAttemptResult result = questionAttemptService.insertQuestionAttempt(1L, request);
 
         assertEquals(-20, result.getRatingChange());
         assertEquals(1480, result.getNewRating());
@@ -139,7 +138,7 @@ class QuestionAttemptServiceTest {
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
             .thenReturn(Collections.emptyList());
 
-        QuestionAttemptResult result = questionAttemptService.insertQuestionAttempt(request);
+        QuestionAttemptResult result = questionAttemptService.insertQuestionAttempt(1L, request);
 
         assertEquals(20, result.getRatingChange());
         assertEquals(1520, result.getNewRating());
@@ -154,7 +153,7 @@ class QuestionAttemptServiceTest {
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
             .thenReturn(Collections.emptyList());
 
-        QuestionAttemptResult result = questionAttemptService.insertQuestionAttempt(request);
+        QuestionAttemptResult result = questionAttemptService.insertQuestionAttempt(1L, request);
 
         assertEquals(-60, result.getRatingChange());
         assertEquals(1440, result.getNewRating());
@@ -170,7 +169,7 @@ class QuestionAttemptServiceTest {
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
             .thenReturn(Collections.emptyList());
 
-        QuestionAttemptResult result = questionAttemptService.insertQuestionAttempt(request);
+        QuestionAttemptResult result = questionAttemptService.insertQuestionAttempt(1L, request);
 
         assertEquals(0, result.getNewRating()); // should not go negative
     }
@@ -181,7 +180,7 @@ class QuestionAttemptServiceTest {
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
             .thenReturn(Collections.emptyList());
 
-        questionAttemptService.insertQuestionAttempt(request);
+        questionAttemptService.insertQuestionAttempt(1L, request);
 
         assertEquals(1, user.getQuestionsAnsweredCorrectly());
         assertEquals(0, user.getQuestionsAnsweredIncorrectly());
@@ -195,7 +194,7 @@ class QuestionAttemptServiceTest {
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
             .thenReturn(Collections.emptyList());
 
-        questionAttemptService.insertQuestionAttempt(request);
+        questionAttemptService.insertQuestionAttempt(1L, request);
 
         assertEquals(0, user.getQuestionsAnsweredCorrectly());
         assertEquals(1, user.getQuestionsAnsweredIncorrectly());
@@ -213,7 +212,7 @@ class QuestionAttemptServiceTest {
             .thenReturn(Collections.emptyList());
 
         // Another correct answer → 4 correct, 1 incorrect → 80%
-        questionAttemptService.insertQuestionAttempt(request);
+        questionAttemptService.insertQuestionAttempt(1L, request);
 
         assertEquals(4, user.getQuestionsAnsweredCorrectly());
         assertEquals(1, user.getQuestionsAnsweredIncorrectly());
@@ -226,7 +225,7 @@ class QuestionAttemptServiceTest {
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
             .thenReturn(Collections.emptyList());
 
-        questionAttemptService.insertQuestionAttempt(request);
+        questionAttemptService.insertQuestionAttempt(1L, request);
 
         verify(questionAttemptRepository).save(any(QuestionAttempt.class));
     }
@@ -242,7 +241,7 @@ class QuestionAttemptServiceTest {
         when(questionAttemptRepository.findByUserIdAndQuestion(1L, question))
             .thenReturn(List.of(existingAttempt));
 
-        questionAttemptService.insertQuestionAttempt(request);
+        questionAttemptService.insertQuestionAttempt(1L, request);
 
         assertEquals(4, existingAttempt.getInterval());
         assertEquals(LocalDate.now().plusDays(4), existingAttempt.getNextReviewDate());
@@ -260,7 +259,7 @@ class QuestionAttemptServiceTest {
             .thenReturn(List.of(existingAttempt));
 
         request.setAnswer(List.of("wrong"));
-        questionAttemptService.insertQuestionAttempt(request);
+        questionAttemptService.insertQuestionAttempt(1L, request);
 
         assertEquals(1, existingAttempt.getInterval());
         assertEquals(LocalDate.now().plusDays(1), existingAttempt.getNextReviewDate());
@@ -269,10 +268,9 @@ class QuestionAttemptServiceTest {
     @Test
     void insertQuestionAttempt_UserNotFound_ThrowsRuntimeException() {
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
-        request.setUserId(99L);
 
         assertThrows(RuntimeException.class,
-            () -> questionAttemptService.insertQuestionAttempt(request));
+            () -> questionAttemptService.insertQuestionAttempt(99L, request));
     }
 
     @Test
@@ -281,6 +279,6 @@ class QuestionAttemptServiceTest {
         request.setQuestionId(99L);
 
         assertThrows(RuntimeException.class,
-            () -> questionAttemptService.insertQuestionAttempt(request));
+            () -> questionAttemptService.insertQuestionAttempt(1L, request));
     }
 }

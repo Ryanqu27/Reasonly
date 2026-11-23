@@ -67,7 +67,6 @@ function Questions() {
     setIsSubmitting(true);
 
     const questionAttempt = {
-      userId: user?.id,
       questionId: currentQuestion.id,
       answer: answerArray
     };

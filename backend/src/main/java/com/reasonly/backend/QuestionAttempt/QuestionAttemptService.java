@@ -52,7 +52,17 @@ public class QuestionAttemptService {
     }
 
     public boolean validateAnswer(Question question, List<String> userAnswer) {
+        if (question == null || question.getCorrectAnswer() == null || question.getCorrectAnswer().isEmpty()) {
+            return false;
+        }
+        if (userAnswer == null || userAnswer.isEmpty()) {
+            return false;
+        }
+
         if (question.getType() == QuestionType.ORDER_CODE) {
+            if (question.getCorrectAnswer().size() != userAnswer.size()) {
+                return false;
+            }
             for (int i = 0; i < question.getCorrectAnswer().size(); i++) {
                 if (!question.getCorrectAnswer().get(i).equals(userAnswer.get(i))) {
                     return false;
@@ -71,9 +81,9 @@ public class QuestionAttemptService {
     }
 
     @Transactional
-    public QuestionAttemptResult insertQuestionAttempt(QuestionAttemptRequest request) {
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + request.getUserId()));
+    public QuestionAttemptResult insertQuestionAttempt(Long userId, QuestionAttemptRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
         Question question = questionRepository.findById(request.getQuestionId())
                 .orElseThrow(() -> new RuntimeException("Question not found with id: " + request.getQuestionId()));
 
@@ -82,8 +92,20 @@ public class QuestionAttemptService {
         String consoleOutput = null;
 
         if (question.getType() == QuestionType.CODE_WRITING) {
+            if (request.getAnswer() == null || request.getAnswer().size() < 2) {
+                QuestionAttemptResult badResult = new QuestionAttemptResult(false, 0, user.getRating(), user);
+                badResult.setErrorMessage("Code submission must include user code and language.");
+                return badResult;
+            }
             String userCode = request.getAnswer().get(0);
-            UserLanguage language = UserLanguage.valueOf(request.getAnswer().get(1));
+            UserLanguage language;
+            try {
+                language = UserLanguage.valueOf(request.getAnswer().get(1).toUpperCase());
+            } catch (Exception e) {
+                QuestionAttemptResult badResult = new QuestionAttemptResult(false, 0, user.getRating(), user);
+                badResult.setErrorMessage("Invalid or unsupported language: " + request.getAnswer().get(1));
+                return badResult;
+            }
 
             CodeExecutionResult execResult = codeExecutionService.executeCode(
                 userCode,
@@ -102,17 +124,18 @@ public class QuestionAttemptService {
         List<QuestionAttempt> questionAttempts = questionAttemptRepository.findByUserIdAndQuestion(user.getId(),
                 question);
         if (!questionAttempts.isEmpty()) {
+            QuestionAttempt attempt = questionAttempts.get(0);
+            attempt.setAnswer(request.getAnswer());
             // Update existing attempt's spaced repetition interval
             if (isCorrect) {
-                questionAttempts.get(0).setInterval(questionAttempts.get(0).getInterval() * 2);
-                questionAttempts.get(0)
-                        .setNextReviewDate(LocalDate.now().plusDays(questionAttempts.get(0).getInterval()));
+                attempt.setInterval(attempt.getInterval() * 2);
+                attempt.setNextReviewDate(LocalDate.now().plusDays(attempt.getInterval()));
             } else {
-                questionAttempts.get(0).setInterval(1);
-                questionAttempts.get(0).setNextReviewDate(LocalDate.now().plusDays(1));
+                attempt.setInterval(1);
+                attempt.setNextReviewDate(LocalDate.now().plusDays(1));
             }
 
-            questionAttemptRepository.save(questionAttempts.get(0));
+            questionAttemptRepository.save(attempt);
         } else {
             QuestionAttempt attempt = new QuestionAttempt();
             attempt.setUserId(user.getId());
