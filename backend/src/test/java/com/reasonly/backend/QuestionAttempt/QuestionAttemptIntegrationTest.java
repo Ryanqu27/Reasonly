@@ -30,6 +30,7 @@ import com.reasonly.backend.User.UserRepository;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@WithMockUser(username = "test@gmail.com")
 public class QuestionAttemptIntegrationTest {
 
     @Autowired
@@ -73,7 +74,6 @@ public class QuestionAttemptIntegrationTest {
         testQuestion = questionRepository.save(testQuestion);
 
         QuestionAttemptRequest request = new QuestionAttemptRequest();
-        request.setUserId(testUser.getId());
         request.setQuestionId(testQuestion.getId());
         request.setAnswer(List.of("correct"));
 
@@ -96,7 +96,6 @@ public class QuestionAttemptIntegrationTest {
         testQuestion = questionRepository.save(testQuestion);
 
         QuestionAttemptRequest request = new QuestionAttemptRequest();
-        request.setUserId(testUser.getId());
         request.setQuestionId(testQuestion.getId());
         request.setAnswer(List.of("incorrect"));
 
@@ -119,7 +118,6 @@ public class QuestionAttemptIntegrationTest {
         testQuestion = questionRepository.save(testQuestion);
 
         QuestionAttemptRequest request = new QuestionAttemptRequest();
-        request.setUserId(testUser.getId());
         request.setQuestionId(testQuestion.getId());
         request.setAnswer(List.of("correct1", "correct2"));
 
@@ -143,7 +141,6 @@ public class QuestionAttemptIntegrationTest {
         testQuestion = questionRepository.save(testQuestion);
 
         QuestionAttemptRequest request = new QuestionAttemptRequest();
-        request.setUserId(testUser.getId());
         request.setQuestionId(testQuestion.getId());
         request.setAnswer(List.of("correct2", "correct1"));
 
@@ -168,7 +165,6 @@ public class QuestionAttemptIntegrationTest {
         testQuestion = questionRepository.save(testQuestion);
 
         QuestionAttemptRequest request = new QuestionAttemptRequest();
-        request.setUserId(testUser.getId());
         request.setQuestionId(testQuestion.getId());
         request.setAnswer(List.of("incorrect1", "correct2"));
 
@@ -191,7 +187,6 @@ public class QuestionAttemptIntegrationTest {
         testQuestion = questionRepository.save(testQuestion);
 
         QuestionAttemptRequest request = new QuestionAttemptRequest();
-        request.setUserId(testUser.getId());
         request.setQuestionId(testQuestion.getId());
         request.setAnswer(List.of("2"));
 
@@ -214,7 +209,6 @@ public class QuestionAttemptIntegrationTest {
         testQuestion = questionRepository.save(testQuestion);
 
         QuestionAttemptRequest request = new QuestionAttemptRequest();
-        request.setUserId(testUser.getId());
         request.setQuestionId(testQuestion.getId());
         request.setAnswer(List.of("1"));
 
@@ -237,7 +231,6 @@ public class QuestionAttemptIntegrationTest {
         testQuestion = questionRepository.save(testQuestion);
 
         QuestionAttemptRequest request = new QuestionAttemptRequest();
-        request.setUserId(testUser.getId());
         request.setQuestionId(testQuestion.getId());
         request.setAnswer(List.of("i"));
 
@@ -260,7 +253,6 @@ public class QuestionAttemptIntegrationTest {
         testQuestion = questionRepository.save(testQuestion);
 
         QuestionAttemptRequest request = new QuestionAttemptRequest();
-        request.setUserId(testUser.getId());
         request.setQuestionId(testQuestion.getId());
         request.setAnswer(List.of("j"));
 
@@ -283,7 +275,6 @@ public class QuestionAttemptIntegrationTest {
         testQuestion = questionRepository.save(testQuestion);
 
         QuestionAttemptRequest request = new QuestionAttemptRequest();
-        request.setUserId(testUser.getId());
         request.setQuestionId(testQuestion.getId());
         request.setAnswer(List.of("1", "2", "3"));
 
@@ -306,7 +297,6 @@ public class QuestionAttemptIntegrationTest {
         testQuestion = questionRepository.save(testQuestion);
 
         QuestionAttemptRequest request = new QuestionAttemptRequest();
-        request.setUserId(testUser.getId());
         request.setQuestionId(testQuestion.getId());
         request.setAnswer(List.of("3", "2", "1"));
 
@@ -329,7 +319,6 @@ public class QuestionAttemptIntegrationTest {
         testQuestion = questionRepository.save(testQuestion);
 
         QuestionAttemptRequest request = new QuestionAttemptRequest();
-        request.setUserId(testUser.getId());
         request.setQuestionId(testQuestion.getId());
         request.setAnswer(List.of("invalid"));
 
@@ -346,10 +335,57 @@ public class QuestionAttemptIntegrationTest {
             .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isOk());
 
-        mockMvc.perform(get("/api/question-attempts")
+        org.junit.jupiter.api.Assertions.assertTrue(
+            questionAttemptRepository.findByUserId(testUser.getId()).isEmpty());
+    }
+
+    @Test
+    void insertQuestionAttempt_IgnoresForgedUserIdInJson_UsesAuthenticatedUser() throws Exception {
+        User victimUser = new User();
+        victimUser.setEmail("victim@gmail.com");
+        victimUser.setPasswordHash("password");
+        victimUser = userRepository.save(victimUser);
+
+        testQuestion = new Question();
+        testQuestion.setDifficulty(QuestionDifficulty.EASY);
+        testQuestion.setType(QuestionType.MULTIPLE_CHOICE);
+        testQuestion.setCorrectAnswer(List.of("correct"));
+        testQuestion = questionRepository.save(testQuestion);
+
+        // Attacker attempts to forge victimUser's ID in JSON payload
+        String jsonWithForgedUserId = "{\"userId\":" + victimUser.getId() + ",\"questionId\":" + testQuestion.getId() + ",\"answer\":[\"correct\"]}";
+
+        mockMvc.perform(post("/api/question-attempts")
+            .contentType("application/json")
+            .content(jsonWithForgedUserId))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.correct").value(true));
+
+        // Victim should NOT have any attempts recorded
+        org.junit.jupiter.api.Assertions.assertTrue(
+            questionAttemptRepository.findByUserId(victimUser.getId()).isEmpty());
+
+        // Authenticated user SHOULD have the attempt recorded
+        org.junit.jupiter.api.Assertions.assertEquals(1,
+            questionAttemptRepository.findByUserId(testUser.getId()).size());
+    }
+
+    @Test
+    void insertQuestionAttempt_EmptyOrNullAnswer_ReturnsIncorrectWithoutCrashing() throws Exception {
+        testQuestion = new Question();
+        testQuestion.setDifficulty(QuestionDifficulty.EASY);
+        testQuestion.setType(QuestionType.ORDER_CODE);
+        testQuestion.setCorrectAnswer(List.of("1", "2", "3"));
+        testQuestion = questionRepository.save(testQuestion);
+
+        QuestionAttemptRequest request = new QuestionAttemptRequest();
+        request.setQuestionId(testQuestion.getId());
+        request.setAnswer(List.of()); // Empty answer
+
+        mockMvc.perform(post("/api/question-attempts")
             .contentType("application/json")
             .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$").isEmpty());
+            .andExpect(jsonPath("$.correct").value(false));
     }
 }
